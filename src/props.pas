@@ -151,7 +151,7 @@ i:integer;
 prop:PProp;
 tempmesh:ID3DXMesh;
 nummat:dword;
-res:HRESULT;
+//res:HRESULT;
 begin
  new(prop); 
  prop.name := name;
@@ -518,10 +518,11 @@ function TPropsystem.collide(poi:TD3DXVector3;gmbnagy:single;out pi:TD3DXVector3
 var
 res,mid,pos,tmp:TD3DXVector3;
 dist,radrot:single;
-xt,yt,zt:byte;
+//xt,yt,zt:byte;
 const
 height:single=1.6;
 begin
+  radrot:=0;
  with coll do
  begin
  d3dxvec3subtract(pos,poi,obj.pos);

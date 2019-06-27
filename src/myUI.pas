@@ -213,7 +213,7 @@ end;
 
 procedure T3DMITextBox.Draw(font:ID3DXFont;sprit:ID3DXSprite);
 var
-  rect2:Trect;
+  //rect2:Trect;
   mat2:TD3DMatrix;
   //center:TD3DXVector3;
 begin
@@ -357,7 +357,7 @@ end;
 
 constructor T3DMenu.Create(aDevice:IDirect3DDevice9;sm:boolean);
 var
-  szam, splashnev:string;
+  splashnev:string;
 begin
   inherited Create;
   safemode:=sm;
@@ -700,7 +700,7 @@ begin
     medalstate:=0;
     medaltex:=nil;
   end;
-
+  y:=0;
   if (medalstate >= 400) and (medalstate <= 1600) then y:=0.5
   else
     if medalstate < 400 then y:=1.0 - (medalstate / 800)
@@ -720,11 +720,11 @@ end;
 
 procedure T3DMenu.Draw;
 var
-  a:single;
+  //a:single;
   i:integer;
-  mat:TD3DMatrix;
+  //mat:TD3DMatrix;
   apos:TD3DXvector3;
-  AlphaValue:DWORD;
+  //AlphaValue:DWORD;
 begin
 
   //g_pd3dDevice.Clear(0, nil, D3DCLEAR_TARGET or D3DCLEAR_ZBUFFER, $FFFFFFFF, 1.0, 0);
@@ -785,7 +785,7 @@ var
   mat:TD3DMatrix;
   rect:TRect;
   a:single;
-  cent:TD3DXVector2;
+  //cent:TD3DXVector2;
 begin
   for I:=low(texts) to high(texts) do
   begin
@@ -988,14 +988,14 @@ var
   str:string;
   escapepos:integer;
   nextcolor:integer;
-  alpha2:integer;
-  i, j:integer;
+  //alpha2:integer;
+  //i, j:integer;
 begin
   rect.Top:=round(posy * SCheight);rect.Bottom:=round(posy2 * SCheight);
   rect.Left:=round(posx * SCwidth);rect.Right:=round(posx2 * SCwidth);
 
   nextcolor:=color;
-  alpha2:=(color shr 2) and $FF000000;
+  //alpha2:=(color shr 2) and $FF000000;
   while length(mit) > 0 do
   begin
     escapepos:=pos(chr(17), mit);
@@ -1047,6 +1047,8 @@ var
   fullrect:Trect;
   shift, ratio:single;
 begin
+  ratio:=0;
+  shift:=0;
   if szazalek <= 100 then
     g_pd3dDevice.Clear(0, nil, D3DCLEAR_TARGET or D3DCLEAR_ZBUFFER,
       $FF000000, 1.0, 0);

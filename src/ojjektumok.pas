@@ -450,9 +450,9 @@ begin
       if tritex < 0 then
         continue;
 
-      if (indices[i * 3 + 0] < 0) or
-        (indices[i * 3 + 1] < 0) or
-        (indices[i * 3 + 2] < 0) or
+      if //(indices[i * 3 + 0] < 0) or
+        //(indices[i * 3 + 1] < 0) or
+        //(indices[i * 3 + 2] < 0) or
         (indices[i * 3 + 0] > high(vertices)) or
         (indices[i * 3 + 1] > high(vertices)) or
         (indices[i * 3 + 2] > high(vertices)) then

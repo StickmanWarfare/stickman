@@ -3479,6 +3479,7 @@ begin
   mapbol:=false;
   halal:=0;
   spectate:=0;
+  ojjind:=0;
 
 {$IFDEF fegyverteszt}
 
@@ -9978,7 +9979,7 @@ begin
     begin
       if vanishcar > 0 then
       begin
-        drawmessage(inttostr(15 - vanishcar div 100) + lang[50], (128 - (vanishcar * 17) div 300) * $1000000 + betuszin);
+        drawmessage(inttostr(15 - vanishcar div 100) + lang[50], (128 - (vanishcar * 17) div 300) * $1000000 + integer(betuszin));
       end;
     end;
 
@@ -9990,8 +9991,8 @@ begin
       else
         txt:=inttostr(zonaellen) + lang[41];
       end;
-      drawmessage(lang[51] + lastzone + ',', min(zonechanged, 255) shl 24 + betuszin);
-      drawmessage(txt, min(zonechanged, 255) shl 24 + betuszin);
+      drawmessage(lang[51] + lastzone + ',', min(zonechanged, 255) shl 24 + Integer(betuszin));
+      drawmessage(txt, min(zonechanged, 255) shl 24 + Integer(betuszin));
     end;
 
     if autobaszallhat and (halal = 0) then
@@ -10006,7 +10007,7 @@ begin
       begin
         if latszonazF > 2 then dec(latszonazF, 2);
         if opt_tips then
-          drawmessage(lang[53], min(255, latszonazF) * $1000000 + betuszin)
+          drawmessage(lang[53], min(255, latszonazF) * $1000000 + Integer(betuszin))
 
       end
       else
@@ -13179,6 +13180,7 @@ var
 
     //sz�moljunk, most hogy nincsenek v�ltoz�k
     numnum:=0;
+    varnum:=0;
     operator:= ' ';
       for i:=0 to n - 1 do
       begin
@@ -13698,7 +13700,7 @@ var
               begin
 
                 j:=stuffjson.GetNum(['lightbeams']);
-                i:=0;
+                //i:=0;
                 for i:=0 to j - 1 do
                 begin
                   if stuffjson.GetString(['lightbeams', i, 'name']) = args[1] then
@@ -14108,7 +14110,8 @@ end;   {}
   var
     args:array of string;
     tmp:string;
-    len, i, j, argnum:integer;
+    len, i, j:integer;
+    //argnum:integer;
   {$IFDEF repkedomod}
     tempd3dbuf:ID3DXBuffer;
     n:integer;

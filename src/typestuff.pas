@@ -26,7 +26,7 @@ type
   public
     value:string;
     fade:word;
-    color:longword;
+    color:integer;
     constructor create(input:string;col:longword;f:word);
   end;
 
@@ -175,34 +175,34 @@ type
   end;
 
   Tmukspls = record
-   seb,vseb:TD3DXVector3;           //sebesség, volt sebesség
+   seb,vseb:TD3DXVector3;           //sebessï¿½g, volt sebessï¿½g
    vpos,megjpos:TD3dxvector3;
-   mtim,vtim,atim:word;             //különbözõ idõk a packetek közt
-   amtim,avtim,aatim,amtim2:word;  //  --||-- autóval
-   pkullov:array [1..15,1..2] of TD3DVector; //pontos lövések
-   kullov:array [1..15] of Tmypackedvector;  //packed lövések
-   klsz,pklsz:byte;                          // számuk
+   mtim,vtim,atim:word;             //kï¿½lï¿½nbï¿½zï¿½ idï¿½k a packetek kï¿½zt
+   amtim,avtim,aatim,amtim2:word;  //  --||-- autï¿½val
+   pkullov:array [1..15,1..2] of TD3DVector; //pontos lï¿½vï¿½sek
+   kullov:array [1..15] of Tmypackedvector;  //packed lï¿½vï¿½sek
+   klsz,pklsz:byte;                          // szï¿½muk
    lo:single;
    nev:Tnev;
    nev2:string;
    fegyv:byte; //128 a csapat
    autopos,autoopos,autoposx,autooposx:TD3DXVector3;
    autoaxes,autovaxes,autovaxes2:array [0..2] of TD3DXVector3;
-  // atmenetL:single;                         //õõõh
-   lottram:integer;               //vmikor lõtt rám pontosat
+  // atmenetL:single;                         //ï¿½ï¿½ï¿½h
+   lottram:integer;               //vmikor lï¿½tt rï¿½m pontosat
    fejh:TD3DXVector3;             //feje hol van (headstuff)
    afejcucc:byte;                 // headstuff
-   donotsend:integer;                //kezdeti neküldjdolog
+   donotsend:integer;                //kezdeti nekï¿½ldjdolog
    overrideport:word;             // port dolog
-   utsocht:string;                // megejelnítendõ chat
+   utsocht:string;                // megejelnï¿½tendï¿½ chat
    chttim:integer;
    visible:boolean;              // Viewport culling
    kills:word;
-   autotkuldj:byte; //0 1 2 3... trükkös.
-   priorneki:single; //ideiglenes szám, a felé mért prioritás (a célzás. pplpos.prior nélkül)
-   priormost: single; // szám, a legkisebb nyer, hozzáadódik a pplpls.priorneki és a pplpos.prior
+   autotkuldj:byte; //0 1 2 3... trï¿½kkï¿½s.
+   priorneki:single; //ideiglenes szï¿½m, a felï¿½ mï¿½rt prioritï¿½s (a cï¿½lzï¿½s. pplpos.prior nï¿½lkï¿½l)
+   priormost: single; // szï¿½m, a legkisebb nyer, hozzï¿½adï¿½dik a pplpls.priorneki ï¿½s a pplpos.prior
    seesme:boolean;    //lat
-   egyebetkapott:integer;    //no minden esetben amikor egyebet kap :) Fõként a seesme miatt.
+   egyebetkapott:integer;    //no minden esetben amikor egyebet kap :) Fï¿½kï¿½nt a seesme miatt.
   end;}
 
   Tloves=record
@@ -216,7 +216,7 @@ type
     pos:TD3DXVector3;
     irany,irany2:single;
     state:byte;
-    seb,vseb:TD3DXVector3;//sebesség, volt sebesség
+    seb,vseb:TD3DXVector3;//sebessï¿½g, volt sebessï¿½g
     vpos,megjpos:TD3dxvector3;
   end;
 
@@ -225,17 +225,17 @@ type
     port:WORD;
     overrideport:word;// nat port dolog
     UID:integer;
-    kapottprior:single;//én milyen fontos vagyok neki
-    nekemprior:single;//õ milyen fontos nekem
-    prior:single;//a kettõ összege, ezzel egyenesen arányos a kapott sávszél
-    priorbucket:single;//ez töltõdik. Ha >0, lehet sendelni, akkor -=1
-    mtim:word;//legutóbbi packet óta eltelt századmásodpercek
-    vtim:word;//legutóbbi packet ideje GetTickCountban
+    kapottprior:single;//ï¿½n milyen fontos vagyok neki
+    nekemprior:single;//ï¿½ milyen fontos nekem
+    prior:single;//a kettï¿½ ï¿½sszege, ezzel egyenesen arï¿½nyos a kapott sï¿½vszï¿½l
+    priorbucket:single;//ez tï¿½ltï¿½dik. Ha >0, lehet sendelni, akkor -=1
+    mtim:word;//legutï¿½bbi packet ï¿½ta eltelt szï¿½zadmï¿½sodpercek
+    vtim:word;//legutï¿½bbi packet ideje GetTickCountban
     atim:word;
-    amtim,avtim,aatim,vamtim:word;//  --||-- autóval
+    amtim,avtim,aatim,vamtim:word;//  --||-- autï¿½val
     lasthandshake:integer;
     gothandshake:boolean;
-    connected:boolean;//3 way handshake kész
+    connected:boolean;//3 way handshake kï¿½sz
     lovesek:array[0..15] of Tloves;//elkuldendo lovesek
     loveseksz:integer;
     plovesek:array[0..7] of Tloves;//elkuldendo pontos lovesek
@@ -251,11 +251,11 @@ type
     fegyvskin:byte;
     fejcucc:byte;// headstuff
     fejh:TD3DXVector3;//feje hol van (headstuff)
-    utsocht:string;// megejelnítendõ chat
+    utsocht:string;// megejelnï¿½tendï¿½ chat
     chttim:integer;
     visible:boolean;// Viewport culling
     kills:word;
-    lottram:integer;//lõtt rám. visszaszámláló
+    lottram:integer;//lï¿½tt rï¿½m. visszaszï¿½mlï¿½lï¿½
     autoban:boolean;
   end;
 
@@ -343,9 +343,10 @@ type
   TParticleSys=record
     from,spd:TD3DXVector3;
     tipus:integer;
-    scolor,ecolor,rcolor:cardinal;
+    scolor,ecolor,rcolor:integer;
     szorzo,rnd,spdrnd:single;
-    amount,period,lifetime,rndlt:integer;
+    amount,lifetime,rndlt:integer;
+    period:cardinal;
     ssize,esize,vis:single;
     texture:integer;
     disabled:bool;
@@ -518,7 +519,7 @@ type
 
   TGridElem=packed record
     meret,top:integer;
-    elemek:Pointer;//1D Array, Dwordok természetesen Castolható pointerre de úhgyis index lesz
+    elemek:Pointer;//1D Array, Dwordok termï¿½szetesen Castolhatï¿½ pointerre de ï¿½gyis index lesz
   end;
 
   TGrid=record
@@ -547,19 +548,19 @@ const
   pow2:array[-10..20] of single=(1/1024,1/512,1/256,1/128,1/64,1/32,1/16,1/8,1/4,1/2,1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536,131072,262144,524288,1048576);
   pow2i:array[0..15] of word=(1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768);
 var
-  cpx:Psingle;///FRÖCCCS
-  cpy:Psingle;///FRÖCCCS
-  cpz:Psingle;///FRÖCCCS
+  cpx:Psingle;///FRï¿½CCCS
+  cpy:Psingle;///FRï¿½CCCS
+  cpz:Psingle;///FRï¿½CCCS
 
   sundir:TD3DXVector3;
   texturefilelist:string;
 
-  hudMessages:array[0..4] of THUDmessage;//állítható mindkét vége, az alacsony a friss
+  hudMessages:array[0..4] of THUDmessage;//ï¿½llï¿½thatï¿½ mindkï¿½t vï¿½ge, az alacsony a friss
   hudMessagePosY:single=0.2;
   hudMessageOffsetY:single=0.05;
   hudInfo:string;
   hudInfoFade:word;
-  hudInfoColor:longword;
+  hudInfoColor:integer;
   winter:boolean=false;
   unfocused:boolean;
   multisampling:integer=0;
@@ -567,11 +568,11 @@ var
   SCheight:integer=(800*3)div 4;
   ASPECT_RATIO:double=4/3;
   pixelX,pixelY,vertScale:single;
-  texture_res:byte;// 0 low, 1 med, 2 hi, //új: 100 superlow, 101 low, 102, med, 103 high, 104 maximum
+  texture_res:byte;// 0 low, 1 med, 2 hi, //ï¿½j: 100 superlow, 101 low, 102, med, 103 high, 104 maximum
   fakedeath:single;
   vallmag:single=1.2;
   vallmag2:single=1.5;
-  singtc,cosgtc,plsgtc:single;//hullámzás
+  singtc,cosgtc,plsgtc:single;//hullï¿½mzï¿½s
   grasslevel:single;
   wetsandlevel:single;
   waterbaselevel:single;
@@ -597,7 +598,8 @@ var
   gpukey:integer=0;
   goodchars:shortstring='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';//62
 
-  betuszin,color_menu_normal,color_menu_select,color_menu_info:longword;
+  betuszin:cardinal;
+  color_menu_normal,color_menu_select,color_menu_info:longword;
 
   mymuzzszog:single;
 
@@ -640,13 +642,13 @@ const
   DETAIL_MAX=2;
 
   POSTPROC_MIN=0;
-  POSTPROC_DISTORTION=1;//úgy használd, hogy kereshetõ legyen
+  POSTPROC_DISTORTION=1;//ï¿½gy hasznï¿½ld, hogy kereshetï¿½ legyen
   POSTPROC_LASTNONSHADER=POSTPROC_DISTORTION;
   POSTPROC_SNIPER=2;
   POSTPROC_GLOW=3;
   POSTPROC_MAX=3;
 
-  //mikor van csicsa hdr: ha van gpeffect és detail > min
+  //mikor van csicsa hdr: ha van gpeffect ï¿½s detail > min
 
   WATER_MAX=3;
 
@@ -671,7 +673,7 @@ const
   FEGYV_BM3=4;//akkor most meg lesz baszva valami
   FEGYV_H31_G=100;//a szerveren a 4 a kibaszott quad
   FEGYV_BM3_2=101;
-  FEGYV_BM3_3=102;// különbözo golyófajták // Hector ne légy balfasz.
+  FEGYV_BM3_3=102;// kï¿½lï¿½nbï¿½zo golyï¿½fajtï¿½k // Hector ne lï¿½gy balfasz.
 
   FEGYV_MPG=128;
   FEGYV_QUAD=129;
@@ -703,7 +705,7 @@ const
   MSTAT_JOBBRA=3;
   MSTAT_BALRA=4;
   MSTAT_FUT=5;
-  //  MSTAT_CHAT=6;// egyelõre nincs animáció de akár lehetne is
+  //  MSTAT_CHAT=6;// egyelï¿½re nincs animï¿½ciï¿½ de akï¿½r lehetne is
   MSTAT_GREET=7;
   MSTAT_FEGYOUP=8;       
   MSTAT_FEGYODOWN=9;     //TODO
@@ -721,7 +723,7 @@ const
   D3DFVF_COLOREDVERTEX=(D3DFVF_XYZ or D3DFVF_DIFFUSE);
 
   {  DIKChar:array [$01..$39] OF CHAR
-                             =(' ','1','2','3','4','5','6','7','8','9','0','-','=','Û',' ',
+                             =(' ','1','2','3','4','5','6','7','8','9','0','-','=','ï¿½',' ',
                            'Q','W','E','R','T','Y','U','I','O','P','[',']',' ',' ','A','S',
                            'D','F','G','H','J','K','L',';',' ',' ',' ','\','Z','X','C','V',
                            'B','N','M',',','.','/',' ','*',' ',' ');}
@@ -1010,7 +1012,7 @@ var
 begin
   for i:=low(muted)to high(muted) do
   begin
-    if name=muted[i] then muted[i]:='';//mentéskor szûrni kell
+    if name=muted[i] then muted[i]:='';//mentï¿½skor szï¿½rni kell
   end;
 end;
 
@@ -1025,7 +1027,7 @@ begin
     FEGYV_X72:result:=1;
     FEGYV_BM3:Result:=0.5;
     FEGYV_HPL:result:=1;
-  else result:=0;//ezeknél úgysincs muzz
+  else result:=0;//ezeknï¿½l ï¿½gysincs muzz
   end;
 end;
 
@@ -1082,7 +1084,7 @@ begin
   begin
     i:=i+62;
   end;
-  result:=(i mod 62)+1;//kibaszott string 1..62 és nem 0..61
+  result:=(i mod 62)+1;//kibaszott string 1..62 ï¿½s nem 0..61
 end;
 
 function unloop(c:char):byte;
@@ -1719,7 +1721,7 @@ begin
   d3dxvec3subtract(a,vec,tri.v2);
   d3dxvec3cross(b,tri.v,ir);
 
-  //A V-vel fordítva!!!
+  //A V-vel fordï¿½tva!!!
   if (d3dxvec3dot(a,b)<0)xor bol then
   begin exit end;
   // if bol2 then exit;
@@ -1786,19 +1788,19 @@ begin
   result:=sqrt(tavpointtri(tri,poi,pi));
 end;
 
-function LTFF(adevice:IDirect3DDevice9;nev:string;out tex:IDirect3DTexture9;flags:cardinal=0;width:PInteger=nil;checksum:boolean=true):boolean;//TODO ha alfás ne legyen scale
+function LTFF(adevice:IDirect3DDevice9;nev:string;out tex:IDirect3DTexture9;flags:cardinal=0;width:PInteger=nil;checksum:boolean=true):boolean;//TODO ha alfï¿½s ne legyen scale
 var
   gotolni:boolean;
   probal:byte;
   eredm:HRESULT;
   info:TD3DXImageInfo;
-  w,h:integer;
-  divisor:integer;
+  w,h:cardinal;
+  divisor:cardinal;
 label
   vissz;
 begin
 
-  divisor:=-1;
+  divisor:=0;
 
   D3DXGetImageInfoFromFile(PChar(nev),info);
   w:=info.Width;
@@ -1821,7 +1823,7 @@ begin
           begin
             w:=1;
             h:=1;
-            divisor:=-1;
+            divisor:=0;
           end;
         end;
         
@@ -1920,7 +1922,7 @@ begin
   closefile(outfile);
 end;
 
-// 0..high ha megtalálta, -1..-high-1 ha nem
+// 0..high ha megtalï¿½lta, -1..-high-1 ha nem
 
 function BSearch(arr:Tintarr;mit:integer):integer; overload;
 var
@@ -2110,7 +2112,7 @@ begin
         wantrect[i].x1:=rect[i].x1+sarkok[j].x;wantrect[i].x2:=rect[i].x2+sarkok[j].x;
         wantrect[i].y1:=rect[i].y1+sarkok[j].y;wantrect[i].y2:=rect[i].y2+sarkok[j].y;
         tmptav:=max(wantrect[i].x2,wantrect[i].y2);
-        // ha elég kicsi, ellenõrzés
+        // ha elï¿½g kicsi, ellenï¿½rzï¿½s
         if tmptav<mintav then
         begin
           jo:=true;
@@ -2130,12 +2132,12 @@ begin
             josarok:=j;
           end;
         end;
-        //ellenõrzés vége
+        //ellenï¿½rzï¿½s vï¿½ge
       end;
       wantrect[i].x1:=rect[i].x1+sarkok[josarok].x;wantrect[i].x2:=rect[i].x2+sarkok[josarok].x;
       wantrect[i].y1:=rect[i].y1+sarkok[josarok].y;wantrect[i].y2:=rect[i].y2+sarkok[josarok].y;
     end
-    else { Über algoritmus }
+    else { ï¿½ber algoritmus }
     begin
       for j:=0 to sarokhi do
       begin for l:=0 to sarokhi do
@@ -2144,7 +2146,7 @@ begin
           wantrect[i].x1:=rect[i].x1+sarkok[j].x;wantrect[i].x2:=rect[i].x2+sarkok[j].x;
           wantrect[i].y1:=rect[i].y1+sarkok[l].y;wantrect[i].y2:=rect[i].y2+sarkok[l].y;
           tmptav:=max(wantrect[i].x2,wantrect[i].y2);
-          // ha elég kicsi, ellenõrzés
+          // ha elï¿½g kicsi, ellenï¿½rzï¿½s
           if tmptav<mintav then
           begin
             jo:=true;
@@ -2159,7 +2161,7 @@ begin
             end;
           end;
         end end;
-      //ellenõrzés vége
+      //ellenï¿½rzï¿½s vï¿½ge
       wantrect[i].x1:=rect[i].x1+sarkok[josarok].x;wantrect[i].x2:=rect[i].x2+sarkok[josarok].x;
       wantrect[i].y1:=rect[i].y1+sarkok[josarok2].y;wantrect[i].y2:=rect[i].y2+sarkok[josarok2].y;
     end;
@@ -2173,7 +2175,7 @@ begin
     if wantrect[i].y2>maxy then
     begin maxy:=wantrect[i].y2 end;
   end;
-  //meglepõen kis kód, meglepõen sokszor fut le.... n*n*n szerintem. Na mendegy
+  //meglepï¿½en kis kï¿½d, meglepï¿½en sokszor fut le.... n*n*n szerintem. Na mendegy
 end;
 
 procedure randomplus(var mit:TD3DXVector3;az,scal:single);
@@ -2244,7 +2246,7 @@ end;
 procedure constraintfloat(var mi:single);
 begin
   NoNANINF(mi);
-  //  if (mi<-5000) and (mi>5000) then //élt: 0.1-2.9.2.1
+  //  if (mi<-5000) and (mi>5000) then //ï¿½lt: 0.1-2.9.2.1
   if (mi<-5000)or(mi>5000) then
   begin mi:=0 end;
 end;
@@ -2330,7 +2332,7 @@ begin
     // szam:=length(indexes) div 2;
      //szam:=trisinAABB(tris,indexes,tt1,teg,false) div 2;
 
-      //keresünk egy jó választó síkot
+      //keresï¿½nk egy jï¿½ vï¿½lasztï¿½ sï¿½kot
     joszam:=0;
     josing:=0;
     teg1:=teg;teg2:=teg;
@@ -2947,7 +2949,7 @@ begin
     result:=1;exit;
   end;
 
-  // Minimum és maximum
+  // Minimum ï¿½s maximum
   mst:=d3dxvec3dot(vec,tri.v0);
   mx:=mst;mn:=mst;
 
@@ -2963,7 +2965,7 @@ begin
   if mn>mst then
   begin mn:=mst end;
 
-  // a 8 pont értéke
+  // a 8 pont ï¿½rtï¿½ke
   for i:=0 to 7 do
   begin mik2[i]:=d3dxvec3dot(vec,box[i]) end;
 
@@ -2980,7 +2982,7 @@ begin
 
   if (lktp=0)or(lktm=0) then
   begin result:=0;exit; end;
-  //döntés
+  //dï¿½ntï¿½s
   if lktp<=lktm then
   begin
     for i:=0 to 7 do
@@ -3349,7 +3351,7 @@ begin
   end
   else
   begin
-    // Sok cumó, szét kell osztani
+    // Sok cumï¿½, szï¿½t kell osztani
     new(child0);
     zeromemory(child0,sizeof(Toctleaf));
     new(child1);
@@ -3372,23 +3374,23 @@ begin
     child0.parent:=leaf;
     child1.parent:=leaf;
 
-    //childek közé a cumó kettéosztása...
+    //childek kï¿½zï¿½ a cumï¿½ kettï¿½osztï¿½sa...
     case leaf.axe of
 
       0:
         begin
-          // a child axe-ja 1-gyel odébb van tolva!
+          // a child axe-ja 1-gyel odï¿½bb van tolva!
           child0.split:=(leaf.AABB.min.z+leaf.AABB.max.z)*0.5;
           child1.split:=child0.split;
 
-          // itt még az eredeti leaf.axe van
+          // itt mï¿½g az eredeti leaf.axe van
           child0.AABB:=leaf.AABB;
           child0.AABB.max.x:=leaf.split;
 
           child1.AABB:=leaf.AABB;
           child1.AABB.min.x:=leaf.split;
 
-          // itt még az eredeti leaf.axe van
+          // itt mï¿½g az eredeti leaf.axe van
           for i:=0 to leaf.cumolngt-1 do
           begin if leaf.split>leaf.cumok[i].pos.x then
             begin
@@ -3404,18 +3406,18 @@ begin
 
       1:
         begin
-          // a child axe-ja 1-gyel odébb van tolva!
+          // a child axe-ja 1-gyel odï¿½bb van tolva!
           child0.split:=(leaf.AABB.min.y+leaf.AABB.max.y)*0.5;
           child1.split:=child0.split;
 
-          // itt még az eredeti leaf.axe van
+          // itt mï¿½g az eredeti leaf.axe van
           child0.AABB:=leaf.AABB;
           child0.AABB.max.z:=leaf.split;
 
           child1.AABB:=leaf.AABB;
           child1.AABB.min.z:=leaf.split;
 
-          // itt még az eredeti leaf.axe van
+          // itt mï¿½g az eredeti leaf.axe van
           for i:=0 to leaf.cumolngt-1 do
           begin if leaf.split>leaf.cumok[i].pos.z then
             begin
@@ -3431,18 +3433,18 @@ begin
 
       2:
         begin
-          // a child axe-ja 1-gyel odébb van tolva!
+          // a child axe-ja 1-gyel odï¿½bb van tolva!
           child0.split:=(leaf.AABB.min.x+leaf.AABB.max.x)*0.5;
           child1.split:=child0.split;
 
-          // itt még az eredeti leaf.axe van
+          // itt mï¿½g az eredeti leaf.axe van
           child0.AABB:=leaf.AABB;
           child0.AABB.max.y:=leaf.split;
 
           child1.AABB:=leaf.AABB;
           child1.AABB.min.y:=leaf.split;
 
-          // itt még az eredeti leaf.axe van
+          // itt mï¿½g az eredeti leaf.axe van
           for i:=0 to leaf.cumolngt-1 do
           begin if leaf.split>leaf.cumok[i].pos.y then
             begin
@@ -3498,19 +3500,19 @@ begin
   leaf.cumok[hi]:=leaf.cumok[leaf.cumolngt-1];
   dec(leaf.cumolngt);
 
-  //Joinolás
+  //Joinolï¿½s
   repeat
     leaf:=leaf.parent;
     if leaf=nil then
     begin exit end;
-    // ha valamelyik is parent, kilépés
+    // ha valamelyik is parent, kilï¿½pï¿½s
     if (leaf.child0.child0<>nil)or(leaf.child1.child0<>nil) then
     begin exit end;
-    // ha elérik a maximális pontszámot, kilépés
+    // ha elï¿½rik a maximï¿½lis pontszï¿½mot, kilï¿½pï¿½s
     if (leaf.child0.cumolngt+leaf.child1.cumolngt)>maxOTpoints then
     begin exit end;
 
-    // egy leafbe másolás
+    // egy leafbe mï¿½solï¿½s
     hi:=leaf.child0.cumolngt;
     for i:=0 to hi-1 do
     begin leaf.cumok[i]:=leaf.child0.cumok[i] end;
@@ -3808,7 +3810,7 @@ end;
 
 
 
-// .x nélkül
+// .x nï¿½lkï¿½l
 
 procedure StickMeshConvertToX(nev:string;a_d3ddevice:IDirect3DDevice9);
 type
@@ -4125,7 +4127,7 @@ begin
   if a>=0 then
   begin result:=integer(most) end;
 end;
-//másodperc
+//mï¿½sodperc
 
 function connectwithtimeout(sck:cardinal;name:PSockAddr;namelen:integer;timeout:integer):integer;
 var
@@ -4400,7 +4402,7 @@ begin
     end;
 
     tmptav:=max(wantrect.px+amx,wantrect.py+amy);
-    // ha elég kicsi, ellenõrzés
+    // ha elï¿½g kicsi, ellenï¿½rzï¿½s
     if tmptav<mintav then
     begin
       jo:=true;
@@ -4418,7 +4420,7 @@ begin
         jorect:=wantrect;
       end;
     end;
-    //ellenõrzés vége
+    //ellenï¿½rzï¿½s vï¿½ge
   end;
 
   if jorect.px=1337 then
@@ -4615,7 +4617,7 @@ begin
   end;
 end;
 
-//function fegyindex(fegy:byte):byte;//ideiglenes, jsonból kell
+//function fegyindex(fegy:byte):byte;//ideiglenes, jsonbï¿½l kell
 //
 //
 //begin
@@ -4638,7 +4640,7 @@ end;
 //
 //end;
 
-procedure log(s:string);
+procedure log(s:string);  //TODO USE
 begin
   writeln(logfile,s);
   flush(logfile);

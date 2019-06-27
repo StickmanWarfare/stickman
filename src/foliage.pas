@@ -139,7 +139,7 @@ const
   fixarray:TIntegerArray0to11 = (
     0, 1, 2, 2, 3, 1, 4, 5, 1, 0, 1, 4);
 var
-  i, j, shift:integer;
+  i, j:integer;
 begin
 
   for i:=0 to racsnum * 2 - 1 do
@@ -214,8 +214,8 @@ end;
 constructor TFoliage.Create(dev:Idirect3ddevice9;texnam:string;ahscale, avscale, avpls:single;ashape:string);
 var
   pIndices:PWordBigArray;
-  i:integer;
-  j:integer;
+  //i:integer;
+  //j:integer;
 begin
   inherited Create;
   betoltve:=false;
@@ -343,7 +343,7 @@ var
   pls, rot, sinv, cosv, rescale:single;
   n:TD3DXVector3;
   cached:integer;
-  tmp:single;
+  //tmp:single;
   //  sw : TStopWatch;
   tpos:TD3DXVector3;
 begin
