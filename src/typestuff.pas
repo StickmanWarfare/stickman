@@ -294,6 +294,7 @@ type
     ontouchscript:string;
     onusescript:string;
     onleavescript:string;
+    vehicle:boolean;
     active:boolean;
     restart:cardinal;
   end;
