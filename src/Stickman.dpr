@@ -56,6 +56,8 @@ uses
   ParticleSystem,
   PerlinNoise,
   qjson,
+  IdHTTP,
+  IdMultipartFormData,
   sky,
   StrUtils,
   SysUtils,
@@ -6519,31 +6521,31 @@ begin
         	if autoban and not vehicle then goto vege;
         	if autoban then
           	  atav:=tavpointpointsq(pos, tegla.pos)
-        else
-          atav:=tavpointpointsq(pos, d3dxvector3(cpx^, cpy^, cpz^));
+        	else
+              atav:=tavpointpointsq(pos, d3dxvector3(cpx^, cpy^, cpz^));
 
-        if atav < sqr(rad) then
-        begin
-          if (not touched) then
-          begin
-            evalscriptline('$thistrigger = ' + name);
-            evalScript(ontouchscript);
-            touched:=true;
-          end;
+            if atav < sqr(rad) then
+            begin
+             if (not touched) then
+             begin
+               evalscriptline('$thistrigger = ' + name);
+               evalScript(ontouchscript);
+               touched:=true;
+             end;
 
-          if (usebutton) then
-          begin
-            evalscriptline('$thistrigger = ' + name);
-            evalScript(onusescript);
-          end;
+             if (usebutton) then
+             begin
+               evalscriptline('$thistrigger = ' + name);
+               evalScript(onusescript);
+             end;
 
-        end
-        else
-        begin
-          if touched then
-          begin
-            evalscriptline('$thistrigger = ' + name);
-            evalscript(onleavescript);
+            end
+            else
+            begin
+             if touched then
+             begin
+               evalscriptline('$thistrigger = ' + name);
+               evalscript(onleavescript);
              end;
              touched:=false;
             end
@@ -13509,6 +13511,9 @@ var
     a:TStringArray;
     b:Cardinal;
     testmuks:Tplayer;
+	HTTPClient: TIdHTTP;
+    postData: TIdMultipartFormDataStream;
+    response:string;
   begin
 
     //bontsuk szavakra, �s tegy�k egy args arraybe
@@ -13981,6 +13986,37 @@ var
                             exit;
                           end
                           else
+
+						              if (args[0] = 'respawn') then
+                          begin
+                            respawn;
+                            exit;
+                          end
+                          else
+
+                          //submit api communication
+                          if (args[0] = 'submit') then
+                          begin
+                            if (args[1] = 'atlantisevent') then
+                            begin
+                                 HTTPClient := TidHTTP.Create(nil);
+                                 try
+                                  postData := TIdMultiPartFormDataStream.Create;
+                                  try
+                                    postData.AddFormField('form[nev]', multisc.nev);
+                                    postData.AddFormField('form[kills]', intToStr(multisc.kills - multisc.killsbeforedeath));
+                                    response := HTTPClient.Post('http://stickman.hu/api?mode=atlantisevent', postData);
+                                  finally
+                                    postData.Free;
+                                  end;
+                                 finally
+                                  HTTPClient.Free;
+                                 end;
+                            end;
+                            exit;
+                          end
+                          else
+
                             //hang
                             if (args[0] = 'sound') and (Length(args) > 4) then
                             begin
