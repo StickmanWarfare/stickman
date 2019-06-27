@@ -1601,6 +1601,12 @@ begin
       onusescript:=stuffjson.GetString(['triggers', name, 'onuse']);
       onleavescript:=stuffjson.GetString(['triggers', name, 'onleave']);
       vehicle:=stuffjson.GetBool(['triggers', name, 'vehicle']);
+	    self:=stuffjson.GetBool(['triggers', name, 'self']);
+      others:=stuffjson.GetBool(['triggers', name, 'others']);
+      clanonly:=stuffjson.GetBool(['triggers', name, 'clanonly']);
+      clan:=stuffjson.GetString(['triggers', name, 'clan']);
+      kill:=stuffjson.GetInt(['triggers', name, 'kill']);
+      killoperator:=stuffjson.GetString(['triggers', name, 'killoperator']);
       active:=true;
     end;
 
@@ -6484,8 +6490,9 @@ end;
 
 procedure handletriggers;
 var
-  i, n:integer;
+  i, j, n:integer;
   atav:single;
+  predic:boolean;
 label
   vege;
 begin
@@ -6495,9 +6502,23 @@ begin
     begin
       if active then
       begin
-        if autoban and not vehicle then goto vege;
-        if autoban then
-          atav:=tavpointpointsq(pos, tegla.pos)
+		if self then
+		begin
+          if killoperator = 'GT' then //faszer nem ordinal
+            predic := (multisc.kills - multisc.killsbeforedeath > kill)
+          else if killoperator = 'LT'  then
+            predic := (multisc.kills - multisc.killsbeforedeath < kill)
+          else if killoperator = 'GTE' then
+            predic := (multisc.kills - multisc.killsbeforedeath >= kill)
+          else if killoperator = 'LTE' then
+            predic := (multisc.kills - multisc.killsbeforedeath <= kill)
+          else //ez az EQ vagy default
+            predic := (multisc.kills - multisc.killsbeforedeath = kill);
+		  if ( (kill = 0) OR ((kill > 0) AND predic) ) then
+		  begin
+        	if autoban and not vehicle then goto vege;
+        	if autoban then
+          	  atav:=tavpointpointsq(pos, tegla.pos)
         else
           atav:=tavpointpointsq(pos, d3dxvector3(cpx^, cpy^, cpz^));
 
@@ -6523,9 +6544,59 @@ begin
           begin
             evalscriptline('$thistrigger = ' + name);
             evalscript(onleavescript);
-          end;
-          touched:=false;
-        end
+             end;
+             touched:=false;
+            end
+          end // kill
+        end;    //self
+
+        if others then
+        begin
+          for j:=0 to high(ppl) do
+          begin
+           if clanonly = FALSE or (clanonly and (ppl[j].pls.clan = clan)) then
+           begin
+           if killoperator = 'GT' then //faszer nem ordinal
+             predic := (ppl[j].pls.kills > kill)
+           else if killoperator = 'LT'  then
+             predic := (ppl[j].pls.kills < kill)
+           else if killoperator = 'GTE' then
+             predic := (ppl[j].pls.kills >= kill)
+           else if killoperator = 'LTE' then
+             predic := (ppl[j].pls.kills <= kill)
+           else //ez az EQ vagy default
+             predic := (ppl[j].pls.kills = kill);
+
+           if ( (kill = 0) OR ((kill > 0) AND predic) ) then
+           begin
+
+               if autoban then
+                 atav:=tavpointpointsq(pos, ppl[j].auto.pos)
+               else
+                atav:=tavpointpointsq(pos, ppl[j].pos.pos);
+
+              if atav < sqr(rad) then
+              begin
+               if (not touched) then
+               begin
+                evalscriptline('$thistrigger = ' + name);
+                evalScript(ontouchscript);
+                touched:=true;
+               end;
+              end
+              else
+              begin
+               if touched then
+               begin
+                evalscriptline('$thistrigger = ' + name);
+                evalscript(onleavescript);
+               end;
+               touched:=false;
+               end
+             end //kill
+           end //clan
+          end //for
+        end;
       end
       else
       begin

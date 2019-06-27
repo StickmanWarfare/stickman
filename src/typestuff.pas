@@ -302,6 +302,12 @@ type
     vehicle:boolean;
     active:boolean;
     restart:cardinal;
+    self:boolean;
+    others:boolean;
+    clanonly:boolean;
+    clan:string;
+    kill:integer;
+    killoperator:string; //GT LT EQ GTE LTE
   end;
 
   TScript=record
