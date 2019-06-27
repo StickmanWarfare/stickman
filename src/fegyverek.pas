@@ -13,7 +13,6 @@ type
 
   Tprojectilearray = array of Tprojectile;
 
-
   TF_M4A1 = class(Tobject)
   private
     g_pMesh:ID3DXMesh;
@@ -32,7 +31,6 @@ type
     procedure drawmuzzle(siz:single);
     destructor Destroy; reintroduce;
   end;
-
 
   TF_M82A1 = class(Tobject)
   private
@@ -77,7 +75,6 @@ type
     destructor Destroy; reintroduce;
   end;
 
-
   TF_MP5A3 = class(Tobject)
   private
     g_pMesh:ID3DXMesh;
@@ -121,7 +118,6 @@ type
   private
     g_pMesh:ID3DXMesh;
     g_pD3Ddevice:IDirect3ddevice9;
-
     mpgtex:IDirect3DTexture9;
     mpgemap:IDirect3DTexture9;
     muzz:array[0..5] of TCustomVertex;
@@ -177,7 +173,6 @@ type
     procedure drawmuzzle(siz:single);
     destructor Destroy; reintroduce;
   end;
-
 
   TF_X72 = class(Tobject)
   private
@@ -236,7 +231,6 @@ type
     destructor Destroy; reintroduce;
   end;
 
-
   TFegyv = class(TObject)
   private
     g_pD3Ddevice:IDirect3ddevice9;
@@ -268,9 +262,7 @@ type
     destructor Destroy; reintroduce;
   end;
 
-
 implementation
-
 
 
 ////////////////////////////////
@@ -420,7 +412,6 @@ begin
     Exit;
   if not LTFF(g_pd3dDevice, 'data/gui/scale.png', scaltex, TEXFLAG_FIXRES) then
     Exit;
-
 
   makemuzzle;
 
@@ -837,11 +828,11 @@ begin
   D3DXComputeboundingbox(pointer(pvert), g_pMesh.GetNumVertices, g_pMesh.GetNumBytesPerVertex, vmi, vma);
   scl:=max(vma.x - vmi.x, max(vma.y - vmi.y, vma.z - vmi.z));
   scl:=0.94 / scl;
-  //  scl:=0.08675; //1200 mm a modell és 1041 kéne legyen
+  //  scl:=0.08675; //1200 mm a modell ï¿½s 1041 kï¿½ne legyen
   fc:=(vma.x - vmi.x) * 0.5;
   for i:=0 to g_pMesh.GetNumVertices - 1 do
   begin
-    tmp.z:=(pvert[i].position.z + vmi.z) * scl - 0.147; //Z=hátra
+    tmp.z:=(pvert[i].position.z + vmi.z) * scl - 0.147; //Z=hï¿½tra
     tmp.y:=(pvert[i].position.y - vma.y) * scl + 0.0028;
     tmp.x:=(pvert[i].position.x - vma.x + fc) * scl;
     //if abs(tmp.x)<0.005 then tmp.x:=0;
@@ -1460,11 +1451,11 @@ begin
   D3DXComputeboundingbox(pointer(pvert), g_pMesh.GetNumVertices, g_pMesh.GetNumBytesPerVertex, vmi, vma);
   scl:=max(vma.x - vmi.x, max(vma.y - vmi.y, vma.z - vmi.z));
   scl:=1.2 * 0.9 / scl;
-  //  scl:=0.08675; //1200 mm a modell és 1041 kéne legyen
+  //  scl:=0.08675; //1200 mm a modell ï¿½s 1041 kï¿½ne legyen
   fc:=(vma.x - vmi.x) * 0.5;
   for i:=0 to g_pMesh.GetNumVertices - 1 do
   begin
-    tmp.z:=(pvert[i].position.z - vmi.z) * scl - 1.0; //Z=hátra
+    tmp.z:=(pvert[i].position.z - vmi.z) * scl - 1.0; //Z=hï¿½tra
     tmp.y:=(pvert[i].position.y - vma.y) * scl + 0.03;
     tmp.x:=(pvert[i].position.x - vma.x + fc) * scl;
     //if abs(tmp.x)<0.005 then tmp.x:=0;
@@ -1474,7 +1465,7 @@ begin
   g_pMesh.UnlockVertexBuffer;
   getmem(adj, g_pmesh.getnumfaces * 12);
   g_pMesh.generateadjacency(0.001, adj);
-  D3DXComputenormals(g_pMesh, nil); //ez itt adj vót
+  D3DXComputenormals(g_pMesh, nil); //ez itt adj vï¿½t
   g_pMesh.OptimizeInplace(D3DXMESHOPT_COMPACT + D3DXMESHOPT_ATTRSORT + D3DXMESHOPT_VERTEXCACHE, adj, nil, nil, nil);
   freemem(adj);
   betoltve:=true;
@@ -1683,7 +1674,7 @@ end;
 
 //***************************************
 //***************************************
-//*******TOVÁBBI FEGYVEREK HELYE!!!******
+//*******TOVï¿½BBI FEGYVEREK HELYE!!!******
 //***************************************
 //***************************************
 
@@ -1865,7 +1856,7 @@ begin
 
   end
   else
-    if (G_peffect <> nil) then //jobb shaderrel, mint simán, az emap így látszik mindenhol, a hdr meg el van intézve
+    if (G_peffect <> nil) then //jobb shaderrel, mint simï¿½n, az emap ï¿½gy lï¿½tszik mindenhol, a hdr meg el van intï¿½zve
     begin
       g_peffect.SetTechnique('WnHDR');
 
@@ -1919,7 +1910,7 @@ begin
 
 end;
 
-//ez a bal kéz egyébként
+//ez a bal kï¿½z egyï¿½bkï¿½nt
 
 function TFegyv.jkez(afegyv:word;astate:byte;szogy:single = 0):TD3DXVector3;
 var
@@ -1989,7 +1980,7 @@ begin
 
 end;
 
-//ez meg a jobb kéz
+//ez meg a jobb kï¿½z
 
 function TFegyv.bkez(afegyv:word;astate:byte;szogy:single = 0):TD3DXVector3;
 var
@@ -2195,7 +2186,7 @@ begin
 
   if (mpgstart div 3) > 0 then begin
     g_pd3ddevice.settexture(0, gunmuztex);
-    g_pd3ddevice.DrawPrimitive(D3DPT_TRIANGLELIST, 0, mpgstart div 3); //megáll
+    g_pd3ddevice.DrawPrimitive(D3DPT_TRIANGLELIST, 0, mpgstart div 3); //megï¿½ll
   end;
 
   if ((x72start - mpgstart) div 33) > 0 then begin

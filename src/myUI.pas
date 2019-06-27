@@ -20,7 +20,7 @@ type
     focused, focusable, handleschar:boolean;
     clicked:boolean;
     minx, miny, maxx, maxy, scale:single;
-    elx, ely:single; //egérlent
+    elx, ely:single; //egï¿½rlent
     rect:Trect;
     value:single;
     valueS:string;
@@ -155,7 +155,7 @@ end;
 
 procedure T3DMenuitem.HandleChar(mit:char);
 begin
-  //MÉG NAGYOBB SEMMI (ezért "virtual")
+  //Mï¿½G NAGYOBB SEMMI (ezï¿½rt "virtual")
 end;
 
 constructor T3DMIText.create(aminx, aminy, amaxx, amaxy, scala:single;szoveg:string;fable:boolean);
@@ -413,7 +413,7 @@ begin
   end;
 
   splashnev:=stuffjson.GetString(['splashes', random(stuffjson.GetNum(['splashes']))]);
-  D3DXGetImageInfoFromFile(PChar('data/gui/' + splashnev), splashinfo); //feltételezzük, hogy egyformák a splashek
+  D3DXGetImageInfoFromFile(PChar('data/gui/' + splashnev), splashinfo); //feltï¿½telezzï¿½k, hogy egyformï¿½k a splashek
 
   splashratio:=splashinfo.Width / splashinfo.Height;
   splashwidth:=round(SCheight * splashratio);
@@ -474,7 +474,6 @@ procedure T3DMenu.Finishcreate;
 begin
   if FAILED(D3DXCreateTextureFromFileEx(g_pd3dDevice, 'data/gui/logo0.png', trunc(512 * vertScale), trunc(256 * vertScale), 0, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, 0, nil, nil, logo0)) then
     Exit;
-
   if FAILED(D3DXCreateTextureFromFileEx(g_pd3dDevice, 'data/gui/4919.png', 256, 128, 0, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, 0, nil, nil, logo2)) then
     Exit;
 
@@ -570,7 +569,7 @@ begin
     case lap of
       0:lap:=3;
       1, 2:lap:=0;
-      4, 5, 6, 7, 8:lap:=2; //TODO ezt frissíteni kell mindig
+      4, 5, 6, 7, 8:lap:=2; //TODO ezt frissï¿½teni kell mindig
       3:items[3, 4].clicked:=true; //exit gomb
     end
   else
@@ -1134,7 +1133,7 @@ var
   i:integer;
 begin
 
-  if (alap<(MENULAP_MAX - 1)) or (length(tegs[alap]) = 0) then //TAB vagy label és üres
+  if (alap<(MENULAP_MAX - 1)) or (length(tegs[alap]) = 0) then //TAB vagy label ï¿½s ï¿½res
     setlength(tegs[alap], length(tegs[alap]) + 1);
 
   with tegs[alap, high(tegs[alap])] do

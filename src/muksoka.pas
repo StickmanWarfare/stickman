@@ -249,7 +249,7 @@ begin
  else
   gmbk[i].y:=alapgmbk[i].y;
 end;
- //lábak
+ //lï¿½bak
  gmbk[0].y:=0;
  gmbk[1].y:=0;
 
@@ -470,7 +470,7 @@ if dst>sqr(7)  then LOD:=9 else
 
 if (LOD<10) and (not heavyLOD) then
 begin
-//SIMA POLIS MUKSÓKÁM
+//SIMA POLIS MUKSï¿½Kï¿½M
  for i:=0 to LOD do
  begin
    for k:=0 to high(kisgmb) do
@@ -538,11 +538,11 @@ end;
   VBwh:=VBwh+length(kapcs);
   IBwh:=IBwh+kapcsind;
 end;
-//SIMA POLIS MUKSÓ VÉGE
+//SIMA POLIS MUKSï¿½ Vï¿½GE
 end
 else
 begin
-//SPRITE MUKSÓ
+//SPRITE MUKSï¿½
  d3dxvec3scale(vu,upvec,vst*SQRT2);
  d3dxvec3scale(vL,lvec,vst*SQRT2);
  vec.u:=0;  vec.v:=0;
@@ -650,11 +650,6 @@ begin
   end;
 
 end;
-
-
-
-
-
 
 g_pmuksIb.Unlock;
 g_pmuksVB.Unlock;

@@ -775,7 +775,7 @@ PS_OUTPUT WaterReflectionPS( VS_OUTPUT In)
     
     hova=mul(hova,g_mProjectionKorr);
     
-    float4 vizcol={0, 0.392, 0.98,1};
+    float4 vizcol={0, 0.392, 0.98, 1};
         Output.RGBColor=lerp(tex2Dproj(MeshTextureSampler2,hova),vizcol,0.1)*HDRszorzo;
     Output.RGBColor.a=fresnel*0.6;
   
