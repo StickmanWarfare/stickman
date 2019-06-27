@@ -116,7 +116,7 @@ type
     posx, posy, posz:single;
     radd, raddn:single;
 {$IFDEF terraineditor}
-    individual:boolean; //azaz terrain_modifierbol szï¿½rmazik-e
+    individual:boolean; //azaz terrain_modifierbol származik-e
     name:string;
 {$ENDIF}
     //ground:boolean;
@@ -176,7 +176,7 @@ var
 
   ReliefMappingEnabled:boolean;
 
-  Use32bitIndices:boolean; // A fï¿½program ï¿½llï¿½tja ï¿½s hasznï¿½lja
+  Use32bitIndices:boolean; // A fõprogram állítja és használja
   maxindices:integer; //caps.MaxVertexIndex+1;
   ImposterTexSize:integer = 1024;
   invimpostertexsize:single = 1 / 1024;
@@ -256,18 +256,18 @@ begin
     tex:=nil;
     if not LTFF(a_d3dDevice, 'data/textures/' + nev, tex, TEXFLAG_COLOR) then
       exit;
-    addfiletochecksum('data/textures/' + nev);
+    //addfiletochecksum('data/textures/' + nev);
 
     hmnev:=stuffjson.GetString(['materials', nev, 'heightmap']);
     if (hmnev <> '') then
-      if LTFF(a_d3dDevice, 'data/textures/' + hmnev, heightmap, TEXFLAG_COLOR) then //textï¿½ra nï¿½lkï¿½l ï¿½gysem ï¿½r semmit a PO
-        addfiletochecksum('data/textures/' + hmnev);
+       LTFF(a_d3dDevice, 'data/textures/heightmap/' + hmnev, heightmap, TEXFLAG_COLOR);//if then //textúra nélkül úgysem ér semmit a PO
+        //addfiletochecksum('data/textures/heightmap/' + hmnev);
 
     if isnormals then
     begin
       normalnev:=stuffjson.GetString(['materials', nev, 'normalmap']);
       if (normalnev <> '') then
-        if LTFF(a_d3dDevice, 'data/textures/' + normalnev, heightmap) then
+        if LTFF(a_d3dDevice, 'data/textures/normalmap/' + normalnev, heightmap, 0, nil, false) then
         begin
           normalmap:=true;
         end;
@@ -321,7 +321,7 @@ begin
 
   if fileexists(fnev + 'lm.png') then
   begin
-    addfiletochecksum(fnev + 'lm.png');
+    //addfiletochecksum(fnev + 'lm.png');
     if not LTFF(a_d3ddevice, fnev + 'lm.png', lightmap, 0, @lightmapsize) then exit;
 
     if Failed(D3DXCreateTextureFromFileEx(a_d3ddevice, PChar(fnev + 'lm.png'), lightmapsize, lightmapsize, 0, 0, D3DFMT_A8R8G8B8,
@@ -331,7 +331,7 @@ begin
   else
     if fileexists(fnev + 'lm.jpg') then
     begin
-      addfiletochecksum(fnev + 'lm.jpg');
+      //addfiletochecksum(fnev + 'lm.jpg');
       if not LTFF(a_d3ddevice, fnev + 'lm.jpg', lightmap, 0, @lightmapsize) then exit;
 
       if Failed(D3DXCreateTextureFromFileEx(a_d3ddevice, PChar(fnev + 'lm.jpg'), lightmapsize, lightmapsize, 0, 0, D3DFMT_A8R8G8B8,
@@ -340,7 +340,7 @@ begin
     end
     else
     begin
-      addfiletochecksum(fnev + 'lm.bmp');
+      //addfiletochecksum(fnev + 'lm.bmp');
       if not LTFF(a_d3ddevice, fnev + 'lm.bmp', lightmap, 0, @lightmapsize) then
       begin
         writeln(logfile, 'Could not load lightmap for: ''', fnev, '''. Please provide ''', fnev + 'lm.png''', ' Or ''', fnev + 'lm.bmp''', '.');flush(logfile);
@@ -524,7 +524,7 @@ begin
     //stickmeshinvertnormals(mymesh);
 
 
-    begin // ha not vanLM akkor nullï¿½zï¿½dik
+    begin // ha not vanLM akkor nullázódik
       setlength(tmprow, lightmapsize); //array4ofbyte
       setlength(lm, lightmapsize * lightmapsize); //array4ofbyte
 
@@ -664,7 +664,7 @@ begin
      tmp2:=d3dxvector3(bz.x-tmp.x*(rad+1),bz.y-tmp.y*(rad+1),bz.z-tmp.z*(rad+1));}
   end;
 
-  //Egyszerï¿½bb mï¿½dszer
+  //Egyszerûbb módszer
   {if bol then
    traverseKDTreelin(tmp1,tmp2,miket,KDData,KDTree,triangles)
   else  }
@@ -751,7 +751,7 @@ begin
      tmp2:=d3dxvector3(bz.x-tmp.x*(rad+1),bz.y-tmp.y*(rad+1),bz.z-tmp.z*(rad+1));}
   end;
 
-  //Egyszerï¿½bb mï¿½dszer
+  //Egyszerûbb módszer
   {if bol then
    traverseKDTreelin(tmp1,tmp2,miket,KDData,KDTree,triangles)
   else  }
@@ -774,7 +774,7 @@ begin
     begin
       begin
         normal:=triangles[miket[i]].n;
-        D3DXVec3Subtract(pl, triangles[miket[i]].v1, triangles[miket[i]].v2); //bï¿½rmely 2 pont a sï¿½kban
+        D3DXVec3Subtract(pl, triangles[miket[i]].v1, triangles[miket[i]].v2); //bármely 2 pont a síkban
         d3dxvec3normalize(normal, normal);
         d3dxvec3normalize(pl, pl);
         material:=triangles[miket[i]].material;
@@ -793,7 +793,7 @@ begin
               honnan, tmp,
               baryU, baryV,
               pdist) then
-              Writeln(logfile, 'Internal error: mitlo'); //TODO optimalizï¿½lt fv.
+              Writeln(logfile, 'Internal error: mitlo'); //TODO optimalizált fv.
 
             //            lightU:=lerp(lu0,lu1,baryU);
             //            lightU:=lerp(lightU,lu2,baryV);
@@ -816,7 +816,7 @@ begin
 
             lmpos:=round((1 - lightV) * lightmapsize)
               + round((lightU) * lightmapsize) * lightmapsize; // V oszlop, U sor
-            //TODO interpolï¿½ciï¿½
+            //TODO interpoláció
 //          Writeln(logfile,ceil(lightU*lightmapsize));
 //          Writeln(logfile,Round(lightV*lightmapsize));
             light^:=(lm[lmpos][3] shl 24) or (lm[lmpos][2] shl 16) or (lm[lmpos][1] shl 8) or lm[lmpos][0]; //argb
@@ -830,7 +830,7 @@ begin
           if (megmarad <> nil) and (size <> nil) then
           begin
             megmarad^:=true;
-            safesize:=size^; //te tï¿½k
+            safesize:=size^; //te tök
 
             d3dxvec3subtract(tmp, vec3add2(hova, vec3scale(pl, safesize)), honnan);
             megmarad^:=megmarad^ and D3DXIntersectTri(v0, v1, v2,
@@ -958,7 +958,7 @@ begin
               honnan, tmp,
               baryU, baryV,
               pdist) then
-              Writeln(logfile, 'Internal error: mitlo'); //TODO optimalizï¿½lt fv.
+              Writeln(logfile, 'Internal error: mitlo'); //TODO optimalizált fv.
 
 
             lightU:=lu0 * (1 - (baryU + baryV))
@@ -1407,7 +1407,7 @@ var
   // lmapsorrend:array of integer;      NOPE
   // lmapx:array of array [0..2] of integer; //X,Y,size  NOPE NOPE NOPE
   // lmapcells:array [0..31,0..31] of integer;    NOPE
-  // lmapsize:integer; //cellï¿½kban (64x64)        NOPE
+  // lmapsize:integer; //cellákban (64x64)        NOPE
   cursize:integer;
   tryx, tryy:integer;
   bol:boolean;
@@ -1439,7 +1439,7 @@ begin
     lasterror:=D3DXCreateTexture(g_pd3dDevice, IMPOSTERTEXSIZE, IMPOSTERTEXSIZE, 0, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, imposters);
     if FAILED(lasterror) then
     begin
-      //felezï¿½nk ï¿½s retry
+      //felezünk és retry
       impostertexsize:=512;
       invimpostertexsize:=1 / impostertexsize;
       lasterror:=D3DXCreateTexture(g_pd3dDevice, IMPOSTERTEXSIZE, IMPOSTERTEXSIZE, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, imposters);
@@ -1475,7 +1475,7 @@ begin
 
   writeln(logfile, 'read...');flush(logfile);
 
-  //POLIK Mï¿½SOLï¿½SA
+  //POLIK MÁSOLÁSA
   facecnt:=0;vertcnt:=0;
   for i:=0 to high(ojjektumarr) do
     with ojjektumarr[i] do
@@ -1619,7 +1619,7 @@ begin
         with pvertojj[pindojj[3 * j + 2]] do
         begin lu2:=lu2 + lu;lv2:=lv2 + lv; end;
 
-        //TODO: vertex colort beï¿½llï¿½tani
+        //TODO: vertex colort beállítani
 //        szin:=64;//lightmapbm[round((lv2/3)*lmapx[i,2]+lmapx[i,1]),round((lu2/3)*lmapx[i,2]+lmapx[i,0]),1];
 //        trilght[j]:=min(szin,128);
 
@@ -1661,7 +1661,7 @@ begin
   inherited;
 end;
 
-//MiHezKï¿½pest
+//MiHezKépest
 
 procedure T3DORenderer.RefreshImposters(mhk:TD3DXVector3);
 const
@@ -1695,7 +1695,7 @@ begin
         inc(lstfrsh);
         hol:=ojjektumarr[i].holvannak[j];
         ttav:=tavpointpointsq(hol, mhk);
-        if ttav > sqr(max(150, ojjektumarr[i].rad2 * 12)) then // a 12 az imposzer bekapcs tï¿½volsï¿½g
+        if ttav > sqr(max(150, ojjektumarr[i].rad2 * 12)) then // a 12 az imposzer bekapcs távolság
         begin
           kelluj:= not imposter;
           qz:=1 / ojjektumarr[i].rad;
@@ -1895,7 +1895,7 @@ begin
         with drawtable[i].DIPdata[j * ojjektumarr[i].hvszam + jj] do
           if facecount > 0 then
           begin
-            g_pd3ddevice.SetTexture(1, ojjektumarr[i].lightmap); //a szopï¿½s irï¿½nya: le
+            g_pd3ddevice.SetTexture(1, ojjektumarr[i].lightmap); //a szopás iránya: le
             g_pd3ddevice.DrawIndexedPrimitive(D3DPT_TRIANGLELIST, vertstart, 0, vertcount, facestart, facecount);
           end;
   end;
@@ -1971,7 +1971,7 @@ begin
   trukkproj._43:=trukkproj._43 + 0.001;
   g_pd3ddevice.SetTransform(D3DTS_PROJECTION, trukkproj);
   g_pd3ddevice.SetTransform(D3DTS_WORLD, identmatr);
-  //Render Z first... remï¿½ljï¿½k nem lassï¿½t tï¿½bbet mint a POM fillrate :S
+  //Render Z first... reméljük nem lassít többet mint a POM fillrate :S
   if (pEffect <> nil) then
   begin
     g_pd3dDevice.SetRenderState(D3DRS_COLORWRITEENABLE, 0);
@@ -1993,7 +1993,7 @@ begin
   end;
 
   g_pd3ddevice.SetTransform(D3DTS_PROJECTION, matproj);
-  //Aztï¿½n a color ï¿½s a POM
+  //Aztán a color és a POM
   for k:=0 to OTnSzam do
   begin
 
@@ -2062,7 +2062,7 @@ begin
           pEffect.SetFloat('specIntensity', ojjektumtextures[k].specIntensity);
         end
         else
-        begin //esï¿½s
+        begin //esõs
           pEffect.SetFloat('specHardness', ojjektumtextures[k].specHardness * 2);
           pEffect.SetFloat('specIntensity', ojjektumtextures[k].specIntensity * 2);
         end;

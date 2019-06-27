@@ -17,6 +17,8 @@
 	"color_mud_dust": "0xFF514024",
 	"color_sand_dust": "0xFFDCB9B2",
 	"lower_menu_text": "Music: Unreal Superhero III Symphonic version by Jaakko Takalo",
+	"spawn_height": 10,
+	"spawn_radius": 5,
 	"terrain": {
 		"grass_level": 15.75,
 		"wetsand_level": 10.75,
@@ -39,8 +41,6 @@
 		"color_sun": "0xFFFFFFE6",
 		"color_shadow": "0xFF252550"
 	},
-	"spawn_height": 10,
-	"spawn_radius": 5,
 	"weapon": {
 		"MPG": {
 			"color": {
@@ -2022,13 +2022,13 @@
 			"model": "lamp.x",
 			"materials": [
 				{
-					"diffuse": "../textures/beton_07.jpg",
+					"diffuse": "../beton_07.jpg",
 					"specHardness": 26.9,
 					"specIntensity": 0,
 					"emission": 0
 				},
 				{
-					"diffuse": "../textures/feh.bmp",
+					"diffuse": "../feh.bmp",
 					"specHardness": 26.9,
 					"specIntensity": 0,
 					"emission": 1
@@ -2627,18 +2627,18 @@
 	],
 	"bullethole_textures": {
 		"default": [
-			"textures/hole_01.png",
-			"textures/hole_02.png",
-			"textures/hole_03.png",
-			"textures/hole_04.png"
+			"hole_01.png",
+			"hole_02.png",
+			"hole_03.png",
+			"hole_04.png"
 		],
 		"metal": [
-			"textures/holem_01.png",
-			"textures/holem_02.png"
+			"holem_01.png",
+			"holem_02.png"
 		],
 		"wood": [
-			"textures/holew_01.png",
-			"textures/holew_02.png"
+			"holew_01.png",
+			"holew_02.png"
 		]
 	}
 }

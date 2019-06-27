@@ -116,8 +116,8 @@ begin
  g_pD3Ddevice:=dev;
  gmbk:=alapgmbk;
  kapcsk:=alapkapcsk;
-  addfiletochecksum('data\fehk.png');
-  LTFF(g_pd3ddevice,'data\fehk.png',tex);
+  //addfiletochecksum('data/textures/fehk.png');
+  LTFF(g_pd3ddevice,'data/textures/fehk.png',tex);
 
 
   if FAILED(g_pd3dDevice.CreateVertexBuffer(20000*sizeof(TCustomVertex),
@@ -842,8 +842,8 @@ begin
    loadOBJ(stuffjson.GetString(['hats',i]));
   end;
    
-  LTFF(g_pd3ddevice,'data\hs\hstex.bmp',hstex,TEXFLAG_FIXRES);
-  addfiletochecksum('data\hs\hstex.bmp');
+  LTFF(g_pd3ddevice,'data/models/hats/hstex.bmp',hstex,TEXFLAG_FIXRES);
+  //addfiletochecksum('data/hs/hstex.bmp');
   writeln(logfile,'Loaded head items...');
   system.flush(logfile);
 
@@ -890,8 +890,8 @@ begin
  aminv:=D3DXVector3(1000,1000,1000);
  amaxv:=D3DXVector3(-1000,-1000,-1000);
 
- addfiletochecksum('data\hs\'+mit+'.obj');
- assignfile(fil,'data\hs\'+mit+'.obj');
+ addfiletochecksum('data/models/hats/'+mit+'.obj');
+ assignfile(fil,'data/models/hats/'+mit+'.obj');
 
  reset(fil);
  if eof(fil) then

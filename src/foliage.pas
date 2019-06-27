@@ -254,9 +254,9 @@ begin
   if FAILED(g_pIB.unlock)
    then Exit;
 
-  if not LTFF(g_pd3dDevice, 'data\' + texnam, g_ptexture) then
+  if not LTFF(g_pd3dDevice, 'data/textures/foliages/' + texnam, g_ptexture) then
     Exit;
-  addfiletochecksum('data\' + texnam);
+  //addfiletochecksum('data\' + texnam);
 
   hscale:=ahscale;
   vscale:=avscale;

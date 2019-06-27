@@ -31,6 +31,7 @@ begin
   writeln(logfile,'Last state: ',laststate);
   writeln(logfile,'Freeze at:',formatdatetime('yyyy.mm.dd/hh:nn:ss',date+time));
   closefile(logfile);
+  RemoveFontResource('data/gui/eurostar.ttf');
   exitprocess(0);
  end;
 

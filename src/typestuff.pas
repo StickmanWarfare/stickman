@@ -556,8 +556,7 @@ var
   hudInfo:string;
   hudInfoFade:word;
   hudInfoColor:longword;
-
-  isEventWeapon:boolean=false;
+  winter:boolean=false;
   unfocused:boolean;
   multisampling:integer=0;
   SCwidth:integer=800;
@@ -753,7 +752,7 @@ function wove(x,y:single):single;
 
 function scalecolor(mit:cardinal;mennyivel:single):cardinal;
 
-function LTFF(adevice:IDirect3DDevice9;nev:string;out tex:IDirect3DTexture9;flags:cardinal=0;width:PInteger=nil):boolean;
+function LTFF(adevice:IDirect3DDevice9;nev:string;out tex:IDirect3DTexture9;flags:cardinal=0;width:PInteger=nil;checksum:boolean=true):boolean;
 
 procedure randomplus(var mit:TD3DXVector3;az,scal:single);
 procedure randomplus2(var mit:TD3DXVector3;az,scal:single);
@@ -1763,7 +1762,7 @@ begin
   result:=sqrt(tavpointtri(tri,poi,pi));
 end;
 
-function LTFF(adevice:IDirect3DDevice9;nev:string;out tex:IDirect3DTexture9;flags:cardinal=0;width:PInteger=nil):boolean;//TODO ha alf�s ne legyen scale
+function LTFF(adevice:IDirect3DDevice9;nev:string;out tex:IDirect3DTexture9;flags:cardinal=0;width:PInteger=nil;checksum:boolean=true):boolean;//TODO ha alf�s ne legyen scale
 var
   gotolni:boolean;
   probal:byte;
@@ -1883,7 +1882,8 @@ begin
   result:=not gotolni;
 
   texturefilelist:=texturefilelist+nev+sLineBreak;
-  //addfiletochecksum(nev);
+  if checksum then
+    addfiletochecksum(nev);
 end;
 
 procedure savetexfilelist;

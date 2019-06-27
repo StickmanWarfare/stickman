@@ -123,7 +123,7 @@ procedure TStickmanEvent.Rendermodels;
 begin
  //Virtaul
 end;
-
+                                                                       //events/
 constructor TPortalEvent.Create(adevice : IDirect3ddevice9;auto:boolean;dir:string);
 var
 a:integer;
@@ -131,9 +131,10 @@ iii:TD3DXVector3;
 begin
  inherited create;
  g_pD3Ddevice:=adevice;
- if not LTFF (g_pd3dDevice,'data/textures/frame.jpg',frametex) then
+ if not LTFF (g_pd3dDevice,'data/textures/'+dir+'frame.jpg',frametex, 0, nil, false) then
    Exit;
-  if FAILED(D3DXLoadMeshFromX(PChar(dir+'portal.x'),0,g_pd3ddevice,nil,nil,nil,nil,framemesh)) then Exit;
+
+  if FAILED(D3DXLoadMeshFromX(PChar('data/models/'+dir+'portal.x'),0,g_pd3ddevice,nil,nil,nil,nil,framemesh)) then Exit;
 
 
   if ATportalhely<>-1 then
@@ -369,7 +370,7 @@ begin
  inherited;
 end;
 
-                                                                    // data\event\
+                                                                    // events/
 constructor TSpaceshipEvent.Create(adevice : IDirect3ddevice9;auto:boolean;dir:string);
 var
 tempmesh:ID3DXMesh;
@@ -388,15 +389,16 @@ begin
  betoltve:=false;
  vege:=true;
  g_pD3Ddevice:=adevice;
- if not LTFF (g_pd3dDevice,'data\textures\metal003.bmp',fotex) then
+ if not LTFF (g_pd3dDevice,'data/textures/metal003.bmp',fotex, 0, nil, false) then
    Exit;
- if not LTFF (g_pd3dDevice,dir+'kekpiros.bmp',kekpirostex) then
+ if not LTFF (g_pd3dDevice,'data/textures/'+dir+'kekpiros.bmp',kekpirostex, 0, nil, false) then
    Exit;
- if not LTFF (g_pd3dDevice,dir+'futofeny.png',futotex) then
+ if not LTFF (g_pd3dDevice,'data/textures/'+dir+'futofeny.png',futotex, 0, nil, false) then
    Exit;
- if not LTFF (g_pd3dDevice,dir+'csill.bmp',csilltex) then
+ if not LTFF (g_pd3dDevice,'data/textures/'+dir+'csill.bmp',csilltex, 0, nil, false) then
    Exit;
-  if FAILED(D3DXLoadMeshFromX(PChar(dir+'spcshp.x'),0,g_pd3ddevice,nil,nil,nil,nil,tempmesh)) then exit;
+
+  if FAILED(D3DXLoadMeshFromX(PChar('data/models/'+dir+'spcshp.x'),0,g_pd3ddevice,nil,nil,nil,nil,tempmesh)) then exit;
   if FAILED(tempmesh.CloneMeshFVF(0,D3DFVF_CUSTOMVERTEX,g_pd3ddevice,g_pMesh)) then exit;
   if tempmesh<>nil then tempmesh:=nil;
 

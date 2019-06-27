@@ -93,8 +93,8 @@ begin
     begin
       SetLength(ps_texes,Length(ps_texes)+1);
 
-      addfiletochecksum(stuffjson.GetString(['bullethole_textures',matname(i),j]));
-      LTFF(g_pd3ddevice,'data/'+stuffjson.GetString(['bullethole_textures',matname(i),j]),ps_texes[High(ps_texes)]);
+      //addfiletochecksum(stuffjson.GetString(['bullethole_textures',matname(i),j]));
+      LTFF(g_pd3ddevice,'data/textures/bulletholes/'+stuffjson.GetString(['bullethole_textures',matname(i),j]),ps_texes[High(ps_texes)], 0, nil, false); //No checksum
     end;
   end;
 

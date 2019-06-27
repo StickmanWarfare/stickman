@@ -510,7 +510,7 @@ begin
  if haromd  then flags:=flags or DSBCAPS_CTRL3D or DSBCAPS_MUTE3DATMAXDISTANCE;
  if freq    then flags:=flags or DSBCAPS_CTRLFREQUENCY;
  //if effects then flags:=flags or DSBCAPS_CTRLFX;
- loadbuf(bufloaded[high(bufLoaded)],flags,'data\snd\'+fnev+'.wav');
+ loadbuf(bufloaded[high(bufLoaded)],flags,'data/sounds/'+fnev+'.wav');
  bufloaded[high(bufLoaded)].mindis:=mindistance;
  bufloaded[high(bufLoaded)].freq:=tempfreq;
 end;
@@ -521,7 +521,7 @@ begin
  laststate:='Loading stream ' + fnev;
  setlength(strmLoaded,length(strmLoaded)+1);
 // zeromemory(@strmLoaded[high(strmLoaded)],sizeof(TMemorybuffer));
- loadbuf(strmLoaded[high(strmLoaded)],DSBCAPS_CTRLVOLUME,'data\snd\rad\'+fnev+'.wav');
+ loadbuf(strmLoaded[high(strmLoaded)],DSBCAPS_CTRLVOLUME,'data/sounds/rad/'+fnev+'.wav');
 end;
 
 procedure StopAll;

@@ -20,7 +20,7 @@ type
     focused, focusable, handleschar:boolean;
     clicked:boolean;
     minx, miny, maxx, maxy, scale:single;
-    elx, ely:single; //egï¿½rlent
+    elx, ely:single; //egérlent
     rect:Trect;
     value:single;
     valueS:string;
@@ -155,7 +155,7 @@ end;
 
 procedure T3DMenuitem.HandleChar(mit:char);
 begin
-  //Mï¿½G NAGYOBB SEMMI (ezï¿½rt "virtual")
+  //MÉG NAGYOBB SEMMI (ezért "virtual")
 end;
 
 constructor T3DMIText.create(aminx, aminy, amaxx, amaxy, scala:single;szoveg:string;fable:boolean);
@@ -369,7 +369,8 @@ begin
   zeromemory(@lastkeyb, sizeof(lastkeyb));
   g_pd3ddevice:=aDevice;
   write(logfile, 'Loading fonts...');flush(logfile);
-  if (AddFontResource('data\eurostar.ttf') = 0) then
+  addfiletochecksum('data/gui/eurostar.ttf');
+  if (AddFontResource('data/gui/eurostar.ttf') = 0) then
     writeln(logfile, 'unsuccesful...');flush(logfile);
   write(logfile, 'font, ');flush(logfile);
   if FAILED(D3DXCreateFont(g_pD3dDevice, trunc(12 + 12 * (SCHeight / 600)), 0, FW_NORMAL, 0, FALSE, DEFAULT_CHARSET, OUT_STRING_PRECIS, PROOF_QUALITY, DEFAULT_PITCH or FF_SWISS, 'Eurostar Black Extended', g_pFont)) then
@@ -388,32 +389,33 @@ begin
   if FAILED(D3DXCreateSprite(g_pd3dDevice, g_pSprite)) then
     Exit;
   writeln(logfile, 'Textures...');flush(logfile);
+  addfiletochecksum('data/textures/feh.bmp');
   if FAILED(D3DXCreateTextureFromFileEx(g_pd3dDevice, 'data/textures/feh.bmp', 2, 2, 0, 0, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, D3DX_FILTER_NONE, D3DX_DEFAULT, 0, nil, nil, feh)) then
   begin
     writeln(logfile, 'Could not load data/textures/feh.bmp');flush(logfile);
     Exit;
   end;
-
-  if FAILED(D3DXCreateTextureFromFileEx(g_pd3dDevice, 'data/gui/glyphs.bmp', 32, 32, 0, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, $FF000000, nil, nil, glyphs)) then
+  addfiletochecksum('data/textures/gui/glyphs.bmp');
+  if FAILED(D3DXCreateTextureFromFileEx(g_pd3dDevice, 'data/textures/gui/glyphs.bmp', 32, 32, 0, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, $FF000000, nil, nil, glyphs)) then
   begin
-    writeln(logfile, 'Could not load data/gui/glyphs.bmp');flush(logfile);
+    writeln(logfile, 'Could not load data/textures/gui/glyphs.bmp');flush(logfile);
     Exit;
   end;
-
-  if FAILED(D3DXCreateTextureFromFileEx(g_pd3dDevice, 'data/gui/cglyphs.png', 16, 16, 0, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, D3DX_FILTER_POINT, D3DX_FILTER_POINT, 0, nil, nil, cglyphs)) then
+  addfiletochecksum('data/textures/gui/cglyphs.png');
+  if FAILED(D3DXCreateTextureFromFileEx(g_pd3dDevice, 'data/textures/gui/cglyphs.png', 16, 16, 0, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, D3DX_FILTER_POINT, D3DX_FILTER_POINT, 0, nil, nil, cglyphs)) then
   begin
-    writeln(logfile, 'Could not load data/gui/cglyphs.png');flush(logfile);
+    writeln(logfile, 'Could not load data/textures/gui/cglyphs.png');flush(logfile);
     Exit;
   end;
-
-  if FAILED(D3DXCreateTextureFromFileEx(g_pd3dDevice, 'data/gui/chtalul.bmp', 32, 32, 0, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, $FF000000, nil, nil, chtalultex)) then
+  addfiletochecksum('data/textures/gui/chtalul.bmp');
+  if FAILED(D3DXCreateTextureFromFileEx(g_pd3dDevice, 'data/textures/gui/chtalul.bmp', 32, 32, 0, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, $FF000000, nil, nil, chtalultex)) then
   begin
-    writeln(logfile, 'Could not load data/gui/chtalul.bmp');flush(logfile);
+    writeln(logfile, 'Could not load data/textures/gui/chtalul.bmp');flush(logfile);
     Exit;
   end;
-
+  //NO checksum for splashes
   splashnev:=stuffjson.GetString(['splashes', random(stuffjson.GetNum(['splashes']))]);
-  D3DXGetImageInfoFromFile(PChar('data/gui/' + splashnev), splashinfo); //feltï¿½telezzï¿½k, hogy egyformï¿½k a splashek
+  D3DXGetImageInfoFromFile(PChar('data/textures/gui/splash/' + splashnev), splashinfo); //feltételezzük, hogy egyformák a splashek
 
   splashratio:=splashinfo.Width / splashinfo.Height;
   splashwidth:=round(SCheight * splashratio);
@@ -455,35 +457,40 @@ begin
     splashheight:=splashheight div divisor;
   end;
 
-  if FAILED(D3DXCreateTextureFromFileEx(g_pd3dDevice, Pchar('data/gui/' + splashnev), splashwidth, splashheight, 0, 0, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, 0, nil, nil, splash)) then
+  if FAILED(D3DXCreateTextureFromFileEx(g_pd3dDevice, Pchar('data/textures/gui/splash/' + splashnev), splashwidth, splashheight, 0, 0, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, 0, nil, nil, splash)) then
   begin
-    writeln(logfile, 'Could not load data/gui/' + splashnev);flush(logfile);
+    writeln(logfile, 'Could not load data/textures/gui/splash/' + splashnev);flush(logfile);
     Exit;
   end;
-
-  if FAILED(D3DXCreateTextureFromFileEx(g_pd3dDevice, 'data/gui/circ2.png', 16, 16, 0, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, 0, nil, nil, sarok)) then
+  addfiletochecksum('data/textures/gui/circ2.png');
+  if FAILED(D3DXCreateTextureFromFileEx(g_pd3dDevice, 'data/textures/gui/circ2.png', 16, 16, 0, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, 0, nil, nil, sarok)) then
   begin
-    writeln(logfile, 'Could not load data/gui/circ2.png');flush(logfile);
+    writeln(logfile, 'Could not load data/textures/gui/circ2.png');flush(logfile);
     Exit;
   end;
+  //Checksum here for menu - 4919 already added
+  addfiletochecksum('data/textures/gui/logo0.png');
+  addfiletochecksum('data/textures/gui/cursor.png');
+  addfiletochecksum('data/textures/gui/beiro.png');
+  addfiletochecksum('data/textures/gui/csuszka.png');
+  addfiletochecksum('data/textures/gui/cssin.png');
 
   loaded:=true;
 end;
 
 procedure T3DMenu.Finishcreate;
 begin
-  if FAILED(D3DXCreateTextureFromFileEx(g_pd3dDevice, 'data/gui/logo0.png', trunc(512 * vertScale), trunc(256 * vertScale), 0, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, 0, nil, nil, logo0)) then
+  if FAILED(D3DXCreateTextureFromFileEx(g_pd3dDevice, 'data/textures/gui/logo0.png', trunc(512 * vertScale), trunc(256 * vertScale), 0, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, 0, nil, nil, logo0)) then
     Exit;
   if FAILED(D3DXCreateTextureFromFileEx(g_pd3dDevice, 'data/gui/4919.png', 256, 128, 0, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, 0, nil, nil, logo2)) then
     Exit;
-
-  if FAILED(D3DXCreateTextureFromFileEx(g_pd3dDevice, 'data/gui/cursor.png', 64, 64, 0, 0, D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, 0, nil, nil, cursor)) then
+  if FAILED(D3DXCreateTextureFromFileEx(g_pd3dDevice, 'data/textures/gui/cursor.png', 64, 64, 0, 0, D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, 0, nil, nil, cursor)) then
     Exit;
-  if FAILED(D3DXCreateTextureFromFileEx(g_pd3dDevice, 'data/gui/beiro.png', 250, 25, 0, 0, D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, 0, nil, nil, boxtex)) then
+  if FAILED(D3DXCreateTextureFromFileEx(g_pd3dDevice, 'data/textures/gui/beiro.png', 250, 25, 0, 0, D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, 0, nil, nil, boxtex)) then
     Exit;
-  if FAILED(D3DXCreateTextureFromFileEx(g_pd3dDevice, 'data/gui/csuszka.png', 16, 128, 0, 0, D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, 0, nil, nil, csusztex)) then
+  if FAILED(D3DXCreateTextureFromFileEx(g_pd3dDevice, 'data/textures/gui/csuszka.png', 16, 128, 0, 0, D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, 0, nil, nil, csusztex)) then
     Exit;
-  if FAILED(D3DXCreateTextureFromFileEx(g_pd3dDevice, 'data/gui/cssin.png', 256, 32, 0, 0, D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, 0, nil, nil, csusz2tex)) then
+  if FAILED(D3DXCreateTextureFromFileEx(g_pd3dDevice, 'data/textures/gui/cssin.png', 256, 32, 0, 0, D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, 0, nil, nil, csusz2tex)) then
     Exit;
 
   splash:=nil;
@@ -502,6 +509,7 @@ destructor T3DMenu.Destroy;
 var
   i, j:integer;
 begin
+  RemoveFontResource('data/gui/eurostar.ttf');
   for i:=0 to high(items) do
   begin
     for j:=0 to high(items[i]) do
@@ -569,7 +577,7 @@ begin
     case lap of
       0:lap:=3;
       1, 2:lap:=0;
-      4, 5, 6, 7, 8:lap:=2; //TODO ezt frissï¿½teni kell mindig
+      4, 5, 6, 7, 8:lap:=2; //TODO ezt frissíteni kell mindig
       3:items[3, 4].clicked:=true; //exit gomb
     end
   else
@@ -1133,7 +1141,7 @@ var
   i:integer;
 begin
 
-  if (alap<(MENULAP_MAX - 1)) or (length(tegs[alap]) = 0) then //TAB vagy label ï¿½s ï¿½res
+  if (alap<(MENULAP_MAX - 1)) or (length(tegs[alap]) = 0) then //TAB vagy label és üres
     setlength(tegs[alap], length(tegs[alap]) + 1);
 
   with tegs[alap, high(tegs[alap])] do

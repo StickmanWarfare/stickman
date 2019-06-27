@@ -157,10 +157,11 @@ begin
  prop.name := name;
  prop.model := model;
 
- if FAILED(D3DXLoadMeshFromX(PChar('data/props/'+model),0,g_pd3ddevice,nil,nil,nil,@nummat,tempmesh)) then
+ addfiletochecksum('data/models/props/'+model);
+ if FAILED(D3DXLoadMeshFromX(PChar('data/models/props/'+model),0,g_pd3ddevice,nil,nil,nil,@nummat,tempmesh)) then
  begin
   MessageBox(0,Pchar('Error loading: '+model),'Hiba',0);
-  if (not FileExists('data/props/'+model)) then MessageBox(0,Pchar(model+' does not exists.'),'Hiba',0);
+  if (not FileExists('data/models/props/'+model)) then MessageBox(0,Pchar(model+' does not exists.'),'Hiba',0);
   exit;
  end;
 
@@ -480,7 +481,7 @@ for i:=0 to Length(textures)-1 do
 
 SetLength(textures,Length(textures)+1);
 
-if not LTFF(g_pd3dDevice, 'data\props\'+name,tex) then
+if not LTFF(g_pd3dDevice, 'data/textures/props/'+name,tex) then
 begin
   MessageBox(0,Pchar('Missing prop texture: '+name),'Hiba',0);
   exit;

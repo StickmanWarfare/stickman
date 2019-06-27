@@ -104,17 +104,17 @@ begin
     D3DPOOL_DEFAULT, ps_IB, nil))
     then Exit;
 
-  addfiletochecksum('data\homaly.png');
-  addfiletochecksum('data\csepp2.png');
-  addfiletochecksum('data\fire.png');
-  addfiletochecksum('data\smoke.png');
-  addfiletochecksum('data\light.png');
+ // addfiletochecksum('data/textures/particles/homaly.png');
+  //addfiletochecksum('data/textures/particles/csepp2.png');
+  //addfiletochecksum('data/textures/particles/fire.png');
+  //addfiletochecksum('data/textures/particles/smoke.png');
+  //addfiletochecksum('data/textures/particles/light.png');
 
-  LTFF(g_pd3ddevice, 'data\homaly.png', ps_texes[1], TEXFLAG_FIXRES);
-  LTFF(g_pd3ddevice, 'data\csepp2.png', ps_texes[2], TEXFLAG_FIXRES);
-  LTFF(g_pd3ddevice, 'data\fire.png', ps_texes[3], TEXFLAG_FIXRES);
-  LTFF(g_pd3ddevice, 'data\smoke.png', ps_texes[4], TEXFLAG_FIXRES);
-  LTFF(g_pd3ddevice, 'data\light.png', ps_texes[5], TEXFLAG_FIXRES);
+  LTFF(g_pd3ddevice, 'data/textures/particles/homaly.png', ps_texes[1], TEXFLAG_FIXRES);
+  LTFF(g_pd3ddevice, 'data/textures/particles/csepp2.png', ps_texes[2], TEXFLAG_FIXRES);
+  LTFF(g_pd3ddevice, 'data/textures/particles/fire.png', ps_texes[3], TEXFLAG_FIXRES);
+  LTFF(g_pd3ddevice, 'data/textures/particles/smoke.png', ps_texes[4], TEXFLAG_FIXRES);
+  LTFF(g_pd3ddevice, 'data/textures/particles/light.png', ps_texes[5], TEXFLAG_FIXRES);
 end;
 
 procedure ParticleSystem_Add(mit:Tparticle);
