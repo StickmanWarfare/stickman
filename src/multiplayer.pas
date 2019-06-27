@@ -6,7 +6,7 @@ unit multiplayer;
 
 interface
 
-uses sysutils, socketstuff, typestuff, D3DX9, windows, sha1, winsock2, Direct3d9;
+uses sysutils, socketstuff, typestuff, crypto, D3DX9, windows, sha1, winsock2, Direct3d9;
 const
   TOKEN_RATE = 10; //ezredm�sodpercenk�nti tokenek sz�ma
   TOKEN_LIMIT = 2000; //bucket max m�rete
@@ -170,7 +170,6 @@ var
 implementation
 
 const
-  shared_key:array[0..19] of byte = ($00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00);
   //#001
 
   CLIENT_VERSION = PROG_VER;
