@@ -7,13 +7,13 @@ interface
 
 uses sysutils, socketstuff, typestuff, crypto, D3DX9, windows, sha1, winsock2, Direct3d9;
 const
-  TOKEN_RATE = 10; //ezredmï¿½sodpercenkï¿½nti tokenek szï¿½ma
-  TOKEN_LIMIT = 2000; //bucket max mï¿½rete
-  PRIOR_NINCSPLOVES = 0.5; //nem lï¿½ttem rï¿½ pontosat
-  PRIOR_NINCSLOVES = 0.2; //egyï¿½talï¿½n nem lï¿½ttem rï¿½
-  PRIOR_AUTOBAN = 0.5; //mï¿½rmint a mï¿½sik van autï¿½ban
-  PRIOR_KAPOTT_CSAPATTARS = 0.2; //az ï¿½ .kapottprior-ja szorzï¿½dik ezzel
-  PRIOR_KAPOTT_ELLENSEG = 0.5; //az ï¿½ .kapottprior-ja szorzï¿½dik ezzel
+  TOKEN_RATE = 10; //ezredmásodpercenkénti tokenek száma
+  TOKEN_LIMIT = 2000; //bucket max mérete
+  PRIOR_NINCSPLOVES = 0.5; //nem lõttem rá pontosat
+  PRIOR_NINCSLOVES = 0.2; //egyátalán nem lõttem rá
+  PRIOR_AUTOBAN = 0.5; //mármint a másik van autóban
+  PRIOR_KAPOTT_CSAPATTARS = 0.2; //az õ .kapottprior-ja szorzódik ezzel
+  PRIOR_KAPOTT_ELLENSEG = 0.5; //az õ .kapottprior-ja szorzódik ezzel
 type
 
   TChat = record
@@ -29,7 +29,7 @@ type
     reconnect:cardinal;
     crypto:array[0..19] of byte; //kill csodacryptocucc
     sentmedals:array of word;
-    laststatus:cardinal; //idï¿½ amikor utoljï¿½ra lett stï¿½tuszï¿½zenet kï¿½ldve
+    laststatus:cardinal; //idõ amikor utoljára lett státuszüzenet küldve
     procedure SendLogin(nev, jelszo:string; fegyver, fegyver_skin, fejrevalo, port, checksum:integer);
     procedure SendChat(uzenet:string);
     procedure SendStatus(x, y:integer);
@@ -53,12 +53,12 @@ type
   public
     sock:TBufferedSocket;
     nev:string;
-    myport:integer; //ï¿½ltalam kijelï¿½lt port
+    myport:integer; //általam kijelölt port
     myUID:integer;
     loggedin:boolean; //read only
     playersonserver:integer;
     chats:array[0..24] of TChat; //detto
-    kicked:string; //olvasd majd tï¿½rï¿½ld ki
+    kicked:string; //olvasd majd töröld ki
     kickedhard:boolean;
     doevent:string; //detto
     doeventphase:integer;
@@ -66,7 +66,7 @@ type
     kills:integer;
     dailykills:integer;
     killscamping:integer; //readwrite
-    killswithoutdeath:integer; // readwrite
+    killsbeforedeath:integer; // readwrite
     weather:byte;
     opt_nochat:boolean;
     state1v1, atrak:boolean;
@@ -96,7 +96,7 @@ type
   end;
 
 
-  //megjegyzï¿½s: 20 bï¿½jtba kell belefï¿½rni egy ATM packethez, 68-ba kettï¿½hï¿½z
+  //megjegyzés: 20 bájtba kell beleférni egy ATM packethez, 68-ba kettõhöz
   TUDPFrame = class(TSocketFrame)
   public
     procedure WritePackedFloat(mit, scale:single);
@@ -135,8 +135,8 @@ type
     procedure CalculatePriorities(campos, lookatpos:TD3DXVector3);
     procedure SendFrame(frame:TUDPFrame;kinek:integer);
   public
-    lovesek:array of Tloves; //kilotte: Index, kï¿½vï¿½lrï¿½l olvasandï¿½ ï¿½s tï¿½rlendï¿½
-    hullak:array of Thulla; //rongybabï¿½k. Detto.
+    lovesek:array of Tloves; //kilotte: Index, kívülrõl olvasandó és törlendõ
+    hullak:array of Thulla; //rongybabák. Detto.
 
 
     medal_prof_active:byte;
@@ -147,7 +147,7 @@ type
     constructor Create(port, fegyv, fegyv_skin:integer);
     destructor Destroy; override;
     procedure Update(posx, posy, posz, oposx, oposy, oposz, iranyx, iranyy:single;state:integer;
-      campos:TD3DXvector3; //a prioritï¿½sokhoz
+      campos:TD3DXvector3; //a prioritásokhoz
       autoban:boolean;vanauto:boolean;
       autopos:TD3DXVector3;autoopos:TD3DXVector3;autoaxes:array {0..2} of TD3DXVector3;fordulat:single);
     procedure Killed(apos, vpos:TD3DXVector3;irany:single;state:byte;animstate:single;
@@ -155,7 +155,7 @@ type
       kimiatt:integer);
     //procedure ToggleChat(toggle:boolean);
     procedure Loves(v1, v2:TD3DXVector3);
-    procedure SendUDPToServer(frame:TUDPFrame); //ez valï¿½jï¿½ban a multiscs, multip2p kï¿½zï¿½tti egyï¿½ttmï¿½kï¿½dï¿½shez kell.
+    procedure SendUDPToServer(frame:TUDPFrame); //ez valójában a multiscs, multip2p közötti együttmûködéshez kell.
 
   end;
 
@@ -175,19 +175,19 @@ const
   CLIENT_VERSION = PROG_VER;
 
   CLIENTMSG_LOGIN = 1;
-  {Login ï¿½zenet. Erre vï¿½lasz: LOGINOK, vagy KICK
-  int kliens_verziï¿½
-  string nï¿½v
-  string jelszï¿½
+  {Login üzenet. Erre válasz: LOGINOK, vagy KICK
+  int kliens_verzió
+  string név
+  string jelszó
   int fegyver
-  int fejrevalï¿½
+  int fejrevaló
   char[2] port
   int checksum
    int langid
   }
 
   CLIENTMSG_STATUS = 2;
-  {Ennek az ï¿½zenetnek sok ï¿½rtelme nincs csak a kapcsolatot tartja fenn.
+  {Ennek az üzenetnek sok értelme nincs csak a kapcsolatot tartja fenn.
   int x
   int y
   }
@@ -198,19 +198,19 @@ const
   }
 
   CLIENTMSG_KILLED = 4;
-  {Ha megï¿½lte a klienst valaki, ezt kï¿½ldi.
+  {Ha megölte a klienst valaki, ezt küldi.
   int UID
   char [20] crypto
   }
 
   CLIENTMSG_MEDAL = 5;
-  {A kliens medï¿½lt kï¿½r
-  int medï¿½l id
+  {A kliens medált kér
+  int medál id
   char [20] crypto
   }
 
   CLIENTMSG_TIME = 6;
-  {A kliens idï¿½t kï¿½r (szerver idï¿½t) Vï¿½lasz: TIME
+  {A kliens idõt kér (szerver idõt) Válasz: TIME
   }
 
   SERVERMSG_LOGINOK = 1;
@@ -234,7 +234,7 @@ const
 
   SERVERMSG_KICK = 3;
   {
-  char hardkick (bool igazï¿½bï¿½l)
+  char hardkick (bool igazából)
   string indok
   }
 
@@ -268,15 +268,15 @@ const
 
   SERVERMSG_WAREVENT = 10;
   {
-   char > 0.b koordinï¿½ta vagy sem, 1.b aktï¿½v, 2.b dm
-   string nï¿½v
+   char > 0.b koordináta vagy sem, 1.b aktív, 2.b dm
+   string név
    byte respawn
    byte invul
  vagy
-   char > 0.b koordinï¿½ta vagy sem
-   byte gun koordinï¿½taszï¿½m
-   byte tech koordinï¿½taszï¿½m
-   single-k hï¿½rmasï¿½val, koordinï¿½tï¿½k
+   char > 0.b koordináta vagy sem
+   byte gun koordinátaszám
+   byte tech koordinátaszám
+   single-k hármasával, koordináták
   }
 
   SERVERMSG_TELEPORT = 11;
@@ -300,14 +300,14 @@ const
 
   P2PMSG_RONGYBABA = 3;
 
-  P2PMSG_STATUS = 4; // pillanatnyilag hasznï¿½laton kï¿½vï¿½l.
+  P2PMSG_STATUS = 4; // pillanatnyilag használaton kívül.
 
 
-  // a P2PMSG_STATUS hoz tartozï¿½ ï¿½zenetek
+  // a P2PMSG_STATUS hoz tartozó üzenetek
 
-  STATUS_CHATON = 1; // mï¿½r nem hasznï¿½lt
+  STATUS_CHATON = 1; // már nem használt
 
-  STATUS_CHATOFF = 2; // mï¿½r nem hasznï¿½lt
+  STATUS_CHATOFF = 2; // már nem használt
 
 
 //#002
@@ -479,8 +479,8 @@ begin
     begin
       uid:=0;
       kills:=killek;
-      if killswithoutdeath = 0 then
-        killswithoutdeath:=kills;
+      if killsbeforedeath = 0 then
+        killsbeforedeath:=kills;
       if killscamping = 0 then
         killscamping:=kills;
     end;
@@ -637,7 +637,7 @@ begin
       frame.ReadChar;
       break;
     end;
-  //remï¿½lem senki sem fog egyszerre 4 medï¿½lt szerezni.
+  //remélem senki sem fog egyszerre 4 medált szerezni.
 end;
 
 procedure TMMOServerClient.ReceiveWarEvent(frame:TSocketFrame);
@@ -648,16 +648,16 @@ var
   //FS:TFormatSettings;
 begin
   fakedeath:=6;
-  //koordinï¿½ta?
+  //koordináta?
   b:=frame.ReadChar;
   isCoord:=nthBit(b, 0);
-  //ha igen akkor hozzï¿½rakjuk a meglï¿½vokhï¿½z
+  //ha igen akkor hozzárakjuk a meglévokhöz
   if isCoord then
   begin
     if warevent_dm then
     begin
-      b:=frame.ReadChar; //ï¿½j koordinï¿½tï¿½k szï¿½ma
-      frame.ReadChar; //ï¿½res
+      b:=frame.ReadChar; //új koordináták száma
+      frame.ReadChar; //üres
       setlength(warevent_spawns, length(warevent_spawns) + b);
       for i:=high(warevent_spawns) - b + 1 to high(warevent_spawns) do
       begin
@@ -667,8 +667,8 @@ begin
     end
     else
     begin
-      b:=frame.ReadChar; //ï¿½j gun koordinï¿½tï¿½k szï¿½ma
-      c:=frame.ReadChar; //ï¿½j tech koordinï¿½tï¿½k szï¿½ma
+      b:=frame.ReadChar; //új gun koordináták száma
+      c:=frame.ReadChar; //új tech koordináták száma
 
       setlength(warevent_gunspawns, length(warevent_gunspawns) + b);
       for i:=high(warevent_gunspawns) - b + 1 to high(warevent_gunspawns) do
@@ -685,13 +685,13 @@ begin
   end
   else
   begin
-    //ha nem akkor minden mï¿½s
+    //ha nem akkor minden más
     warevent:=nthBit(b, 1);
     warevent_dm:=nthBit(b, 2);
     warevent_name:=frame.ReadString;
     warevent_respawn:=frame.ReadChar;
     warevent_invul:=frame.ReadChar;
-    setlength(warevent_spawns, 0); //ha vï¿½ltï¿½s van, akkor reset
+    setlength(warevent_spawns, 0); //ha váltás van, akkor reset
     setlength(warevent_gunspawns, 0);
     setlength(warevent_techspawns, 0);
   end;
@@ -718,7 +718,7 @@ begin
   reconnect:=0;
   kills:=0;
   killscamping:=0;
-  killswithoutdeath:=0;
+  killsbeforedeath:=0;
 end;
 
 destructor TMMOServerClient.Destroy;
@@ -787,7 +787,7 @@ begin
   end;
   frame.Free;
 
-  if laststatus < GetTickCount - 3000 then //TODO nem ettï¿½l fagy a szerver?
+  if laststatus < GetTickCount - 3000 then //TODO nem ettõl fagy a szerver?
   begin
     laststatus:=GetTickCount;
     SendStatus(random(1000), random(1000));
@@ -958,8 +958,8 @@ begin
 
   if not ppl[kitol].net.gothandshake then
   begin
-    ppl[kitol].net.gothandshake:=true; //ï¿½n kaptam tï¿½le
-    ppl[kitol].net.lasthandshake:=0; //hamar jelezzï¿½nk neki vissza
+    ppl[kitol].net.gothandshake:=true; //én kaptam tõle
+    ppl[kitol].net.lasthandshake:=0; //hamar jelezzünk neki vissza
   end;
 
   if flags <> 0 then
@@ -1154,7 +1154,7 @@ begin
     tmp:=tavpointline2(ppl[i].pos.megjpos, campos, lookatpos);
     if tmp < 10 then
       tmp:=10;
-    ppl[i].net.nekemprior:=10 / tmp; //ez nem felhasznï¿½lva lesz, hanem elkï¿½ldve. 0 ï¿½s 1 kï¿½zï¿½tt
+    ppl[i].net.nekemprior:=10 / tmp; //ez nem felhasználva lesz, hanem elküldve. 0 és 1 között
 
     tmp:=0.5;
     if ppl[i].net.ploveseksz = 0 then
@@ -1164,7 +1164,7 @@ begin
         tmp:=tmp * PRIOR_NINCSPLOVES;
 
     if ppl[i].auto.enabled then
-      tmp:=tmp * PRIOR_AUTOBAN; //mï¿½rmint a mï¿½sik van autï¿½ban
+      tmp:=tmp * PRIOR_AUTOBAN; //mármint a másik van autóban
 
     if (ppl[i].pls.fegyv xor myfegyv) > 127 then
       ppl[i].net.prior:=tmp + ppl[i].net.kapottprior * PRIOR_KAPOTT_CSAPATTARS
@@ -1203,7 +1203,7 @@ end;
 
 
 procedure TMMOPeerToPeer.Update(posx, posy, posz, oposx, oposy, oposz, iranyx, iranyy:single;
-  state:integer;campos:TD3DXvector3; //a prioritï¿½sokhoz
+  state:integer;campos:TD3DXvector3; //a prioritásokhoz
   autoban:boolean;vanauto:boolean;
   autopos:TD3DXVector3;autoopos:TD3DXVector3;autoaxes:array {0..2} of TD3DXVector3;fordulat:single);
 var
@@ -1276,7 +1276,7 @@ begin
   CalculatePriorities(campos, lookatpos);
   bucket:=bucket + integer(GetTickCount - lastsend) * TOKEN_RATE;
   lastsend:=GetTickCount;
-  if bucket < -TOKEN_LIMIT then //valami WTF tï¿½rtï¿½nt
+  if bucket < -TOKEN_LIMIT then //valami WTF történt
     bucket:=0;
   if bucket > TOKEN_LIMIT then
     bucket:=TOKEN_LIMIT;
@@ -1299,7 +1299,7 @@ begin
     end
     else
     begin
-      //send packet, prior-=1, bucket-=bï¿½jtok
+      //send packet, prior-=1, bucket-=bájtok
       frame:=TUDPFrame.Create;
       frame.WriteChar(P2PMSG_POS);
 
@@ -1349,7 +1349,7 @@ begin
 
       bucket:=bucket - frame.cursor - 28;
       ppl[i].net.priorbucket:=ppl[i].net.priorbucket - 1;
-      ppl[i].net.prior:=0; //ebben a kï¿½rben tï¿½bet nem kap.
+      ppl[i].net.prior:=0; //ebben a körben töbet nem kap.
       frame.Free;
     end;
 
@@ -1418,7 +1418,7 @@ begin
     indexek[0]:=kimiatt;
   end;
 
-  //lenne mit optimalizï¿½lni de minek.
+  //lenne mit optimalizálni de minek.
   for i:=1 to high(ppl) do
     for j:=i + 1 to high(ppl) do
       if TavPointPointSq(ppl[indexek[i]].pos.megjpos, apos) > TavPointPointSq(ppl[indexek[j]].pos.megjpos, apos) then

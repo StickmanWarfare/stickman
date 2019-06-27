@@ -3468,7 +3468,7 @@ begin
 
   lastzone:= '';
   multisc.killscamping:=multisc.kills;
-  multisc.killswithoutdeath:=multisc.kills;
+  multisc.killsbeforedeath:=multisc.kills;
 
   zonechanged:=0;
   invulntim:=300;
@@ -7821,7 +7821,7 @@ end;
       if myfegyv > 127 then
       begin
 
-        case multisc.kills - multisc.killswithoutdeath of
+        case multisc.kills - multisc.killsbeforedeath of
           2:i:=12 + 0;
           5:i:=12 + 1;
           8:i:=12 + 2;
@@ -7838,7 +7838,7 @@ end;
       end
       else
       begin
-        case multisc.kills - multisc.killswithoutdeath of
+        case multisc.kills - multisc.killsbeforedeath of
           2:i:=31 + 0;
           5:i:=31 + 1;
           8:i:=31 + 2;
@@ -8167,7 +8167,7 @@ begin
     felho.makenew;
   end;
 
-  case multisc.kills - multisc.killswithoutdeath of
+  case multisc.kills - multisc.killsbeforedeath of
     3:multisc.Medal('W', '1');
     6:multisc.Medal('W', '2');
     9:multisc.Medal('W', '3');
@@ -9895,14 +9895,14 @@ begin
     menu.DrawSzinesChat(txt, 0.9, 0.33, 1, 0.35, $FF000000 + betuszin);
 
 
-    if multisc.kills - multisc.killswithoutdeath > 1 then
-      txt:=inttostr(multisc.kills - multisc.killswithoutdeath) + lang[44]
+    if multisc.kills - multisc.killsbeforedeath > 1 then
+      txt:=inttostr(multisc.kills - multisc.killsbeforedeath) + lang[44]
     else
       txt:= '';
     menu.DrawSzinesChat(txt, 0.86, 0.35, 1, 39, $FF000000 + betuszin);
 
 
-    case multisc.kills - multisc.killswithoutdeath of
+    case multisc.kills - multisc.killsbeforedeath of
       0, 1, 2:txt:= '';
       3, 4, 5:txt:= 'Killing Spree!';
       6, 7, 8:txt:= 'Rampage!';
@@ -14334,7 +14334,7 @@ end;   {}
                   if (ppl[i].net.UID = 0) then ppl[i].pls.kills := 0;
                 multisc.kills:=0;
                 multisc.killscamping:=multisc.kills;
-                multisc.killswithoutdeath:=multisc.kills;
+                multisc.killsbeforedeath:=multisc.kills;
                 setupmymuksmatr;
               end
               else
