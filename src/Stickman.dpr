@@ -13365,11 +13365,14 @@ var
   procedure evalscriptline(line:string);
   var
     args:array of string;
-    len, i, j, argnum:integer;
+    len, i, j, argnum,k,l:integer;
     tmp:string;
     v1:single;
     t:char;
-
+    vec1,vec2:TD3DXVector3;
+    a:TStringArray;
+    b:Cardinal;
+    testmuks:Tplayer;
   begin
 
     //bontsuk szavakra, �s tegy�k egy args arraybe
@@ -13623,6 +13626,34 @@ var
                   tmp:=tmp + ' ' + varToString(args[i]);
 
                 addHudMessage(tmp, 255, betuszin);
+                exit;
+              end
+              else
+
+              //fenycsik
+              if (args[0] = 'lightbeam') then
+              begin
+
+                j:=stuffjson.GetNum(['lightbeams']);
+                i:=0;
+                for i:=0 to j - 1 do
+                begin
+                  if stuffjson.GetString(['lightbeams', i, 'name']) = args[1] then
+                  begin
+                     vec1 := D3DXVector3(stuffjson.GetFloat(['lightbeams', i, 'start', 'x']),
+                           stuffjson.GetFloat(['lightbeams', i, 'start', 'y']),
+                           stuffjson.GetFloat(['lightbeams', i, 'start', 'z']));
+                     vec2 := D3DXVector3(stuffjson.GetFloat(['lightbeams', i, 'end', 'x']),
+                           stuffjson.GetFloat(['lightbeams', i, 'end', 'y']),
+                           stuffjson.GetFloat(['lightbeams', i, 'end', 'z']));
+                     k:=stuffjson.GetInt(['lightbeams', i, 'time']);
+                     l:=stuffjson.GetInt(['lightbeams', i, 'size']);
+                     b:=stuffjson.GetInt(['lightbeams', i, 'color']);
+                     Particlesystem_add(fenycsikcreate(vec1,vec2,l,b,k));
+                     exit;
+                  end;
+                end;
+
                 exit;
               end
               else
