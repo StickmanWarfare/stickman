@@ -702,6 +702,11 @@ const
   MSTAT_BALRA=4;
   MSTAT_FUT=5;
   //  MSTAT_CHAT=6;// egyel�re nincs anim�ci� de ak�r lehetne is
+  MSTAT_GREET=7;
+  MSTAT_FEGYOUP=8;       
+  MSTAT_FEGYODOWN=9;     //TODO
+  MSTAT_FEGYOFEJFOLE=10; //TODO
+  MSTAT_DAB=11;          //TODO
   MSTAT_GUGGOL=16;//flag
   MSTAT_CSIPO=32;//ez is flag
 

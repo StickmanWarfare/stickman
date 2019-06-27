@@ -2214,6 +2214,9 @@ begin
     3:muks.SideWalk(animstat, (mstat and MSTAT_GUGGOL) > 0);
     4:muks.SideWalk(1 - animstat, (mstat and MSTAT_GUGGOL) > 0);
     5:muks.Runn(animstat, true);
+    //6:muks.Chat(animstat, (mstat and MSTAT_GUGGOL) > 0);
+    7:muks.Greet(animstat, (mstat and MSTAT_GUGGOL) > 0);
+    8:muks.Fegyverup(animstat, (mstat and MSTAT_GUGGOL) > 0);
   else muks.stand((mstat and MSTAT_GUGGOL) > 0);
   end;
 
@@ -4202,6 +4205,11 @@ begin
   fut:=dine.keyd(DIK_W) and (not dine.keyd(DIK_LSHIFT)) and ((vizben < 0.5) or nemviz) and iranyithato and csipo and (not gugg) and (halal = 0);
 
   mstat:=MSTAT_ALL;
+  if dine.keyd(DIK_1) then begin mstat:=MSTAT_GREET; nemlohet := true; end;
+  if dine.keyd(DIK_2) then begin mstat:=MSTAT_FEGYOUP; nemlohet := true; end; //WiP
+  //if dine.keyd(DIK_3) then begin mstat:=MSTAT_GREET; nemlohet := true; end; //TODO
+  //if dine.keyd(DIK_4) then begin mstat:=MSTAT_GREET; nemlohet := true; end; //TODO
+  //if dine.keyd(DIK_5) then begin mstat:=MSTAT_GREET; nemlohet := true; end; //TODO
   if dine.keyd(DIK_D) and not dine.keyd(DIK_A) then begin px:=px + dc * 0.02;py:=py - ds * 0.02;mstat:=MSTAT_BALRA end;
   if dine.keyd(DIK_A) and not dine.keyd(DIK_D) then begin px:=px - dc * 0.02;py:=py + ds * 0.02;mstat:=MSTAT_JOBBRA end;
   if dine.keyd(DIK_S) and not dine.keyd(DIK_W) then begin px:=px - ds * 0.02;py:=py - dc * 0.02;mstat:=MSTAT_HATRA end;
@@ -9162,6 +9170,9 @@ begin
         3:muks.SideWalk(animstate, (state and MSTAT_GUGGOL) > 0);
         4:muks.SideWalk(1 - animstate, (state and MSTAT_GUGGOL) > 0);
         5:muks.Runn(animstate, true);
+        //6:muks.Chat(animstate, (state and MSTAT_GUGGOL) > 0);
+        7:muks.Greet(animstate, (state and MSTAT_GUGGOL) > 0);
+        8:muks.Fegyverup(animstate, (state and MSTAT_GUGGOL) > 0);
       end;
       addrongybaba(apos, vpos, gmbvec, ppl[index].pls.fegyvskin, mlgmb, random(20000) + 1, -1);
     end;
@@ -10427,6 +10438,9 @@ begin
     3:muks.SideWalk(animstat, (astate and MSTAT_GUGGOL) > 0);
     4:muks.SideWalk(1 - animstat, (astate and MSTAT_GUGGOL) > 0);
     5:muks.Runn(animstat, true);
+    //6:muks.Chat(animstate,(astate and MSTAT_GUGGOL) > 0);
+    7:muks.Greet(animstat,(astate and MSTAT_GUGGOL) > 0);
+    8:muks.Fegyverup(animstat,(astate and MSTAT_GUGGOL) > 0);
   end;
 
   ppl[i].pls.fejh:=muks.gmbk[10];
