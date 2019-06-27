@@ -268,7 +268,7 @@ var
   mstat:byte;
   kliensfelh:string;//ezzel leptem be a kliensbe, ez van skins.cfg vegen
   //  myfegyv:byte;
-  csipo, rblv, gugg, spc, iranyithato, objir:boolean;
+  csipo, rblv, gugg, inspect, spc, iranyithato, objir:boolean;
   tulnagylokes:boolean;
   lovok:single;
   cooldown:single;
@@ -2207,6 +2207,9 @@ var
 begin
   muks.jkez:=fegyv.jkez(myfegyv, mstat);
   muks.bkez:=fegyv.bkez(myfegyv, mstat);
+  //if (mstat and MSTAT_MASK) = 7 then muks.jkez.y := muks.jkez.y + 5;
+
+  laststate:= 'rendermykez - setupmymuksmatr - kezek';
 
   case mstat and MSTAT_MASK of
     0:muks.stand((mstat and MSTAT_GUGGOL) > 0);
@@ -2220,6 +2223,9 @@ begin
     8:muks.Fegyverup(animstat, (mstat and MSTAT_GUGGOL) > 0);
   else muks.stand((mstat and MSTAT_GUGGOL) > 0);
   end;
+
+  laststate:= 'rendermykez - setupmymuksmatr - case';
+
 
   pos:=d3dxvector3(ccpx, ccpy, ccpz);
   D3DXMatrixRotationY(matWorld2, szogx + d3dx_pi);
@@ -3206,6 +3212,9 @@ begin
   end else
     MessageBox(0, 'Benttthagyott AI k�d', 'Faszom', 0);
 
+  if (ppl[mi].pos.state and MSTAT_MASK) = 8 then
+    D3DXMatrixTranslation(matWorld, -0.2, 0.2, -0.1);
+
   D3DXMatrixMultiply(matWorld2, matWorld, matWorld2);
   // pos.x:=pos.x+0.05;
 
@@ -3224,7 +3233,7 @@ end;
 procedure SetupMyFegyvmatr;
 var
   matWorld, mat, mat2:TD3DMatrix;
-  acpx, acpy, acpz:single;
+  acpx, acpy, acpz, offsetX, offsetY, offsetZ:single;
 begin
   {
 if repules then
@@ -3255,15 +3264,49 @@ szogx:=szogx+0.2*eltim;{}
   else
     D3DXMatrixTranslation(matWorld, acpx, acpy + 1.5, acpz); //sajt
 
-  D3DXMatrixRotationY(mat, mszogx + d3dx_pi);
+  if inspect then
+  begin
+    D3DXMatrixRotationY(mat, mszogx + d3dx_pi * 0.5);
+    D3DXMatrixRotationX(mat2, mszogy * 0.4);
+  end
+  else
+    if (mstat and MSTAT_MASK) = 8 then
+    begin
+      D3DXMatrixRotationY(mat, mszogx + d3dx_pi);
+      D3DXMatrixRotationX(mat2, d3dx_pi * 0.5);
+    end
+    else
+      begin //no shit happenning
+        D3DXMatrixRotationY(mat, mszogx + d3dx_pi);
+        D3DXMatrixRotationX(mat2, mszogy);
+      end;
 
-  D3DXMatrixRotationX(mat2, mszogy);
+
   D3DXMatrixMultiply(mat, mat2, mat);
 
   if csipo then
     D3DXMatrixTranslation(mat2, -0.1, -0.1, 0.0 + hatralok)
   else
     D3DXMatrixTranslation(mat2, 0, 0, 0.05 + hatralok * 0.5);
+
+
+  if inspect then //z+ van elore, x+ balra
+  begin
+    offsetX := -0.5 - sin(mszogy) * 0.8;
+    if offsetX > -0.2 then offsetX := -0.2;
+    if offsetX < -0.65 then offsetX := -0.65;
+    offsetZ := 0.4;
+    offsetY := 0.0;
+    case myfegyv of
+      FEGYV_M82A1, FEGYV_HPL: begin offsetZ := 0.5; offsetX := offsetX - 0.1; end;
+      FEGYV_QUAD: begin offsetY:= 0.05; offsetZ := 0.3; offsetX := offsetX - 0.2; end;
+      FEGYV_NOOB: begin offsetY:= 0.05; offsetZ := 0.2; offsetX := offsetX - 0.2; end;
+      FEGYV_X72: begin offsetX := offsetX - 0.2; end;
+      FEGYV_LAW, FEGYV_H31_T, FEGYV_H31_G: begin offsetZ := 0.25; offsetX := offsetX - 0.1; end;
+    end;
+    D3DXMatrixTranslation(mat2, offsetX, offsetY, offsetZ);
+  end;
+
 
   mat2._41:=mat2._41 - sin(mszogx - szogx) * 0.3;
   mat2._42:=mat2._42 - sin(mszogy - szogy) * 0.3;
@@ -4202,7 +4245,9 @@ begin
   if (cpy^ <= waterlevel+0.5) and winter then cpy^ := cpy^+0.008;
 
   // TODO
-  gugg:=dine.keyd(DIK_LCONTROL) and (halal = 0) and iranyithato;
+  inspect:=dine.keyd(DIK_O) and (halal = 0) and iranyithato and csipo;
+  gugg:=dine.keyd(DIK_LCONTROL) and (halal = 0) and iranyithato and (not inspect);
+  if inspect then begin iranyithato := false; nemlohet := true; end;
   if (myfegyv = FEGYV_QUAD) and (not csipo) then iranyithato:=false;
   fut:=dine.keyd(DIK_W) and (not dine.keyd(DIK_LSHIFT)) and ((vizben < 0.5) or nemviz) and iranyithato and csipo and (not gugg) and (halal = 0);
 
@@ -9184,6 +9229,8 @@ begin
       muks.jkez:=fegyv.jkez(ppl[index].pls.fegyvskin, state);
       muks.bkez:=fegyv.bkez(ppl[index].pls.fegyvskin, state);
 
+      if (state and MSTAT_MASK) = 7 then muks.bkez.y := muks.bkez.y + 5;
+
       case state and MSTAT_MASK of
         0:muks.stand((state and MSTAT_GUGGOL) > 0);
         1:muks.Walk(animstate, (state and MSTAT_GUGGOL) > 0);
@@ -10503,6 +10550,19 @@ begin
       tb:=vec3add2(tb, D3DXVector3(-0.01, -0.01, 0.15));
     end;
 
+    //if (mstat and MSTAT_MASK) = 7 then tj.y := tj.y + 0.5;
+    case (mstat and MSTAT_MASK) of
+    7:
+      begin
+        tj.y := tj.y + 0.2;
+        tj.x := tj.x + 0.3;  // + <-mozgat-> -
+      end;
+    8:
+      begin
+        tj.y := tj.y - 0.5;
+        tj.x := tj.x + 0.3;
+      end;
+    end;
 
     //if (myfegyv=FEGYV_LAW) or (myfegyv=FEGYV_H31_T) or (myfegyv=FEGYV_H31_G) then begin tj.x:=tj.x-0.1; tb.x:=tb.x-0.1; end;
   //  if myfegyv=FEGYV_M4A1 then begin tj.y:=tj.y+0.03; tb.y:=tb.y+0.03; end; //todo WAT?
@@ -11549,6 +11609,7 @@ begin
     laststate:= 'Rendering Stickman and ragdolls';
 
     muks.init;
+    laststate:= 'muksinit';
     g_pd3dDevice.SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
     g_pd3ddevice.SetRenderState(D3DRS_ALPHAREF, $80);
     g_pd3ddevice.SetRenderState(D3DRS_ALPHATESTENABLE, iTRUE);
@@ -11557,6 +11618,7 @@ begin
 
     D3DXMatrixIdentity(mat_world);
     setupidentmatr;
+    laststate:= 'setupidentmatr';
 
     if (menu.lap = -1) then //MEN�B�L nem k�ne...
     begin
@@ -11564,7 +11626,7 @@ begin
         if (csipo) or ((myfegyv <> FEGYV_M82A1) and (myfegyv <> FEGYV_HPL)) then
           if not nofegyv then
             rendermykez;
-
+      laststate:= 'rendermykez';
       pos:=D3DXVector3(cpx^, cpy^, cpz^);
       for i:=0 to rbszam do
         if abs(rongybabak[i].gmbk[10].y - cpy^) < 100 then
@@ -11572,6 +11634,7 @@ begin
           //g_pd3dDevice.SetRenderState(D3DRS_AMBIENT, rongybabak[i].szin);
           rongybabak[i].transfertomuks(muks);
           muks.Render(rongybabak[i].szin, mat_world, pos);
+          laststate:= 'muksrender';
 
         end;
 
