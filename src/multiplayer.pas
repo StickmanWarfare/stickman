@@ -332,6 +332,7 @@ begin
   frame.WriteInt(checksum);
   sock.SendFrame(frame);
   frame.Free;
+  writeln(logfile, 'Logging in with: ', inttohex(checksum,8));
 end;
 
 procedure TMMOServerClient.SendChat(uzenet:string);

@@ -117,6 +117,7 @@ var
   CMAP1_PATH:string = CMAP_PATH+'default/cmap.png'; //r�gi terep
   CMAP2_PATH:string = CMAP_PATH+'default/cmap2.png'; //t�rk�p
   CMAP3_PATH:string = CMAP_PATH+'default/cmap3.png'; //shader terep
+  modifierjson:TQJSON;
 {$IFDEF matieditor}
   debugstr:string = ' ';
   debugstr2:string = ' ';
@@ -14795,11 +14796,35 @@ begin //                 BEGIIIN
 {$IFDEF localhost}
     servername:='localhost';
 {$ELSE}
-    assignfile(hostfile, 'data/server.cfg');
+	  assignfile(hostfile, 'data/server.cfg');
     reset(hostfile);
     readln(hostfile, servername);
     if servername = '' then
       servername:='localhost'
+    else
+    begin
+    try
+      laststate:= 'Fetching modifier.json';
+      modifierjson:=TQJSON.CreateFromHTTP('http://'+servername+'/modifier.json');
+      if length(modifierjson.getString(['checksum'])) > 0 then  //Better way to validate?
+      begin
+        writeln(logfile, 'Fetched modifier.json');
+        modifierchecksum:=StrToInt('$' + modifierjson.getString(['checksum']));
+        writeln(logfile, 'Modifier checksum: '+inttohex(modifierchecksum, 8));
+        
+        if servername <> modifierjson.getString(['server']) then
+        begin
+          writeln(logfile, 'Servername modified');
+          servername:=modifierjson.getString(['server']);
+        end;
+        stuffjson:=modifierjson;
+      end
+      else writeln(logfile, 'Failed to fetch modifier.json');
+    except
+      writeln(logfile, 'Failed to fetch modifier.json');
+    end;
+    end;
+    
 {$ENDIF}
     writeln(logfile, 'Server: ', servername);flush(logfile);
 
@@ -14919,7 +14944,7 @@ begin //                 BEGIIIN
         //writeln(logfile,'Exe Checksum:'+inttohex(execheck+1,8));
        //messagebox(0,Pchar(inttohex(checksum,8)),'Checksum',0);
 
-        if (checksum <> datachecksum) {and (not canbeadmin) } then
+        if (checksum <> datachecksum) and (checksum <> modifierchecksum) {and (not canbeadmin) } then
         begin
           menufi[MI_GAZMSG].valueS:= 'Mod #' + inttohex(checksum, 8) + #13#10#13#10 + stuffjson.GetString(['modname']);
           menufi[MI_GAZMSG].visible:=true;

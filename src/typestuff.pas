@@ -536,6 +536,7 @@ const
   datachecksum=$03BA822D;
 
 var
+  modifierchecksum:Dword;
   checksum:Dword=0;
   nyelv:integer;
 const
