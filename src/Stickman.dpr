@@ -8859,6 +8859,16 @@ begin
   end;
 end;
 
+function strInArr(needle:string;haystack:array of string):boolean;
+var
+  i:integer;
+begin
+  result := false;
+  for i:=high(haystack) downto 1 do
+    if (needle = haystack[i]) then
+      result := true;
+end;
+
 procedure handleBulletholes(aloves:Tloves);
 var
   j, k:integer;
@@ -13786,6 +13796,17 @@ var
                           end
                           else
 
+                          //global uzenet
+                          if (args[0] = 'chatmost') then
+                          begin
+                            tmp := '';
+                            for i:=1 to Length(args) - 1 do
+                               tmp := tmp + ' ' + varToString(args[i]);
+
+                            Multisc.Chat(tmp);
+                            exit;
+                          end
+                          else
                             //hang
                             if (args[0] = 'sound') and (Length(args) > 4) then
                             begin
@@ -14198,8 +14219,128 @@ end;   {}
                   unmute(lowercase(Copy(chatmost, 10, length(chatmost))));
                 end
                 else
+					if (' hogy ' = lowercase(Copy(chatmost, 1, 6))) or
+             (' hogyan ' = lowercase(Copy(chatmost, 1, 8))) or
+             (' mennyi ' = lowercase(Copy(chatmost, 1, 8))) or
+             (' mi�rt ' = lowercase(Copy(chatmost, 1, 7))) or
+             (' m�rt ' = lowercase(Copy(chatmost, 1, 6))) or
+             (' mi�r ' = lowercase(Copy(chatmost, 1, 6))) or
+             (' mi� ' = lowercase(Copy(chatmost, 1, 5))) or
+             (' m�r ' = lowercase(Copy(chatmost, 1, 5))) or
+             (' m� ' = lowercase(Copy(chatmost, 1, 4))) or
+             (' MI�RT ' = Copy(chatmost, 1, 4)) or
+             (' M�RT ' = Copy(chatmost, 1, 6)) or
+             (' MI�R ' = Copy(chatmost, 1, 6)) or
+             (' MI� ' = Copy(chatmost, 1, 5)) or
+             (' M�R ' = Copy(chatmost, 1, 5)) or
+             (' M� ' = Copy(chatmost, 1, 4)) then
+					  begin
 
+            len:=Length(chatmost);
+            j:=0;
+            SetLength(args, 1);
 
+            for i:=1 to len do begin
+              if (chatmost[i] = ' ') then
+              begin
+                if ((Length(args[j]) > 0)) then
+                begin
+                  inc(j);
+                  SetLength(args, j + 1);
+                end;
+              end
+              else
+              begin
+                tmp := stringreplace(chatmost[i],',','',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'.','',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,':','',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,';','',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'?','',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'!','',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'�','a',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'�','e',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'�','o',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'�','o',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'�','o',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'�','u',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'�','u',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'�','u',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'�','i',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'�','a',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'�','e',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'�','o',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'�','o',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'�','o',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'�','u',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'�','u',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'�','u',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'�','i',[rfReplaceAll, rfIgnoreCase]);
+                args[j]:=args[j] + lowercase(tmp);
+              end;
+            end;
+
+            if (strInArr('realm',args)) or
+               (strInArr('realmra',args)) or
+               (strInArr('realmre',args)) or
+               (strInArr('realmot',args)) or
+               (strInArr('realmet',args)) or 
+               (strInArr('realmon',args)) or
+               (strInArr('realmnek',args)) or
+               (strInArr('realmnak',args)) or
+               (strInArr('realmt',args)) then
+            begin
+              writeChat(lang[101]);
+            end
+            else
+            if (strInArr('privat',args)) or
+               (strInArr('privi',args)) or
+               (strInArr('privit',args)) or
+               (strInArr('priv',args)) or
+               (strInArr('msg',args)) then
+            begin
+              writeChat(lang[102]);
+            end
+            else
+            if (strInArr('war',args)) or
+               (strInArr('wart',args)) or
+               (strInArr('warra',args)) or
+               (strInArr('wara',args)) or
+               (strInArr('warozni',args)) or
+               (strInArr('warozok',args)) or
+               (strInArr('waron',args)) then
+            begin
+              writeChat(lang[103]);
+            end
+            else
+            if (
+               (strInArr('nincs',args)) or
+               (strInArr('nincsen',args)) or
+               (strInArr('nem',args))
+                ) and (
+               (strInArr('fenn',args)) or
+               (strInArr('fent',args)) or
+               (strInArr('fonn',args)) or
+               (strInArr('font',args)) or
+               (strInArr('latni',args)) or
+               (strInArr('latszik',args)) or
+               (strInArr('latszanak',args)) or
+               (strInArr('latok',args)) or
+               (strInArr('latom',args)) or
+               (strInArr('lat',args))
+               ) and (
+               (strInArr('senki',args)) or
+               (strInArr('senkit',args)) or
+               (strInArr('senkinek',args)) or
+               (strInArr('senkise',args)) or
+               (strInArr('senkitse',args))
+               ) then
+            begin
+              writeChat(lang[104]);
+            end;
+						Multisc.Chat(Copy(chatmost, 1, length(chatmost)));
+
+					  end
+					  else
                   {   if (' /kbwar'=chatmost) and (halal=0) and (multisc.sock.error<>0) then
                      begin
                       war_kb:=false;
