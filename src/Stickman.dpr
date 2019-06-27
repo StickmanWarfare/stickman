@@ -14262,6 +14262,16 @@ end;   {}
 
             end
             else
+              if (' /zerome' = Copy(chatmost, 1, 8)) and (halal = 0) then
+              begin
+                for i:=0 to high(ppl) do
+                  if (ppl[i].net.UID = 0) then ppl[i].pls.kills := 0;
+                multisc.kills:=0;
+                multisc.killscamping:=multisc.kills;
+                multisc.killswithoutdeath:=multisc.kills;
+                setupmymuksmatr;
+              end
+              else
               if (' /mute ' = Copy(chatmost, 1, 7)) and (Copy(chatmost, 8, length(chatmost)) <> '') and (halal = 0) then
               begin
                 for i:=high(multisc.chats) downto 1 do
