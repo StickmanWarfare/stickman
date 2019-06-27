@@ -1,7 +1,7 @@
 unit qjson;
 
 interface
-uses SysUtils,Classes,windows,math;
+uses SysUtils,Classes,windows,math,IdHTTP;
 type
 
  EJSONParserError = class(EParserError)
@@ -55,6 +55,7 @@ type
  public
   constructor Create();
   constructor CreateFromFile(const filename:string);
+  constructor CreateFromHTTP(const url:string);
   procedure SaveToFile(const filename:string);
   destructor Destroy();override;
   procedure SetVal(keys:array of const;mire:integer);overload;
@@ -307,6 +308,28 @@ begin
  root:=CreateQJSONFromString(str,i);
 end;
 
+constructor TQJSON.CreateFromHTTP(const url:string);
+var
+  i:integer;
+  str: string;
+  IdHTTP: TIdHTTP;
+begin
+  IdHTTP := TIdHTTP.Create(nil);
+  try
+    try
+      str := IdHTTP.Get(url);
+      if length(str) > 0 then
+      begin
+        i:=1;
+        root:=CreateQJSONFromString(str,i);
+      end;
+    except
+    end;
+  finally
+    IdHTTP.Free;
+  end;
+end;
+												
 procedure TQJSON.SaveToFile2(data:PQJSONData;indent:integer;var fil:TextFile);
 var
 i,hgh:integer;
