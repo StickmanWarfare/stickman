@@ -243,6 +243,7 @@ type
     nev:string;
     clan:string;
     fegyv:byte;//128 a csapat
+    fegyvskin:byte;
     fejcucc:byte;// headstuff
     fejh:TD3DXVector3;//feje hol van (headstuff)
     utsocht:string;// megejeln�tend� chat
@@ -586,7 +587,8 @@ var
   fogstart,fogend,fogc:single;
   lightIntensity:single;
   domuzzleflash:boolean;
-  myfegyv:byte;
+  myfegyv, myfegyv_skin:byte;
+  fegyvskins:array[0..9] of byte;
   savepw:boolean;
   lasthash:string='-';
   gpukey:integer=0;
@@ -674,6 +676,20 @@ const
   FEGYV_X72=131;
   FEGYV_HPL=132;
   FEGYV_H31_T=200;
+
+  //SKINEK: 10-19 m4; 140-149 mpg; kezdoertek mindig a golden
+  FEGYV_G_M4A1 = 10;
+  FEGYV_G_M82A1 = 20;
+  FEGYV_G_LAW = 30;
+  FEGYV_G_MP5A3 = 40;
+  FEGYV_G_BM3 = 50;
+
+  FEGYV_G_MPG = 140;
+  FEGYV_G_QUAD = 150;
+  FEGYV_G_NOOB = 160;
+  FEGYV_G_X72 = 170;
+  FEGYV_G_HPL = 180;
+  //SKINEK END
 
   FEGYV_NUM=10;
 
@@ -4659,6 +4675,24 @@ begin
   result.y := result.y + cy;
 
 end;
+ {
+function getFegyvBySkin(c:integer):byte;
+begin
+       if ((c >= 10) and (c <= 19)) or (c = 0) then result := FEGYV_M4A1
+  else if ((c >= 20) and (c <= 29)) or (c = 1) then result := FEGYV_M82A1
+  else if ((c >= 30) and (c <= 39)) or (c = 2) then result := FEGYV_LAW
+  else if ((c >= 40) and (c <= 49)) or (c = 3) then result := FEGYV_MP5A3
+  else if ((c >= 50) and (c <= 59)) or (c = 4) then result := FEGYV_BM3
+  else if ((c >= 140) and (c <= 149)) or (c = 128) then result := FEGYV_MPG
+  else if ((c >= 150) and (c <= 159)) or (c = 129) then result := FEGYV_QUAD
+  else if ((c >= 160) and (c <= 169)) or (c = 130) then result := FEGYV_NOOB
+  else if ((c >= 170) and (c <= 179)) or (c = 131) then result := FEGYV_X72
+  else if ((c >= 180) and (c <= 189)) or (c = 132) then result := FEGYV_HPL
+  else if (c = 100) then result := FEGYV_H31_G
+  else if (c = 200) then result := FEGYV_H31_T
+  else result := 0;
+end;     }
+
 
 end.
 

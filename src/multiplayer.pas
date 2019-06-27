@@ -26,12 +26,12 @@ type
   private
     szerveraddr:TSockaddrIn;
     host, jelszo:string;
-    fegyver, fejcucc:integer;
+    fegyver, fegyver_skin, fejcucc:integer;
     reconnect:cardinal;
     crypto:array[0..19] of byte; //kill csodacryptocucc
     sentmedals:array of word;
     laststatus:cardinal; //id� amikor utolj�ra lett st�tusz�zenet k�ldve
-    procedure SendLogin(nev, jelszo:string;fegyver, fejrevalo, port, checksum:integer);
+    procedure SendLogin(nev, jelszo:string;fegyver, fegyver_skin, fejrevalo, port, checksum:integer);
     procedure SendChat(uzenet:string);
     procedure SendStatus(x, y:integer);
 
@@ -39,6 +39,7 @@ type
     procedure SendKill(UID:integer);
     procedure SendMedal(medal:word);
 
+    function getFegyvBySkin(c:integer):byte;
 
     procedure ReceiveLoginok(frame:TSocketFrame);
     procedure ReceivePlayerlist(frame:TSocketFrame);
@@ -87,7 +88,7 @@ type
     kihivas:string;
     kihivszam:integer;
 
-    constructor Create(ahost:string;aport:integer;anev, ajelszo:string;afegyver, afejcucc:integer);
+    constructor Create(ahost:string;aport:integer;anev, ajelszo:string;afegyver, afegyver_skin, afejcucc:integer);
     destructor Destroy; override;
     procedure Update;
     procedure Chat(mit:string);
@@ -123,7 +124,7 @@ type
 
   TMMOPeerToPeer = class(Tobject)
   private
-    myfegyv:integer;
+    myfegyv, myfegyv_skin:integer;
     sock:TUDPSocket;
     bucket:integer;
     lastsend:cardinal; //GTC
@@ -144,7 +145,7 @@ type
     medal_spd_kills:integer;
     medal_lastkilltime:cardinal;
 
-    constructor Create(port, fegyv:integer);
+    constructor Create(port, fegyv, fegyv_skin:integer);
     destructor Destroy; override;
     procedure Update(posx, posy, posz, oposx, oposy, oposz, iranyx, iranyy:single;state:integer;
       campos:TD3DXvector3; //a priorit�sokhoz
@@ -312,7 +313,7 @@ const
 
 //#002
 
-procedure TMMOServerClient.SendLogin(nev, jelszo:string;fegyver, fejrevalo, port, checksum:integer);
+procedure TMMOServerClient.SendLogin(nev, jelszo:string;fegyver, fegyver_skin, fejrevalo, port, checksum:integer);
 var
   frame:TSocketFrame;
 begin
@@ -324,7 +325,7 @@ begin
   frame.WriteInt(nyelv);
   frame.WriteString(nev);
   frame.WriteString(jelszo);
-  frame.WriteInt(fegyver);
+  frame.WriteInt(fegyver_skin);
   frame.WriteInt(fejrevalo);
   frame.WriteChar(port);
   frame.WriteChar(port shr 8);
@@ -379,6 +380,22 @@ begin
 
 end;
 
+function TMMOServerClient.getFegyvBySkin(c:integer):byte;
+begin
+       if ((c >= 10) and (c <= 19)) or (c = 0) then result := FEGYV_M4A1
+  else if ((c >= 20) and (c <= 29)) or (c = 1) then result := FEGYV_M82A1
+  else if ((c >= 30) and (c <= 39)) or (c = 2) then result := FEGYV_LAW
+  else if ((c >= 40) and (c <= 49)) or (c = 3) then result := FEGYV_MP5A3
+  else if ((c >= 50) and (c <= 59)) or (c = 4) then result := FEGYV_BM3
+  else if ((c >= 140) and (c <= 149)) or (c = 128) then result := FEGYV_MPG
+  else if ((c >= 150) and (c <= 159)) or (c = 129) then result := FEGYV_QUAD
+  else if ((c >= 160) and (c <= 169)) or (c = 130) then result := FEGYV_NOOB
+  else if ((c >= 170) and (c <= 179)) or (c = 131) then result := FEGYV_X72
+  else if ((c >= 180) and (c <= 189)) or (c = 132) then result := FEGYV_HPL
+  else if (c = 100) then result := FEGYV_H31_G
+  else if (c = 200) then result := FEGYV_H31_T
+  else result := 0;
+end;
 
 procedure TMMOServerClient.SendKill(UID:integer);
 var
@@ -435,7 +452,7 @@ var
   nev, clan:string;
   ip:DWORD;
   port:WORD;
-  uid, fegyver, fejrevalo, killek:integer;
+  uid, fegyver, fejrevalo, fegyver_skin, killek:integer;
   ujppl:array of Tplayer;
   volt:boolean;
 begin
@@ -454,7 +471,7 @@ begin
     uid:=frame.ReadInt;
     nev:=frame.ReadString;
     clan:=frame.ReadString;
-    fegyver:=frame.ReadInt;
+    fegyver:=frame.ReadInt;  //EZ MOST SKIN
     fejrevalo:=frame.ReadInt;
     killek:=frame.ReadInt;
 
@@ -480,12 +497,33 @@ begin
     if not volt then
       ujppl[i]:=uresplayer;
 
+    fegyver_skin:=fegyver;
+    fegyver:=getFegyvBySkin(fegyver);
+
+    if (fegyver_skin < 5) or ((fegyver_skin > 127) and (fegyver_skin < 133)) then   //nincs egyedi skinem
+      if killek >= 50 then        //de eleget oltem
+        case fegyver of
+          FEGYV_MPG:    fegyver_skin := FEGYV_G_MPG;
+          FEGYV_M82A1:  fegyver_skin := FEGYV_G_M82A1;
+          FEGYV_M4A1:   fegyver_skin := FEGYV_G_M4A1;
+          FEGYV_QUAD:   fegyver_skin := FEGYV_G_QUAD;
+          FEGYV_NOOB:   fegyver_skin := FEGYV_G_NOOB;
+          FEGYV_LAW:    fegyver_skin := FEGYV_G_LAW;
+          FEGYV_X72:    fegyver_skin := FEGYV_G_X72;
+          FEGYV_MP5A3:  fegyver_skin := FEGYV_G_MP5A3;
+          FEGYV_H31_T:  fegyver_skin := FEGYV_H31_T;
+          FEGYV_H31_G:  fegyver_skin := FEGYV_H31_G;
+          FEGYV_HPL:    fegyver_skin := FEGYV_G_HPL;
+          FEGYV_BM3:    fegyver_skin := FEGYV_G_BM3;
+        end;
+
     ujppl[i].net.ip:=ip;
     ujppl[i].net.port:=port;
     ujppl[i].net.UID:=uid;
     ujppl[i].pls.nev:=nev;
     ujppl[i].pls.clan:=clan;
     ujppl[i].pls.fegyv:=fegyver;
+    ujppl[i].pls.fegyvskin:=fegyver_skin;
     ujppl[i].pls.fejcucc:=fejrevalo;
     ujppl[i].pls.kills:=killek;
   end;
@@ -659,7 +697,7 @@ begin
   end;
 end;
 
-constructor TMMOServerClient.Create(ahost:string;aport:integer;anev, ajelszo:string;afegyver, afejcucc:integer);
+constructor TMMOServerClient.Create(ahost:string;aport:integer;anev, ajelszo:string;afegyver, afegyver_skin, afejcucc:integer);
 begin
   inherited Create;
   host:=ahost;
@@ -667,6 +705,7 @@ begin
   nev:=anev;
   jelszo:=ajelszo;
   fegyver:=afegyver;
+  fegyver_skin:=afegyver_skin;
   fejcucc:=afejcucc;
 
   sock:=nil;
@@ -707,9 +746,9 @@ begin
       szerveraddr.sin_port:=htons(25252);
       sock:=TBufferedSocket.Create(CreateClientSocket(szerveraddr));
 {$IFDEF fakenetchecksum}
-      SendLogin(nev, jelszo, fegyver, fejcucc, myport, datachecksum);
+      SendLogin(nev, jelszo, fegyver, fegyver_skin, fejcucc, myport, datachecksum);
 {$ELSE}
-      SendLogin(nev, jelszo, fegyver, fejcucc, myport, checksum);
+      SendLogin(nev, jelszo, fegyver, fegyver_skin, fejcucc, myport, checksum);
 {$ENDIF}
     end;
     exit;
@@ -1134,10 +1173,11 @@ begin
   end;
 end;
 
-constructor TMMOPeerToPeer.Create(port, fegyv:integer);
+constructor TMMOPeerToPeer.Create(port, fegyv, fegyv_skin:integer);
 begin
   inherited Create;
   myfegyv:=fegyv;
+  myfegyv_skin:=fegyv_skin; //AYY?
   sock:=TUDPSocket.Create(port);
 end;
 
