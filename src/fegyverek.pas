@@ -234,17 +234,20 @@ type
   private
     g_pD3Ddevice:IDirect3ddevice9;
     M4proj, mpgproj:Tprojectilearray;
-    G_M4A1, M4A1:TF_M4A1;
-    G_M82A1, M82A1:TF_M82A1;
-    G_MPG, MPG:TF_MPG;
-    G_LAW, LAW:TF_LAW;
-    G_NOOB, NOOB:TF_NOOB;
-    G_QUADRO, QUADRO:TF_QUADRO;
-    G_MP5A3, MP5A3:TF_MP5A3;
-    G_X72, X72:TF_X72;
+
+    B_M4A1, G_M4A1, M4A1:TF_M4A1;
+    B_M82A1, G_M82A1, M82A1:TF_M82A1;
+    B_MPG,  G_MPG, MPG:TF_MPG;
+    B_LAW,  G_LAW, LAW:TF_LAW;
+    B_NOOB, G_NOOB, NOOB:TF_NOOB;
+    B_QUADRO, G_QUADRO, QUADRO:TF_QUADRO;
+    B_MP5A3, G_MP5A3, MP5A3:TF_MP5A3;
+    B_X72,  G_X72, X72:TF_X72;
+    B_BM3,  G_BM3, BM3:TF_BM3;
+    B_HPL,  G_HPL, HPL:TF_HPL;
+
     H31:TF_H31;
-    G_BM3, BM3:TF_BM3;
-    G_HPL, HPL:TF_HPL;
+
     gunmuztex, mpgmuztex, x72muztex:IDirect3DTexture9;
     g_pVB:IDirect3DVertexBuffer9;
   public
@@ -1736,6 +1739,28 @@ begin
   if not G_QUADRO.betoltve then exit;
   G_HPL:=TF_HPL.create(a_D3Ddevice, 'hpl', 'golden');
   if not G_HPL.betoltve then exit;
+
+  
+  B_M4A1:=TF_M4A1.create(a_D3Ddevice, 'm4a1', 'blue');
+  if not B_M4A1.betoltve then exit;
+  B_M82A1:=TF_M82A1.create(a_D3Ddevice, 'm82', 'blue');
+  if not B_M82A1.betoltve then exit;
+  B_LAW:=TF_LAW.create(a_D3Ddevice, 'law', 'blue');
+  if not B_LAW.betoltve then exit;
+  B_MP5A3:=TF_MP5A3.create(a_D3Ddevice, 'mp5', 'blue');
+  if not B_MP5A3.betoltve then exit;
+  B_BM3:=TF_BM3.create(a_D3Ddevice, 'bm3', 'blue');
+  if not B_BM3.betoltve then exit;
+  B_NOOB:=TF_NOOB.create(a_D3Ddevice, 'noob', 'blue');
+  if not B_NOOB.betoltve then exit;
+  B_X72:=TF_X72.create(a_D3Ddevice, 'x72', 'blue');
+  if not B_x72.betoltve then exit;
+  B_MPG:=TF_MPG.create(a_D3Ddevice, 'mpg', 'blue');
+  if not B_MPG.betoltve then exit;
+  B_QUADRO:=TF_QUADRO.create(a_D3Ddevice, 'quad', 'blue');
+  if not B_QUADRO.betoltve then exit;
+  B_HPL:=TF_HPL.create(a_D3Ddevice, 'hpl', 'blue');
+  if not B_HPL.betoltve then exit;
   //SKINEK END
 
   if not LTFF(g_pd3dDevice, 'data/textures/weapons/muzzle/m4a1muzz.png', gunmuztex) then
@@ -1798,57 +1823,63 @@ begin
   begin
 
     case mit of
-      FEGYV_M4A1:tex:=@M4A1.m4tex;
-      FEGYV_G_M4A1:tex:=@G_M4A1.m4tex;
-
-      FEGYV_M82A1:tex:=@M82A1.m4tex;
-      FEGYV_G_M82A1:tex:=@G_M82A1.m4tex;
-
-      FEGYV_LAW:tex:=@LAW.m4tex;
-      FEGYV_G_LAW:tex:=@g_LAW.m4tex;
-
-      FEGYV_MPG:tex:=@MPG.mpgtex;
-	    FEGYV_G_MPG:tex:=@G_MPG.mpgtex;
-
-      FEGYV_QUAD:tex:=@QUADRO.quadrotex;
-	    FEGYV_G_QUAD:tex:=@G_QUADRO.quadrotex;
-
-      FEGYV_NOOB:tex:=@NOOB.tex;
-      FEGYV_G_NOOB:tex:=@G_NOOB.tex;
-
-      FEGYV_MP5A3:tex:=@MP5A3.m4tex;
-      FEGYV_G_MP5A3:tex:=@G_MP5A3.m4tex;
-
-      FEGYV_X72:tex:=@X72.x72tex;
-	    FEGYV_G_X72:tex:=@G_X72.x72tex;
-
-      FEGYV_H31_G:tex:=@H31.tex;
-      FEGYV_H31_T:tex:=@H31.tex;
-
-      FEGYV_BM3:tex:=@BM3.m4tex;
-      FEGYV_G_BM3:tex:=@G_BM3.m4tex;
-
-      FEGYV_HPL:tex:=@HPL.m4tex;
-	    FEGYV_G_HPL:tex:=@G_HPL.m4tex;
+		  FEGYV_M4A1:tex:=@M4A1.m4tex;
+		  FEGYV_M82A1:tex:=@M82A1.m4tex;
+		  FEGYV_LAW:tex:=@LAW.m4tex;
+		  FEGYV_MPG:tex:=@MPG.mpgtex;
+		  FEGYV_QUAD:tex:=@QUADRO.quadrotex;
+		  FEGYV_NOOB:tex:=@NOOB.tex;
+		  FEGYV_MP5A3:tex:=@MP5A3.m4tex;
+		  FEGYV_X72:tex:=@X72.x72tex;
+		  FEGYV_BM3:tex:=@BM3.m4tex;
+		  FEGYV_HPL:tex:=@HPL.m4tex;
+          
+		  FEGYV_H31_G:tex:=@H31.tex;
+		  FEGYV_H31_T:tex:=@H31.tex;
+          
+		  FEGYV_G_M4A1:tex:=@G_M4A1.m4tex;
+		  FEGYV_G_M82A1:tex:=@G_M82A1.m4tex;
+		  FEGYV_G_LAW:tex:=@g_LAW.m4tex;
+		  FEGYV_G_MPG:tex:=@G_MPG.mpgtex;
+		  FEGYV_G_QUAD:tex:=@G_QUADRO.quadrotex;
+		  FEGYV_G_NOOB:tex:=@G_NOOB.tex;
+		  FEGYV_G_MP5A3:tex:=@G_MP5A3.m4tex;
+		  FEGYV_G_X72:tex:=@G_X72.x72tex;
+		  FEGYV_G_BM3:tex:=@G_BM3.m4tex;
+		  FEGYV_G_HPL:tex:=@G_HPL.m4tex;
+          
+		  FEGYV_B_M4A1:tex:=@B_M4A1.m4tex;
+		  FEGYV_B_M82A1:tex:=@B_M82A1.m4tex;
+		  FEGYV_B_LAW:tex:=@B_LAW.m4tex;
+		  FEGYV_B_MPG:tex:=@B_MPG.mpgtex;
+		  FEGYV_B_QUAD:tex:=@B_QUADRO.quadrotex;
+		  FEGYV_B_NOOB:tex:=@B_NOOB.tex;
+		  FEGYV_B_MP5A3:tex:=@B_MP5A3.m4tex;
+		  FEGYV_B_X72:tex:=@B_X72.x72tex;
+		  FEGYV_B_BM3:tex:=@B_BM3.m4tex;
+		  FEGYV_B_HPL:tex:=@B_HPL.m4tex;
     end;
 
     //    em:=@MPG.mpgemap;
 
     case mit of
-      FEGYV_MPG:em:=@MPG.mpgemap;
-      FEGYV_G_MPG:em:=@G_MPG.mpgemap;
-
+	    FEGYV_MPG:em:=@MPG.mpgemap;
       FEGYV_QUAD:em:=@QUADRO.quadroemap;
-      FEGYV_G_QUAD:em:=@G_QUADRO.quadroemap;
-
       FEGYV_NOOB:em:=@NOOB.emap;
-      FEGYV_G_NOOB:em:=@G_NOOB.emap;
-
       FEGYV_X72:em:=@X72.x72emap;
-      FEGYV_G_X72:em:=@G_X72.x72emap;
-
       FEGYV_HPL:em:=@HPL.mpgemap;
+
+      FEGYV_G_MPG:em:=@G_MPG.mpgemap;
+      FEGYV_G_QUAD:em:=@G_QUADRO.quadroemap;
+      FEGYV_G_NOOB:em:=@G_NOOB.emap;
+      FEGYV_G_X72:em:=@G_X72.x72emap;
       FEGYV_G_HPL:em:=@G_HPL.mpgemap;
+	  
+	    FEGYV_B_MPG:em:=@B_MPG.mpgemap;
+      FEGYV_B_QUAD:em:=@B_QUADRO.quadroemap;
+      FEGYV_B_NOOB:em:=@B_NOOB.emap;
+      FEGYV_B_X72:em:=@B_X72.x72emap;
+      FEGYV_B_HPL:em:=@B_HPL.mpgemap;
     end;
 
     if em <> nil then vanem:=true;
@@ -1941,38 +1972,41 @@ begin
     end;
 
   case mit of
-    FEGYV_M4A1:M4A1.draw;
-    FEGYV_G_M4A1:G_M4A1.draw;
+		FEGYV_M4A1:M4A1.draw;
+		FEGYV_M82A1:M82A1.draw;
+		FEGYV_LAW:LAW.draw;
+		FEGYV_MPG:MPG.draw;
+		FEGYV_QUAD:QUADRO.draw;
+		FEGYV_NOOB:NOOB.draw;
+		FEGYV_MP5A3:MP5A3.draw;
+		FEGYV_X72:X72.draw;
+		FEGYV_BM3:BM3.draw;
+		FEGYV_HPL:HPL.draw;
 
-    FEGYV_M82A1:M82A1.draw;
-    FEGYV_G_M82A1:G_M82A1.draw;
+		FEGYV_H31_G:H31.draw;
+		FEGYV_H31_T:H31.draw;
 
-    FEGYV_LAW:LAW.draw;
-    FEGYV_G_LAW:G_LAW.draw;
+		FEGYV_G_M4A1:G_M4A1.draw;
+		FEGYV_G_M82A1:G_M82A1.draw;
+		FEGYV_G_LAW:G_LAW.draw;
+		FEGYV_G_MPG:G_MPG.draw;
+		FEGYV_G_QUAD:G_QUADRO.draw;
+		FEGYV_G_NOOB:G_NOOB.draw;
+		FEGYV_G_MP5A3:G_MP5A3.draw;
+		FEGYV_G_X72:G_X72.draw;
+		FEGYV_G_BM3:G_BM3.draw;
+		FEGYV_G_HPL:G_HPL.draw;
 
-    FEGYV_MPG:MPG.draw;
-	  FEGYV_G_MPG:G_MPG.draw;
-
-    FEGYV_QUAD:QUADRO.draw;
-	  FEGYV_G_QUAD:G_QUADRO.draw;
-
-    FEGYV_NOOB:NOOB.draw;
-	  FEGYV_G_NOOB:G_NOOB.draw;
-
-    FEGYV_MP5A3:MP5A3.draw;
-    FEGYV_G_MP5A3:G_MP5A3.draw;
-
-    FEGYV_X72:X72.draw;
-	  FEGYV_G_X72:G_X72.draw;
-
-    FEGYV_H31_G:H31.draw;
-    FEGYV_H31_T:H31.draw;
-
-    FEGYV_BM3:BM3.draw;
-    FEGYV_G_BM3:G_BM3.draw;
-
-	  FEGYV_HPL:HPL.draw;
-	  FEGYV_G_HPL:G_HPL.draw;
+		FEGYV_B_M4A1:B_M4A1.draw;
+		FEGYV_B_M82A1:B_M82A1.draw;
+		FEGYV_B_LAW:B_LAW.draw;
+		FEGYV_B_MPG:B_MPG.draw;
+		FEGYV_B_QUAD:B_QUADRO.draw;
+		FEGYV_B_NOOB:B_NOOB.draw;
+		FEGYV_B_MP5A3:B_MP5A3.draw;
+		FEGYV_B_X72:B_X72.draw;
+		FEGYV_B_BM3:B_BM3.draw;
+		FEGYV_B_HPL:B_HPL.draw;
   end;
 
   if (G_peffect <> nil) then
@@ -2068,30 +2102,33 @@ begin
 
   if bol then
     case afegyv of
-      FEGYV_M4A1, FEGYV_G_M4A1:result:=D3DXVector3(-0.05, 1.37, -0.27);
-      FEGYV_M82A1, FEGYV_G_M82A1:result:=D3DXVector3(-0.05, 1.4, -0.35);
-      FEGYV_QUAD, FEGYV_G_QUAD:result:=D3DXVector3(0, 1.28, -0.13);
-      FEGYV_X72, FEGYV_G_X72:result:=D3DXVector3(-0.05, 1.27, -0.15);
-      FEGYV_NOOB, FEGYV_G_NOOB:result:=D3DXVector3(-0.05, 1.15, -0.10);
-      FEGYV_LAW, FEGYV_G_LAW:result:=D3DXVector3(-0.2, 1.35, -0.27);
-      FEGYV_H31_T:result:=D3DXVector3(-0.1, 1.35, -0.27);
+      FEGYV_M4A1, FEGYV_G_M4A1, FEGYV_B_M4A1:result:=D3DXVector3(-0.05, 1.37, -0.27);
+      FEGYV_M82A1, FEGYV_G_M82A1, FEGYV_B_M82A1:result:=D3DXVector3(-0.05, 1.4, -0.35);
+      FEGYV_NOOB, FEGYV_G_NOOB, FEGYV_B_NOOB:result:=D3DXVector3(-0.05, 1.15, -0.10);
+      FEGYV_LAW, FEGYV_G_LAW, FEGYV_B_LAW:result:=D3DXVector3(-0.2, 1.35, -0.27);
+	    FEGYV_QUAD, FEGYV_G_QUAD, FEGYV_B_QUAD:result:=D3DXVector3(0, 1.28, -0.13);
+	    FEGYV_X72, FEGYV_G_X72, FEGYV_B_X72:result:=D3DXVector3(-0.05, 1.27, -0.15);
+      FEGYV_BM3, FEGYV_G_BM3, FEGYV_B_BM3:result:=vec3add2(D3DXVector3(-0.07, 1.06, -0.21), D3DXVector3(0.03, 0.36, -0.14));
+      FEGYV_HPL, FEGYV_G_HPL, FEGYV_B_HPL:result:=vec3add2(D3DXVector3(-0.05, 1.055, -0.17), D3DXVector3(0, 0.32, -0.11));
+
+	    FEGYV_H31_T:result:=D3DXVector3(-0.1, 1.35, -0.27);
       FEGYV_H31_G:result:=D3DXVector3(-0.1, 1.35, -0.27);
-      FEGYV_BM3, FEGYV_G_BM3:result:=vec3add2(D3DXVector3(-0.07, 1.06, -0.21), D3DXVector3(0.03, 0.36, -0.14));
-      FEGYV_HPL, FEGYV_G_HPL:result:=vec3add2(D3DXVector3(-0.05, 1.055, -0.17), D3DXVector3(0, 0.32, -0.11));
     else result:=D3DXVector3(-0.05, 1.35, -0.27);
     end
   else
     case afegyv of
-      FEGYV_M4A1, FEGYV_G_M4A1:result:=D3DXVector3(-0.05, 1.07, -0.27);
-      FEGYV_M82A1, FEGYV_G_M82A1:result:=vec3add2(D3DXVector3(-0.05, 1.4, -0.35), D3DXVector3(0, -0.35, 0.15));
-      FEGYV_NOOB, FEGYV_G_NOOB:result:=D3DXVector3(-0.17, 1.07, -0.1);
-      FEGYV_LAW, FEGYV_G_LAW:result:=D3DXVector3(-0.25, 1.1, -0.45);
-      FEGYV_QUAD, FEGYV_G_QUAD:result:=D3DXVector3(-0.05, 1.00, -0.07);
-      FEGYV_X72, FEGYV_G_X72:result:=D3DXVector3(-0.07, 0.95, -0.15);
-      FEGYV_H31_T:result:=D3DXVector3(-0.15, 1.1, -0.45);
+	
+      FEGYV_M4A1, FEGYV_G_M4A1, FEGYV_B_M4A1:result:=D3DXVector3(-0.05, 1.07, -0.27);
+      FEGYV_M82A1, FEGYV_G_M82A1, FEGYV_B_M82A1:result:=vec3add2(D3DXVector3(-0.05, 1.4, -0.35), D3DXVector3(0, -0.35, 0.15));
+      FEGYV_NOOB, FEGYV_G_NOOB, FEGYV_B_NOOB:result:=D3DXVector3(-0.17, 1.07, -0.1);
+      FEGYV_LAW, FEGYV_G_LAW, FEGYV_B_LAW:result:=D3DXVector3(-0.25, 1.1, -0.45);
+      FEGYV_QUAD, FEGYV_G_QUAD, FEGYV_B_QUAD:result:=D3DXVector3(-0.05, 1.00, -0.07);
+      FEGYV_X72, FEGYV_G_X72, FEGYV_B_X72:result:=D3DXVector3(-0.07, 0.95, -0.15);
+      FEGYV_BM3, FEGYV_G_BM3, FEGYV_B_BM3:result:=D3DXVector3(-0.07, 1.06, -0.21);
+      FEGYV_HPL, FEGYV_G_HPL, FEGYV_B_HPL:result:=D3DXVector3(-0.05, 1.055, -0.17);
+	  
+	    FEGYV_H31_T:result:=D3DXVector3(-0.15, 1.1, -0.45);
       FEGYV_H31_G:result:=D3DXVector3(-0.15, 1.1, -0.45);
-      FEGYV_BM3, FEGYV_G_BM3:result:=D3DXVector3(-0.07, 1.06, -0.21);
-      FEGYV_HPL, FEGYV_G_HPL:result:=D3DXVector3(-0.05, 1.055, -0.17);
     else result:=D3DXVector3(-0.05, 1.05, -0.27);
     end;
 
