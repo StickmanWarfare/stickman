@@ -1219,7 +1219,7 @@
 			"rnd_color": "0x00010101",
 			"visible_range": 150,
 			"start_size": 0.8,
-			"end_size": 10.0,
+			"end_size": 10,
 			"factor": 0.12,
 			"amount": 1,
 			"period": 10,
@@ -1364,7 +1364,7 @@
 		"kiskemeny1": {
 			"x": -336.55,
 			"y": 41.81,
-			"z": 161.0,
+			"z": 161,
 			"type": "kiskemenyfust"
 		},
 		"kiskemeny2": {
