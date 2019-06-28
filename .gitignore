@@ -1,3 +1,5 @@
 src/*/
 *.bat
 src/Stickman.dof
+src/Stickman.cfg
+libs/
