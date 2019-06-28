@@ -203,6 +203,8 @@ var
   kickmsg:string;
   hardkick:boolean;
 
+  incompmodifier:boolean;
+
   portalpos:TD3DXVector3;
   portalstarted:boolean = false;
 
@@ -2518,6 +2520,7 @@ begin
   col_fog_rainy:=stuffjson.GetInt(['fog', 'color_rainy']);
   col_fog_sunny:=stuffjson.GetInt(['fog', 'color_sunny']);
   col_fog_water:=stuffjson.GetInt(['fog', 'color_underwater']);
+
   radius_rainy:=stuffjson.GetInt(['fog', 'radius_rainy']);
   radius_sunny:=stuffjson.GetInt(['fog', 'radius_sunny']);
 
@@ -6007,7 +6010,6 @@ begin
   end;
 end;
 
-
 procedure AddNOOB(av1, av2:TD3DXvector3;akl:integer);
 begin
   setlength(noobproj, length(noobproj) + 1);
@@ -8052,7 +8054,6 @@ begin
   // �res, csak k�nyvjelz�;
 end;
 {$ENDIF}
-
 
 procedure handlefizikLite;
 var
@@ -13144,7 +13145,6 @@ begin
   felho.makenew;
   matview:=identmatr;mat_world:=identmatr;matproj:=identmatr;
 
-
 end;
 
 procedure evalScript(name:string);
@@ -15196,7 +15196,8 @@ begin //                 BEGIIIN
 
     addfiletochecksum('data/stuff.json');
     stuffjson:=TQJSON.CreateFromFile('data/stuff.json');
-
+    incompmodifier:=false;
+    
 {$IFDEF localhost}
     servername:='localhost';
 {$ELSE}
@@ -15206,12 +15207,15 @@ begin //                 BEGIIIN
     if servername = '' then
       servername:='localhost'
     else
-    begin
+    if stuffjson.GetString(['modname']) = 'Official' then //if not modded
     try
       laststate:= 'Fetching modifier.json';
+      writeln(logfile, 'Fetching modifier.json');
       modifierjson:=TQJSON.CreateFromHTTP('http://'+servername+'/modifier.json');
-      if length(modifierjson.getString(['checksum'])) > 0 then  //Better way to validate?
+      modifierdatachecksum:=StrToInt('$' + modifierjson.getString(['datachecksum']));
+      if datachecksum = modifierdatachecksum then //Don't load incompatible modifier
       begin
+
         writeln(logfile, 'Fetched modifier.json');
         modifierchecksum:=StrToInt('$' + modifierjson.getString(['checksum']));
         writeln(logfile, 'Modifier checksum: '+inttohex(modifierchecksum, 8));
@@ -15223,12 +15227,15 @@ begin //                 BEGIIIN
         end;
         stuffjson:=modifierjson;
       end
-      else writeln(logfile, 'Failed to fetch modifier.json');
+      else
+      begin
+      incompmodifier:=true;
+      writeln(logfile, 'Incompatible modifier!');
+      end;
     except
       writeln(logfile, 'Failed to fetch modifier.json');
     end;
-    end;
-    
+
 {$ENDIF}
     writeln(logfile, 'Server: ', servername);flush(logfile);
 
@@ -15348,7 +15355,16 @@ begin //                 BEGIIIN
         //writeln(logfile,'Exe Checksum:'+inttohex(execheck+1,8));
        //messagebox(0,Pchar(inttohex(checksum,8)),'Checksum',0);
 
-        if (checksum <> datachecksum) and (checksum <> modifierchecksum) {and (not canbeadmin) } then
+        if incompmodifier then
+        begin
+          menufi[MI_GAZMSG].valueS:= lang[63];
+          menufi[MI_GAZMSG].visible:=true;
+          menu.tegs[0, 1].visible:=true;
+        end
+        else
+        if (checksum <> datachecksum)//True mod
+        and (checksum <> modifierchecksum)//Modified modifier? tinkered or outdated(can't be -> incompatible)
+        {and (not canbeadmin) } then
         begin
           menufi[MI_GAZMSG].valueS:= 'Mod #' + inttohex(checksum, 8) + #13#10#13#10 + stuffjson.GetString(['modname']);
           menufi[MI_GAZMSG].visible:=true;
