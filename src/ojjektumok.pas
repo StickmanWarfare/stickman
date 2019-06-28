@@ -170,7 +170,7 @@ var
   bubbles:array of Tbubble;
   grounds:array of Tground;
   // lightmapbm:array [0..2047,0..2047,0..3] of byte;
-  panthepulet, portalepulet, ATportalhely:integer;
+  panthepulet, portalepulet, ATportalhely, atlantis, atlantis_b:integer;
   DNSvec:TD3DXVector3;
   DNSrad:single;
 
@@ -1338,6 +1338,11 @@ begin
     if stuffjson.GetKey(['buildings'], i) = 'portal_inst' then
       ATportalhely:=i;
 
+    if stuffjson.GetKey(['buildings'], i) = 'atlantis_a' then
+      atlantis:=i;
+      
+    if stuffjson.GetKey(['buildings'], i) = 'atlantis_b' then
+      atlantis_b:=i;
 
     for j:=0 to stuffjson.GetNum(['buildings', i, 'special']) do
     begin
