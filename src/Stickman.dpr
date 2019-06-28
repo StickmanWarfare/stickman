@@ -12,13 +12,13 @@
  *                                           *)
 {$R stickman.RES}
 {$DEFINE force16bitindices} //ez hibás, pár helyen, ha nincs kipontozva, meg kell majd nézni
-{$DEFINE undebug}
+{$DEFINE undebug} //Remove dot for release, add dot for dev
 {.$DEFINE nochecksumcheck}
 {.$DEFINE speedhack}
 {.$DEFINE repkedomod}
 {.$DEFINE godmode}
 {.$DEFINE admingun}
-{-$DEFINE palyszerk}
+{.$DEFINE palyszerk}
 {.$DEFINE alttabengedes}
 {.$DEFINE matieditor}
 {.$DEFINE profiler}
@@ -15119,10 +15119,10 @@ end;   {}
     balstart, jobbveg, balveg, jobbstart, korr, bigtext, fent, sor, szel, jobbkozep:single;
     lap, hanyadik:byte;
   begin
-    if not directoryexists('data\cfg') then createdirectory('data\cfg', nil);
-    if fileexists('data\cfg\name.cfg') then
+    if not directoryexists('data/cfg') then createdirectory('data/cfg', nil);
+    if fileexists('data/cfg/name.cfg') then
     begin
-      assignfile(fil, 'data\cfg\name.cfg');
+      assignfile(fil, 'data/cfg/name.cfg');
       reset(fil);
       readln(fil, str);
       str:=stringreplace(str, ' ', '_', [rfReplaceAll]);
@@ -15466,9 +15466,9 @@ end;   {}
     ASPECT_RATIO:=SCwidth / SCheight;
 
 
-    if FileExists('data/video.ini') then //TODO TO CFG
+    if FileExists('data/cfg/graphics.cfg') then
     begin
-      assignfile(fil, 'data/video.ini');
+      assignfile(fil, 'data/cfg/graphics.cfg');
       reset(fil);
 
       while not eof(fil) do
@@ -15680,21 +15680,30 @@ begin //                 BEGIIIN
 {$IFDEF localhost}
     servername:='localhost';
 {$ELSE}
-	  assignfile(hostfile, 'data/server.cfg');
-    reset(hostfile);
-    readln(hostfile, servername);
-    if servername = '' then
-      servername:='localhost'
+    if not directoryexists('data/cfg') then createdirectory('data/cfg', nil);
+	  assignfile(hostfile, 'data/cfg/server.cfg');
+    if not fileexists('data/cfg/server.cfg') then
+    begin
+      rewrite(hostfile);
+      servername:='server.stickman.hu';
+      writeln(hostfile, servername);flush(hostfile);
+    end
     else
+    begin
+      reset(hostfile);
+      readln(hostfile, servername);
+      if servername = '' then
+        servername:='server.stickman.hu';
+    end;
     if stuffjson.GetString(['modname']) = 'Official' then //if not modded
     try
       laststate:= 'Fetching modifier.json';
       writeln(logfile, 'Fetching modifier.json');
+
       modifierjson:=TQJSON.CreateFromHTTP('http://'+servername+'/modifier.json');
       modifierdatachecksum:=StrToInt('$' + modifierjson.getString(['datachecksum']));
       if datachecksum = modifierdatachecksum then //Don't load incompatible modifier
       begin
-
         writeln(logfile, 'Fetched modifier.json');
         modifierchecksum:=StrToInt('$' + modifierjson.getString(['checksum']));
         writeln(logfile, 'Modifier checksum: '+inttohex(modifierchecksum, 8));
@@ -15704,18 +15713,19 @@ begin //                 BEGIIIN
           writeln(logfile, 'Servername modified');
           servername:=modifierjson.getString(['server']);
         end;
-        stuffjson:=modifierjson;
+        stuffjson:=modifierjson; //Overwrite stuff.json
       end
       else
       begin
-      incompmodifier:=true;
-      writeln(logfile, 'Incompatible modifier!');
+        incompmodifier:=true;
+        writeln(logfile, 'Incompatible modifier!');
       end;
     except
       writeln(logfile, 'Failed to fetch modifier.json');
     end;
-
+    closefile(hostfile);
 {$ENDIF}
+
     writeln(logfile, 'Server: ', servername);flush(logfile);
 
     //WINTER
