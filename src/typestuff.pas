@@ -273,6 +273,15 @@ type
     isTyping:boolean;
   end;
 
+  Tbot=record
+    dead:integer;
+    mukso:TPlayer;
+    allok,lovescd,maxlovescd:Integer;//ennyi ticken at maradok ebben az akcioban
+    speed,accuracy:single;
+    front:TD3DXVector3;
+    nekimegyekepuletnek,latomjatekost,partotert:boolean;
+  end;
+
 const uresplayer:Tplayer=();
 
 type
