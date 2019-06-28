@@ -511,10 +511,12 @@ begin
           FEGYV_LAW:    fegyver_skin := FEGYV_G_LAW;
           FEGYV_X72:    fegyver_skin := FEGYV_G_X72;
           FEGYV_MP5A3:  fegyver_skin := FEGYV_G_MP5A3;
-          FEGYV_H31_T:  fegyver_skin := FEGYV_H31_T;
-          FEGYV_H31_G:  fegyver_skin := FEGYV_H31_G;
+
           FEGYV_HPL:    fegyver_skin := FEGYV_G_HPL;
           FEGYV_BM3:    fegyver_skin := FEGYV_G_BM3;
+          
+          FEGYV_H31_T:  fegyver_skin := FEGYV_H31_T;
+          FEGYV_H31_G:  fegyver_skin := FEGYV_H31_G;
         end;
 
     ujppl[i].net.ip:=ip;
