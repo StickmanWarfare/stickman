@@ -719,7 +719,7 @@ IBwh2:=IBwh2+IBwh;
 
 VBwh2:=VBwh2+VBwh;
 
-if IBwh2>35000 then
+if IBwh2>10000 then
  flush;
 
 end;
@@ -858,7 +858,7 @@ g_pmuksVB.Unlock;
 IBwh2:=IBwh2+IBwh;
 VBwh2:=VBwh2+VBwh;
 
-if IBwh2>35000 then
+if IBwh2>10000 then
  flush;
 
 end;
@@ -1161,7 +1161,7 @@ VBwh2:=VBwh2+vertszam;
 
 end;
 
-if IBwh2>35000 then
+if IBwh2>10000 then
  flush;
 
 end;
