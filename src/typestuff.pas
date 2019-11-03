@@ -14,12 +14,28 @@ uses
   winsock2,
   qjson;
 
+type
+ Tgmbk= array [0..10] of TD3dvector;
+ Tkapcsk = array [0..9,0..1] of byte;
+
 const
   PROG_VER=209073;
   datachecksum=$A219091E;
 type
 
   array4ofbyte=array[0..3] of byte;
+
+  TRongybaba = class (TObject)
+  public
+    ID:cardinal;
+    disabled:boolean;
+    ido:cardinal;
+    gmbk,voltgmbk:Tgmbk;                                  //meglövési erõ      meglõtt gömb
+    szin:cardinal;
+    constructor create(mat:TD3DMatrix;Muks:TMuksoka;pos,vpos,gmbvec:TD3DXVector3;mlgmb:byte;azID,aszin:cardinal);
+    procedure step(advwove:Tadvwove;nondis:boolean;bubi:boolean);
+    procedure transfertomuks(muks:Tmuksoka);
+  end;
 
   THUDmessage=class(TObject)
   public
@@ -271,15 +287,6 @@ type
     pls:Tplayerpls;
     auto:Tplayerauto;
     isTyping:boolean;
-  end;
-
-  Tbot=record
-    dead:integer;
-    mukso:TPlayer;
-    allok,lovescd,maxlovescd:Integer;//ennyi ticken at maradok ebben az akcioban
-    speed,accuracy:single;
-    front:TD3DXVector3;
-    nekimegyekepuletnek,latomjatekost,partotert:boolean;
   end;
 
 const uresplayer:Tplayer=();
@@ -567,6 +574,8 @@ var
   cpy:Psingle;///FRÖCCCS
   cpz:Psingle;///FRÖCCCS
 
+  rongybabak:array[0..50] of Trongybaba;//FASZOM
+
   sundir:TD3DXVector3;
   texturefilelist:string;
 
@@ -686,6 +695,7 @@ const
   FEGYV_LAW=2;
   FEGYV_MP5A3=3;
   FEGYV_BM3=4;//akkor most meg lesz baszva valami
+  FEGYV_GUNSUPP=5;
   FEGYV_H31_G=100;//a szerveren a 4 a kibaszott quad
   FEGYV_BM3_2=101;
   FEGYV_BM3_3=102;// különbözo golyófajták // Hector ne légy balfasz.
@@ -695,6 +705,7 @@ const
   FEGYV_NOOB=130;
   FEGYV_X72=131;
   FEGYV_HPL=132;
+  FEGYV_TECHSUPP=133;
   FEGYV_H31_T=200;
 
   //SKINEK: 10-19 m4; 140-149 mpg; kezdoertek mindig a golden

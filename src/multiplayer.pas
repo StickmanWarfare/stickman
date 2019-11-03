@@ -387,11 +387,13 @@ begin
   else if ((c >= 30) and (c <= 39)) or (c = 2) then result := FEGYV_LAW
   else if ((c >= 40) and (c <= 49)) or (c = 3) then result := FEGYV_MP5A3
   else if ((c >= 50) and (c <= 59)) or (c = 4) then result := FEGYV_BM3
+  else if ((c >= 60) and (c <= 69)) or (c = 5) then result := FEGYV_GUNSUPP
   else if ((c >= 140) and (c <= 149)) or (c = 128) then result := FEGYV_MPG
   else if ((c >= 150) and (c <= 159)) or (c = 129) then result := FEGYV_QUAD
   else if ((c >= 160) and (c <= 169)) or (c = 130) then result := FEGYV_NOOB
   else if ((c >= 170) and (c <= 179)) or (c = 131) then result := FEGYV_X72
   else if ((c >= 180) and (c <= 189)) or (c = 132) then result := FEGYV_HPL
+  else if ((c >= 190) and (c <= 199)) or (c = 133) then result := FEGYV_TECHSUPP
   else if (c = 100) then result := FEGYV_H31_G
   else if (c = 200) then result := FEGYV_H31_T
   else result := 0;
@@ -514,7 +516,10 @@ begin
 
           FEGYV_HPL:    fegyver_skin := FEGYV_G_HPL;
           FEGYV_BM3:    fegyver_skin := FEGYV_G_BM3;
-          
+
+          FEGYV_GUNSUPP: fegyver_skin := FEGYV_GUNSUPP;
+          FEGYV_TECHSUPP: fegyver_skin := FEGYV_TECHSUPP;
+
           FEGYV_H31_T:  fegyver_skin := FEGYV_H31_T;
           FEGYV_H31_G:  fegyver_skin := FEGYV_H31_G;
         end;

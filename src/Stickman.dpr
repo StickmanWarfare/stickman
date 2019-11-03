@@ -4,14 +4,14 @@
  *                                           *
  * Almost everything in this file and the    *
  * units are written by Badics Alex,         *
- * Háda Ádám and Göller Bertalan.            *
+ * Hï¿½da ï¿½dï¿½m and Gï¿½ller Bertalan.            *
  *                                           *
  * Except: PerlinNoise (i got that from      *
  *                      a forum)             *
  *         D3D units   (www.clootie.ru)      *
  *                                           *)
 {$R stickman.RES}
-{$DEFINE force16bitindices} //ez hibás, pár helyen, ha nincs kipontozva, meg kell majd nézni
+{$DEFINE force16bitindices} //ez hibï¿½s, pï¿½r helyen, ha nincs kipontozva, meg kell majd nï¿½zni
 {$DEFINE undebug}
 {.$DEFINE nochecksumcheck}
 {.$DEFINE speedhack}
@@ -40,10 +40,8 @@ uses
   Directinput,
   eventscripts,
   fegyverek,
-  //filectrl,
   fizika,
   foliage,
-  //generated,
   Math,
   Messages,
   MMSystem,
@@ -59,18 +57,20 @@ uses
   IdHTTP,
   IdMultipartFormData,
   sky,
+  Utils,
   StrUtils,
   SysUtils,
-  //SyncObjs,
-  //ShellApi,
   Typestuff,
   Windows,
-  Winsock2
-  //  StopWatch //todo kivenni
-  ;
+  Winsock2,
+  BotGroups,
+  Selfie;
+
+//StopWatch //TODO: kivenni
+
 
 const
-  lvlmin = 0; //ENNEK ÍGY KÉNE MARADNIA
+  lvlmin = 0; //ENNEK ï¿½GY Kï¿½NE MARADNIA
   lvlmax = 6;
   lvlsiz = 32; //Ennek is :(
   lvlsizp = lvlsiz + 1;
@@ -103,7 +103,7 @@ const
   T_CONST = 0;
   T_OPERATOR = 1;
 
-  //CMAP_SIZE=1024; //lefelé betöltésnél kéne scalelni
+  //CMAP_SIZE=1024; //lefelï¿½ betï¿½ltï¿½snï¿½l kï¿½ne scalelni
   CMAP_SIZE = 1024;
   CMAP_PATH = 'data/textures/map/';
 
@@ -115,9 +115,11 @@ const
 var
   // REMOVE
 
+  botGroupArr: array of TBotGroup;
+  selfieMaker: TSelfie;
 
-  CMAP1_PATH:string = CMAP_PATH+'default/cmap.png'; //régi terep
-  CMAP2_PATH:string = CMAP_PATH+'default/cmap2.png'; //térkép
+  CMAP1_PATH:string = CMAP_PATH+'default/cmap.png'; //rï¿½gi terep
+  CMAP2_PATH:string = CMAP_PATH+'default/cmap2.png'; //tï¿½rkï¿½p
   CMAP3_PATH:string = CMAP_PATH+'default/cmap3.png'; //shader terep
   modifierjson:TQJSON;
 {$IFDEF matieditor}
@@ -170,8 +172,7 @@ var
 
   hogombmesh:ID3DXMesh = nil;
 
-  bots:array of TBot;
-  foliages:array of Tfoliage; //Növényzet
+  foliages:array of Tfoliage; //Nï¿½vï¿½nyzet
   //  foliagelevels:array of integer;
   ojjektumrenderer:T3DORenderer;
   propsystem:TPropsystem;
@@ -234,22 +235,22 @@ var
 
   hWindow:HWND;
   wndpos:Tpoint = (x:0;y:0);
-  cpox:Psingle; ///FRÖCCCS
+  cpox:Psingle; ///FRï¿½CCCS
   toind, allind:integer;
   muks:Tmuksoka;
   rongybabak:array[0..50] of Trongybaba;
   halalhorg:integer;
-  cpoy:Psingle; ///FRÖCCCS
+  cpoy:Psingle; ///FRï¿½CCCS
   rbido:integer;
   rbszam:integer = -1;
-  cpoz:Psingle; ///FRÖCCCS
+  cpoz:Psingle; ///FRï¿½CCCS
   rbm:integer = 0;
   mat_world, mat_bajusz, mfm:TD3DMatrix;
   mousesens:single;
   mouseacc:boolean;
   oopos:TD3DXVector3;
   wentthroughwall:boolean;
-  posokvoltak:array[0..4] of TD3DXVector3; //Ne MERD az MMO-n kíbvül használni mert megbaszlak!
+  posokvoltak:array[0..4] of TD3DXVector3; //Ne MERD az MMO-n kï¿½bvï¿½l hasznï¿½lni mert megbaszlak!
   lastzone:string;
   zonaellen:integer;
   zonabarat:integer;
@@ -791,7 +792,7 @@ begin
   v24y:=advwove(xx, zz - (scalfac)) - advwove(xx, zz + (scalfac));
   //v1-v3
   v13y:=advwove(xx - (scalfac), zz) - advwove(xx + (scalfac), zz);
-  //Döbbenetes az egyszerûsítés
+  //Dï¿½bbenetes az egyszerï¿½sï¿½tï¿½s
   norm.x:=v13y;
   norm.y:=2 * scalfac;
   norm.z:=v24y;
@@ -800,7 +801,7 @@ begin
     d3dxvec3scale(norm, norm, fastinvsqrt(lngt));
 end;
 
-//function norm(xx,zz:single;scalfac:single):Td3dvector; //ideiglenesen kivéve
+//function norm(xx,zz:single;scalfac:single):Td3dvector; //ideiglenesen kivï¿½ve
 //var
 //lngt:single;
 //v24y,v13y:single;
@@ -948,7 +949,7 @@ begin
   //if scalfac>=pow2[farlvl] then
   //if (not useoldterrain and (opt_detail>0)) or (useoldterrain and (scalfac>=pow2[farlvl])) then
   if (not useoldterrain) or (useoldterrain and (scalfac >= pow2[farlvl])) then
-  begin //távoli vagy új
+  begin //tï¿½voli vagy ï¿½j
     ux:=xx / 2048 + 0.5;
     uz:=zz / 2048 + 0.5;
 //    szin:=$FFFFFF; yeeeaaaahhh
@@ -956,7 +957,7 @@ begin
     u2z:=zz / 2 + cos(xx / 3) / 6 + cos(xx / 10); //+perlin.complexnoise(1,xx,zz+2000,16,4,0.5)*1{+perlin.noise(xx/200+100,0.5,zz/200)*50};
   end
   else
-  begin //old közeli
+  begin //old kï¿½zeli
     ux:=xx / 1 + sin(zz / 2) / 2 + sin(zz / 8) + perlin.complexnoise(1, xx + 2000, zz, 16, 4, 0.5) * 3 {+perlin.noise(xx/200,0.5,zz/200+100)*50};
     uz:=zz / 1 - cos(xx / 2) / 2 + cos(xx / 8) + perlin.complexnoise(1, xx, zz + 2000, 16, 4, 0.5) * 3 {+perlin.noise(xx/200+100,0.5,zz/200)*50};
     u2x:=xx / 16;
@@ -1057,7 +1058,7 @@ begin
       if (levels[lvl, alapind[i * 3 + 0]].color = fuszin) or
         (levels[lvl, alapind[i * 3 + 1]].color = fuszin) or
         (levels[lvl, alapind[i * 3 + 2]].color = fuszin) then
-      begin //füves a cucc
+      begin //fï¿½ves a cucc
         lvlind[lvl, 0, lvlindszam[lvl, 0] + 0]:=alapind[i * 3 + 0] + lvlcucc;
         lvlind[lvl, 0, lvlindszam[lvl, 0] + 1]:=alapind[i * 3 + 1] + lvlcucc;
         lvlind[lvl, 0, lvlindszam[lvl, 0] + 2]:=alapind[i * 3 + 2] + lvlcucc;
@@ -1067,7 +1068,7 @@ begin
       if (levels[lvl, alapind[i * 3 + 0]].color = koszin) or
         (levels[lvl, alapind[i * 3 + 1]].color = koszin) or
         (levels[lvl, alapind[i * 3 + 2]].color = koszin) then
-      begin //vagy köves
+      begin //vagy kï¿½ves
         lvlind[lvl, 1, lvlindszam[lvl, 1] + 0]:=alapind[i * 3 + 0] + lvlcucc;
         lvlind[lvl, 1, lvlindszam[lvl, 1] + 1]:=alapind[i * 3 + 1] + lvlcucc;
         lvlind[lvl, 1, lvlindszam[lvl, 1] + 2]:=alapind[i * 3 + 2] + lvlcucc;
@@ -1077,7 +1078,7 @@ begin
         if (levels[lvl, alapind[i * 3 + 0]].color <> fuszin) or
           (levels[lvl, alapind[i * 3 + 1]].color <> fuszin) or
           (levels[lvl, alapind[i * 3 + 2]].color <> fuszin) then
-        begin //vagy egyéb (homok, víz)
+        begin //vagy egyï¿½b (homok, vï¿½z)
           lvlind[lvl, 2, lvlindszam[lvl, 2] + 0]:=alapind[i * 3 + 0] + lvlcucc;
           lvlind[lvl, 2, lvlindszam[lvl, 2] + 1]:=alapind[i * 3 + 1] + lvlcucc;
           lvlind[lvl, 2, lvlindszam[lvl, 2] + 2]:=alapind[i * 3 + 2] + lvlcucc;
@@ -1094,7 +1095,7 @@ begin
   // zeromemory(pointer(pVertices),lvlsizp*lvlsizp*sizeof(Tcustomvertex));
   g_pVB.Unlock;
 
-  //elköltöztünk
+  //elkï¿½ltï¿½ztï¿½nk
 
    //if lvl=4 then bokrok.update(@(levels[lvl,0]),yandnormbokor);
    //if lvl=1 then fuvek.update(@(levels[lvl,0]),yandnormfu);
@@ -1682,7 +1683,7 @@ begin
     dnsrad:=ojjektumarr[panthepulet].rad * 1.4;
   end
   else
-  begin //hogy legalább ne látszódjon a modokban //így utólag nézve ez egy trágya megoldás
+  begin //hogy legalï¿½bb ne lï¿½tszï¿½djon a modokban //ï¿½gy utï¿½lag nï¿½zve ez egy trï¿½gya megoldï¿½s
     dnsvec:=d3dxvector3(0, -100, 0);
     pantheonPos:=d3dxvector3(0, -100, 0);
     dnsrad:=1;
@@ -1837,7 +1838,7 @@ begin
   Result:=E_FAIL;
   tmptex:=nil;
   if Failed(g_pd3dDevice.CreateTexture(CMAP_SIZE, CMAP_SIZE, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, tmptex, nil)) then Exit;
-  if Failed(g_pd3dDevice.CreateTexture(CMAP_SIZE, CMAP_SIZE, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, mt1, nil)) then Exit; //régi vagy új terep
+  if Failed(g_pd3dDevice.CreateTexture(CMAP_SIZE, CMAP_SIZE, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, mt1, nil)) then Exit; //rï¿½gi vagy ï¿½j terep
   if Failed(g_pd3dDevice.CreateTexture(CMAP_SIZE, CMAP_SIZE, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, mt2, nil)) then Exit; //minimap
 
 
@@ -1853,7 +1854,7 @@ begin
   if not winter then wacol:=D3DXColorFromDWord(stuffjson.GetInt(['color_water']))
   else wacol:=D3DXColorFromDWord($FFFFFFFF);
   wacol.a:=1; //1
-  //TODO ezekre már van változó
+  //TODO ezekre mï¿½r van vï¿½ltozï¿½
 
   l1c:=D3DXColorFromDWORD(stuffjson.GetInt(['light', 'color_sun']));
   l2c:=D3DXColorFromDWORD(stuffjson.GetInt(['light', 'color_shadow']));
@@ -2025,7 +2026,7 @@ begin
 
           //zz:=zz+(round(xx)mod 2)*scalfac/2;
 
-            //alap színek
+            //alap szï¿½nek
           red:=grasspeak;
           //   if yy<0 then yy:=0;
           if (yy > 18) then
@@ -2042,11 +2043,11 @@ begin
           if (yy < 16.2) and (yy >= 14.62) then red:=Lerp(sandpeak, grasspeak, clip(0, 1, (yy - 15) / 1.58 + 0.5 * (-0.5 + Frac(perlin.complexnoise(1, xx + 2000, zz, 4, 1, 0.5) * 300))));
           if yy < 14.62 then red:=sandpeak; //16.2 14.62
           if (yy < 11.5) and (yy >= 10) then red:=Lerp(waterend, sandpeak, (yy - 10) / 1.5); //waterend = vizes homok peak
-          if yy < 10 then red:=Lerp(waterstart, waterend, (yy - 5) / 5); //y=10-nél 1 legyen
+          if yy < 10 then red:=Lerp(waterstart, waterend, (yy - 5) / 5); //y=10-nï¿½l 1 legyen
           if yy < 5 then red:=waterstart;
 
 
-          //fények
+          //fï¿½nyek
           tmp:=D3DXVec3dot(n, l1);
           if tmp < 0 then tmp:=0;
           //     D3DXColorscale(lght1,l1c,tmp);
@@ -2287,11 +2288,50 @@ begin
     FEGYV_MP5A3:result:= 'MP5';
     FEGYV_BM3:result:= 'BM3';
     FEGYV_HPL:result:= 'HPL';
+    FEGYV_GUNSUPP:result:= 'GUNSUPP';
+    FEGYV_TECHSUPP:result:= 'TECHSUPP';
 
     FEGYV_H31_G:result:= 'SW1';
     FEGYV_H31_T:result:= 'SW1';
   else
     result:= 'WTF';
+  end;
+end;
+
+function fegyvercode(fegyvname:string): Byte;
+begin
+  result := FEGYV_M4A1;
+  if fegyvname = 'M4A1' then result := FEGYV_M4A1
+  else if fegyvname = 'M82A1' then result := FEGYV_M82A1
+  else if fegyvname = 'LAW' then result := FEGYV_LAW
+  else if fegyvname = 'MP5A3' then result := FEGYV_MP5A3
+  else if fegyvname = 'BM3' then result := FEGYV_BM3
+  else if fegyvname = 'GUNSUPP' then result := FEGYV_GUNSUPP
+  else if fegyvname = 'MPG' then result := FEGYV_MPG
+  else if fegyvname = 'QUADRO' then result := FEGYV_QUAD
+  else if fegyvname = 'NOOB' then result := FEGYV_NOOB
+  else if fegyvname = 'X72' then result := FEGYV_X72
+  else if fegyvname = 'HPL' then result := FEGYV_HPL
+  else if fegyvname = 'TECHSUPP' then result := FEGYV_TECHSUPP
+end;
+
+function fegyvercooldown(mi:byte): Single;
+begin
+  case mi of
+    FEGYV_M4A1:result:= 1 / 7.44;
+    FEGYV_M82A1:result:= 1;
+    FEGYV_LAW:result:= 3;
+    FEGYV_MPG:result:= 1 / 6;
+    FEGYV_QUAD:result:= 1 / 7.93;
+    FEGYV_NOOB:result:= 3; //TODO: figure out noob cd
+    FEGYV_X72:result:= max(x72gyrs - 0.6, 1 / 6.25);
+    FEGYV_MP5A3:result:= 1 / 8.32;
+    FEGYV_BM3:result:= 1 / 1.2;
+    FEGYV_HPL:result:= 1;
+    FEGYV_GUNSUPP:result:= 1 / 1.5;
+    FEGYV_TECHSUPP:result:= 1 / 7.44;
+  else
+    result:= -1;
   end;
 end;
 
@@ -2465,6 +2505,84 @@ begin
   end;
 end;
 
+procedure initbots;
+var
+  groupCount, weaponCount, maxSize: Integer;
+  groupIndex, weaponIndex, botIndex, i: Integer;
+  team, mode, fegyvname: string;
+  spawnpos, tmpPos: TD3DXVector3;
+  spawnrad: Integer;
+  tmode: TBotMode;
+  bot: TBot;
+  tfegyv: Byte;
+begin
+  laststate:='initbots';
+  groupCount := stuffjson.GetNum(['botgroups']);
+  setlength(botGroupArr, groupCount);
+  for groupIndex := 0 to high(botGroupArr) do
+  begin
+    maxSize := stuffjson.GetInt(['botgroups', groupIndex, 'count']);
+    team := stuffjson.GetString(['botgroups', groupIndex, 'team']);
+    mode := stuffjson.GetString(['botgroups', groupIndex, 'mode']);
+    if mode = 'DUMMY' then tmode := BOT_DUMMY
+    else if mode = 'NORMAL' then tmode := BOT_NORMAL
+    else if mode = 'PRO' then tmode := BOT_PRO
+    else if mode = 'EASY' then tmode := BOT_EASY
+    else if mode = 'PATROL' then tmode := BOT_PATROL
+    else if mode = 'BEACH' then tmode := BOT_BEACH
+    else tmode := BOT_DUMMY;
+
+    spawnpos.x := stuffjson.GetFloat(['botgroups', groupIndex, 'spawnpos', 'x']);
+    spawnpos.y := stuffjson.GetFloat(['botgroups', groupIndex, 'spawnpos', 'y']);
+    spawnpos.z := stuffjson.GetFloat(['botgroups', groupIndex, 'spawnpos', 'z']);
+    spawnrad := stuffjson.GetInt(['botgroups', groupIndex, 'spawnrad']);
+
+    botGroupArr[groupIndex] := TBotGroup.Create(
+      groupIndex,
+      maxSize,
+      team,
+      tmode,
+      spawnpos,
+      spawnrad
+    );
+
+    weaponCount := stuffjson.GetNum(['botgroups', groupIndex, 'weapons']);
+    for weaponIndex := 0 to weaponCount - 1 do
+    begin
+      fegyvname := stuffjson.GetString(['botgroups', groupIndex, 'weapons', weaponIndex]);
+      botGroupArr[groupIndex].AddFegyv(fegyvercode(fegyvname));
+    end;
+  end;
+
+  botIndex := 1;
+  for groupIndex := 0 to high(botGroupArr) do
+    for i := 0 to botGroupArr[groupIndex].maxSize - 1 do
+    begin
+      tmode := botGroupArr[groupIndex].botMode;
+      spawnpos := botGroupArr[groupIndex].spawnpos;
+      spawnrad := botGroupArr[groupIndex].spawnrad;
+      tmpPos.x := spawnpos.x + random(spawnrad) - spawnrad div 2;
+      tmpPos.y := spawnpos.y;
+      tmpPos.z := spawnpos.z + random(spawnrad) - spawnrad div 2;
+
+      if length(botGroupArr[groupIndex].fegyvs) > 0 then
+          tfegyv := botGroupArr[groupIndex].fegyvs[random(high(botGroupArr[groupIndex].fegyvs) + 1)]
+      else if botGroupArr[groupIndex].team = 'TECH' then
+          tfegyv := FEGYV_MPG
+      else tfegyv := FEGYV_M4A1;
+
+      bot := TBot.Create(
+        botIndex,
+        tmode,
+        tfegyv,
+        tmpPos
+      );
+
+      botGroupArr[groupIndex].Add(bot);
+      botIndex := botIndex + 1;
+    end;
+end;
+
 function InitializeAll:HRESULT;
 var
   pIndices:PWordArray;
@@ -2505,7 +2623,7 @@ begin
   gunszin:=stuffjson.GetInt(['color_gun']);
   techszin:=stuffjson.GetInt(['color_tech']);
 
-  setlength(weapons, 6); //minden 0 indexnél üres, mert idióta vagyok
+  setlength(weapons, 6); //minden 0 indexnï¿½l ï¿½res, mert idiï¿½ta vagyok
   for i:=1 to 5 do
   begin
     setlength(weapons[i].col, 10); //getnum meg faszom...
@@ -2515,7 +2633,7 @@ begin
     end;
   end;
 
-  water1col:=stuffjson.GetInt(['weapon', 'WATER', '1']); //vízbe lövünk
+  water1col:=stuffjson.GetInt(['weapon', 'WATER', '1']); //vï¿½zbe lï¿½vï¿½nk
   water2col:=stuffjson.GetInt(['weapon', 'WATER', '2']);
   dustcol:=stuffjson.GetInt(['weapon', 'DUST']);
 
@@ -2628,9 +2746,15 @@ begin
   end;
   writeln(logfile, 'Loaded stickmen');flush(logfile);
 
+  selfieMaker := TSelfie.Create(muks, myfegyv, myfejcucc, D3DXVector3(cpx^, cpy^, cpz^), szogx, szogy);
+  writeln(logfile, 'Inited selfie maker');flush(logfile);
+
+  initbots;
+  writeln(logfile, 'Loaded bots');flush(logfile);
+
   setlength(posrads, 0);
   tmpint:=0;
-  for i:=0 to stuffjson.GetNum(['terrain_modifiers']) - 1 do //normális modifierek
+  for i:=0 to stuffjson.GetNum(['terrain_modifiers']) - 1 do //normï¿½lis modifierek
   begin
     tmpbol:=stuffjson.GetBool(['terrain_modifiers', i, 'agressive']);
 
@@ -2653,15 +2777,18 @@ begin
       inc(tmpint);
     end;
   end;
+  writeln(logfile, 'Loaded terrain modifiers');flush(logfile);
 
   if not loadfegyv then exit;
-  if not loadojjektumok then exit; //épületek alatti modifierek
+  writeln(logfile, 'Loaded fegyv');flush(logfile);
+
+  if not loadojjektumok then exit; //ï¿½pï¿½letek alatti modifierek
   tempmesh:=nil;
 
 
   j:=high(posrads);
   tmpint:=1;
-  for i:=0 to stuffjson.GetNum(['terrain_modifiers']) - 1 do //agresszív modifierek
+  for i:=0 to stuffjson.GetNum(['terrain_modifiers']) - 1 do //agresszï¿½v modifierek
   begin
     tmpbol:=stuffjson.GetBool(['terrain_modifiers', i, 'agressive']);
 
@@ -2815,7 +2942,7 @@ begin
     begin
       if not LTFF(g_pd3dDevice, 'data/textures/grass.jpg', futex, TEXFLAG_COLOR, nil, false) then exit;
     end;
-    if not LTFF(g_pd3dDevice, 'data/textures/shadernoise.jpg', hnoise, 0, nil, false) then exit; //shaderes terepen fûre és homokra
+    if not LTFF(g_pd3dDevice, 'data/textures/shadernoise.jpg', hnoise, 0, nil, false) then exit; //shaderes terepen fï¿½re ï¿½s homokra
     if not LTFF(g_pd3dDevice, 'data/textures/sand_02.jpg', homtex, TEXFLAG_COLOR, nil, false) then exit;
     if not LTFF(g_pd3dDevice, 'data/textures/rock_12.jpg', kotex, TEXFLAG_COLOR, nil, false) then exit;
   end;
@@ -2912,7 +3039,7 @@ begin
 
 
   FillupMenu;
-  crunchSettings; //tyúklife
+  crunchSettings; //tyï¿½klife
 
   ParticleSystem_Init(g_pd3ddevice);
 
@@ -3073,7 +3200,7 @@ begin
 
   laststate:= 'Loading sounds';
   writeln(logfile, 'Loading sounds');flush(logfile);
-  loadsounds; //  menu.DrawLoadScreen(85);-tõl 95-ig
+  loadsounds; //  menu.DrawLoadScreen(85);-tï¿½l 95-ig
 
   writeln(logfile, 'Initializing succeful');flush(logfile);
 
@@ -3149,34 +3276,28 @@ begin
   g_pd3dDevice.SetTransform(D3DTS_WORLD, identmatr);
 end;
 
-procedure SetupMuksmatr(mi:integer; isbot:boolean = FALSE);
+procedure SetupMuksmatr(mi:integer);
 var
   matWorld, matWorld2, matb:TD3DMatrix;
   pos:TD3DVector;
+  modifier:TD3DXVector3;
 begin
-
-  if not isbot then
-  begin
     if mi >= 0 then
     begin
       if ppl[mi].net.vtim > 0 then
         pos:=ppl[mi].pos.megjpos
       else
         pos:=ppl[mi].pos.pos;
+
+        D3DXVec3add(pos, pos, modifier);
+
      //pos:=pplpos[mi].pos;
      D3DXMatrixRotationY(matWorld2, ppl[mi].pos.irany + d3dx_pi);
      D3DXMatrixRotationX(matb, clipszogybajusz(ppl[mi].pos.irany2));
 
     end
     else
-     MessageBox(0, 'Benthagyott AI kód', 'Hiba', 0);
-    end
-  else
-  begin
-    pos:=bots[mi].mukso.pos.pos;
-    D3DXMatrixRotationY(matWorld2, bots[mi].mukso.pos.irany + d3dx_pi);
-    D3DXMatrixRotationX(matb, clipszogybajusz(bots[mi].mukso.pos.irany2));
-  end;
+     MessageBox(0, 'Benthagyott AI kï¿½d', 'Hiba', 0);
 
   D3DXMatrixMultiply(matb, matb, matWorld2);
 
@@ -3192,14 +3313,12 @@ begin
 end;
 
 
-procedure SetupFegyvmatr(mi:integer;iscsip:boolean; isbot:boolean = FALSE);
+procedure SetupFegyvmatr(mi:integer;iscsip:boolean);
 var
   matWorld, matWorld2, mat2:TD3DMatrix;
   pos:TD3DVector;
 begin
 
-  if not isbot then
-  begin
   if mi >= 0 then
   begin
     //pos:=pplpos[mi].pos;
@@ -3238,49 +3357,10 @@ begin
                   D3DXMatrixTranslation(matWorld, -0.05, 0, 0);
 
   end else
-    MessageBox(0, 'Benttthagyott AI kód', 'Faszom', 0);
+    MessageBox(0, 'Benttthagyott AI kï¿½d', 'Faszom', 0);
 
   if (ppl[mi].pos.state and MSTAT_MASK) = 8 then
     D3DXMatrixTranslation(matWorld, -0.2, 0.2, -0.1);
-
-  end
-  else
-  begin
-    pos := bots[mi].mukso.pos.pos;
-
-    if (bots[mi].mukso.pos.state and MSTAT_GUGGOL) > 0 then
-      pos.y:=pos.y - 0.5;
-    D3DXMatrixRotationY(matWorld2, bots[mi].mukso.pos.irany + d3dx_pi);
-    D3DXMatrixRotationX(mat2, clipszogy(bots[mi].mukso.pos.irany2));
-    D3DXMatrixMultiply(matWorld2, mat2, matWorld2);
-   {
-    if (bots[mi].mukso.pls.fegyv = FEGYV_HPL) and not iscsip then
-      D3DXMatrixTranslation(matWorld, -0.05, 0.02, -0.11)
-    else
-      if (bots[mi].mukso.pls.fegyv = FEGYV_M82A1) and iscsip then
-        D3DXMatrixTranslation(matWorld, -0.05, -0.05, 0.15)
-      else
-        if (bots[mi].mukso.pls.fegyv = FEGYV_BM3) and iscsip then
-          D3DXMatrixTranslation(matWorld, -0.05, -0.05, 0.06)
-        else
-          if (bots[mi].mukso.pls.fegyv = FEGYV_BM3) and not iscsip then
-            D3DXMatrixTranslation(matWorld, -0.05, 0.01, -0.08)
-          else
-            if (bots[mi].mukso.pls.fegyv = FEGYV_LAW) then
-              D3DXMatrixTranslation(matWorld, 0.05, 0, 0)
-            else
-              if (bots[mi].mukso.pls.fegyv = FEGYV_H31_T) or (ppl[mi].pls.fegyv = FEGYV_H31_G) then
-                D3DXMatrixTranslation(matWorld, 0.05, 0, 0)
-              else
-                if (bots[mi].mukso.pls.fegyv = FEGYV_QUAD) and (not iscsip) then
-                  D3DXMatrixTranslation(matWorld, -0.00, -0.1, -0.03)
-                else }
-                  D3DXMatrixTranslation(matWorld, -0.05, 0, 0);
-
-
-    if (bots[mi].mukso.pos.state and MSTAT_MASK) = 8 then
-      D3DXMatrixTranslation(matWorld, -0.2, 0.2, -0.1);
-  end;//ez a bot end
 
   D3DXMatrixMultiply(matWorld2, matWorld, matWorld2);
   // pos.x:=pos.x+0.05;
@@ -3414,8 +3494,8 @@ begin
   virt:=nil;
   try
     virt:=virtualalloc(nil, 4, MEM_COMMIT + MEM_RESERVE, PAGE_READWRITE + PAGE_GUARD);
-    {guard page-es memóriadebug tesztelése}
-    virt^:=$13370000; {Kiakad, kivéve ha fut a CE}
+    {guard page-es memï¿½riadebug tesztelï¿½se}
+    virt^:=$13370000; {Kiakad, kivï¿½ve ha fut a CE}
     cpy^:=10000000;
   except
   end;
@@ -3609,7 +3689,7 @@ begin
               tmptav:=tmptav + sqrt(tavpointpoint(tmppos, ppl[p].pos.pos));
           end
           else
-          begin //csapatra spawnol, meg félig ellenségre
+          begin //csapatra spawnol, meg fï¿½lig ellensï¿½gre
             if not D3DXVector3Equal(ppl[p].pos.pos, D3DXVector3Zero) then
               if ((ppl[p].pls.fegyv xor myfegyv) >= 128) then
                 tmptav:=tmptav + 0.5 * sqrt(tavpointpoint(tmppos, ppl[p].pos.pos))
@@ -3866,7 +3946,7 @@ begin
   //   if invulntim>0 then exit;
 
 
-     //hollo:=D3DXVector3(0,3,0); ///BVÁÁÁÁÁÁ
+     //hollo:=D3DXVector3(0,3,0); ///BVï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
   hollo:=D3DXVector3(0, -0.10, 0);
 
@@ -3893,7 +3973,7 @@ begin
         D3DXVec3add(v2, hollo, D3DxVector3(0, 0, -300));
 
   if shoti > 0 then
-    v2:=vec3add2(v2, randomvec2(random(10000), shoti * 1.6, shoti * 1.6, 0)); //3 golyó, ami messzire megy az pontosabb
+    v2:=vec3add2(v2, randomvec2(random(10000), shoti * 1.6, shoti * 1.6, 0)); //3 golyï¿½, ami messzire megy az pontosabb
 
 
   D3DXVec3add(hollo, hollo, D3DxVector3(0, 0, -0.7));
@@ -4118,7 +4198,7 @@ begin
   hDebugObject:=0;
   Status:=NtQueryInformationProcess($FFFFFFFF, 7, hDebugObject, 4, nil);
   if (Status = 0) then
-    if (hDebugObject <> 0) then {windows féle debug handler}
+    if (hDebugObject <> 0) then {windows fï¿½le debug handler}
       setlength(ppl, 0);
 {$ENDIF}
 end;
@@ -4206,7 +4286,7 @@ asm
  jz @josag
  MOV EAX,1000000
  MOV mapmode,EAX
- //büntetés
+ //bï¿½ntetï¿½s
 
  @josag:
 end;
@@ -4284,7 +4364,7 @@ begin
   else if dine.keyd(DIK_LMENU) and dine.keyd2(DIK_RETURN) and noborder and iswindowed then
   begin
     noborder:=false;
-    SetWindowLong(hWindow, GWL_STYLE, misteryNumber); //ezt valaki más kitalálja
+    SetWindowLong(hWindow, GWL_STYLE, misteryNumber); //ezt valaki mï¿½s kitalï¿½lja
     MoveWindow(hWindow, 0, 0, windowrect.Right - windowrect.Left, windowrect.Bottom - windowrect.Top, false);
   end;
 
@@ -4307,7 +4387,7 @@ begin
 
 
 
-  //Új irányítás kód
+  //ï¿½j irï¿½nyï¿½tï¿½s kï¿½d
   ds:=sin(szogx);
   dc:=cos(szogx);
   px:=0;py:=0;
@@ -4318,7 +4398,7 @@ begin
   // TODO
   inspect:=dine.keyd(DIK_O) and (halal = 0) and iranyithato and csipo;
   gugg:=dine.keyd(DIK_LCONTROL) and (halal = 0) and iranyithato and (not inspect);
-  if inspect then begin iranyithato := false; nemlohet := true; end;
+  if inspect or selfieMaker.isSelfieModeOn then begin iranyithato := false; nemlohet := true; end;
   if (myfegyv = FEGYV_QUAD) and (not csipo) then iranyithato:=false;
   fut:=dine.keyd(DIK_W) and (not dine.keyd(DIK_LSHIFT)) and ((vizben < 0.5) or nemviz) and iranyithato and csipo and (not gugg) and (halal = 0);
 
@@ -4358,7 +4438,7 @@ begin
     px:=px * 0.02;
     py:=py * 0.02;
 
-    mstat:=mstat and (MSTAT_GUGGOL + MSTAT_CSIPO); //animáció kikapcs
+    mstat:=mstat and (MSTAT_GUGGOL + MSTAT_CSIPO); //animï¿½ciï¿½ kikapcs
 
     undebug_debugobject;
   end;
@@ -4381,7 +4461,7 @@ begin
 
 {$ELSE}
   if repules then begin
-    cpox^:=cpox^ + 0.1 * (cpx^ - cpox^); //tehetetlenséd
+    cpox^:=cpox^ + 0.1 * (cpx^ - cpox^); //tehetetlensï¿½d
     cpoy^:=cpoy^ + 0.1 * (cpy^ - cpoy^);
     cpoz^:=cpoz^ + 0.1 * (cpz^ - cpoz^);
     if dine.keyd(DIK_SPACE) then
@@ -4727,6 +4807,10 @@ begin
           case myfegyv of
 
             FEGYV_M4A1:begin lovok:=holindul(FEGYV_M4A1);cooldown:=1 / 7.44;hatralok:=0.05; end;
+
+            FEGYV_GUNSUPP:begin lovok:=holindul(FEGYV_MPG);cooldown:=1 / 1.5;hatralok:=0.10; end;
+
+            FEGYV_TECHSUPP:begin lovok:=holindul(FEGYV_M4A1);cooldown:=1 / 7.44;hatralok:=0.05; end;
 
             FEGYV_BM3:begin lovok:=holindul(FEGYV_BM3);cooldown:=1 / 1.2;hatralok:=0.07; end;
 
@@ -5471,8 +5555,8 @@ begin
   cp:=D3DXVector3(cpx^, cpy^, cpz^);
 
 
-  // PROP ÜTKÖZÉS
-  { ideiglenesen kivéve
+  // PROP ï¿½TKï¿½Zï¿½S
+  { ideiglenesen kivï¿½ve
     for i:=0 to length(propsystem.objects)-1 do
    begin
     iri := propsystem.collision(cp,0.4,cp,i);
@@ -5480,7 +5564,7 @@ begin
    end;              {}
 
   laststate:= 'Docollisiontests 2';
-  //VONAL TESZT  ÉS ZÓNATESZT
+  //VONAL TESZT  ï¿½S Zï¿½NATESZT
   vec1:=D3DXVector3(cpx^, cpy^ + 1, cpz^);
   if not autoban then
     for l:=0 to high(ojjektumnevek) do
@@ -5537,7 +5621,7 @@ begin
             ojjektumarr[l].NeedKD;
             traverseKDTree(tmpbb, miket, ojjektumarr[l].KDData, ojjektumarr[l].KDTree, COLLISION_SOLID);
             ojjektumarr[l].makecurrent(miket);
-            //gömbök
+            //gï¿½mbï¿½k
             for k:=0 to high(gmbk) do
             begin
               if k = 10 then mdst:=fejvst else mdst:=vst;
@@ -5578,9 +5662,9 @@ begin
   laststate:= 'Docollisiontests(false) 4';
 
 
-  // AUTÓK AUTÓK AUTÓK AUTÓK AUTÓK AUTÓK AUTÓK AUTÓK AUTÓK
-  // AUTÓK AUTÓK AUTÓK AUTÓK AUTÓK AUTÓK AUTÓK AUTÓK AUTÓK
-  // AUTÓK AUTÓK AUTÓK AUTÓK AUTÓK AUTÓK AUTÓK AUTÓK AUTÓK
+  // AUTï¿½K AUTï¿½K AUTï¿½K AUTï¿½K AUTï¿½K AUTï¿½K AUTï¿½K AUTï¿½K AUTï¿½K
+  // AUTï¿½K AUTï¿½K AUTï¿½K AUTï¿½K AUTï¿½K AUTï¿½K AUTï¿½K AUTï¿½K AUTï¿½K
+  // AUTï¿½K AUTï¿½K AUTï¿½K AUTï¿½K AUTï¿½K AUTï¿½K AUTï¿½K AUTï¿½K AUTï¿½K
 
   for l:=0 to high(ojjektumnevek) do
     for i:=0 to ojjektumarr[l].hvszam - 1 do
@@ -5620,7 +5704,7 @@ begin
       //  if colltim>=4 then
       if colltim >= 1 then
       begin
-        laststate:= 'Docollisiontests 6a'; //föld
+        laststate:= 'Docollisiontests 6a'; //fï¿½ld
         if advwove(v1.x, v1.z) > v1.y then
         begin
           DoLAWRobbanas(i, false, true);
@@ -5639,7 +5723,7 @@ begin
           goto lawskip;
         end;
 
-        laststate:= 'Docollisiontests 6c'; // épület
+        laststate:= 'Docollisiontests 6c'; // ï¿½pï¿½let
 
         for l:=0 to high(ojjektumnevek) do
           for j:=0 to ojjektumarr[l].hvszam - 1 do
@@ -5810,7 +5894,7 @@ begin
             goto x72skip;
           end;
 
-        if eletkor > 300 then //vagy ez vagy a cél check kell, amúgy bugos
+        if eletkor > 300 then //vagy ez vagy a cï¿½l check kell, amï¿½gy bugos
         begin
           Dox72Robbanas(i, false);
           goto x72skip;
@@ -6176,7 +6260,7 @@ begin
   constraintvec(vec0);
   vec1:=vec0;vec1.y:=vec1.y + 100;
 
-  mennyit:=3; //ennyit bök elõre
+  mennyit:=3; //ennyit bï¿½k elï¿½re
   wide:=1.5;
 
   if ((myfegyv = FEGYV_M82A1) or (myfegyv = FEGYV_HPL)) and not csipo then
@@ -6198,7 +6282,7 @@ begin
   begin
     if felesHDR then i:=a else i:=a + 2;
 
-    HDRarr[i, HDRScanline]:=round(255 * 0.6); //a 0.4 lentebbrõl a vágási határ
+    HDRarr[i, HDRScanline]:=round(255 * 0.6); //a 0.4 lentebbrï¿½l a vï¿½gï¿½si hatï¿½r
     for k:=0 to high(ojjektumnevek) do
       for j:=0 to ojjektumarr[k].hvszam - 1 do
       begin
@@ -6232,11 +6316,11 @@ begin
       HDRincit:=5000;
 {$ENDIF}
 
-      //  lightness:=clip(0,0.4,HDRincit/8160)/0.4; // a világosakat eldobjuk
-      lightness:=clip(0.01, 1, HDRincit / 8160 / 0.5); // a világosakat eldobjuk
+      //  lightness:=clip(0,0.4,HDRincit/8160)/0.4; // a vilï¿½gosakat eldobjuk
+      lightness:=clip(0.01, 1, HDRincit / 8160 / 0.5); // a vilï¿½gosakat eldobjuk
 
       //  hdrgoal:=1+(1-lightness)*1.8;
-      //  hdrpref:=0.8; //todo csúszka izébe
+      //  hdrpref:=0.8; //todo csï¿½szka izï¿½be
       hdrgoal:=clip(1, 4, (1 / lightness) * hdrpref);
       //  writechat(formatfloat('0.####',hdrgoal));
 
@@ -6447,8 +6531,8 @@ begin
           atav:=tavpointpointsq(from, d3dxvector3(cpx^, cpy^, cpz^));
         if (atav < sqr(vis * opt_particle)) and ((hanyszor and period) = period) and (not disabled) then
         begin
-          //jöhet a rajzolás
-          chance:=opt_particle / PARTICLE_MAX; //ez már csak fallback, ha megváltozna valami
+          //jï¿½het a rajzolï¿½s
+          chance:=opt_particle / PARTICLE_MAX; //ez mï¿½r csak fallback, ha megvï¿½ltozna valami
 
           if (opt_particle=PARTICLE_MAX) then
           chance:=1;
@@ -6886,303 +6970,100 @@ begin
    end;
 end;
 
-procedure addBot(pos:TD3DXVector3);
+function getAllBots: TBotArray;
 var
-  bot:Tbot;
-  n,m,l:integer;
+  groupIndex, botIndex: Integer;
 begin
-  bot.partotert:=false;
-  n:=stuffjson.GetNum(['bots', 'dest']);
-  l:=random(n);
-  bot.front.x:=stuffjson.GetFloat(['bots', 'dest', l, 'x']) + random(30)-15;
-  bot.front.z:=stuffjson.GetFloat(['bots', 'dest', l, 'z']) + random(30)-15;
-  bot.dead:=0;
-  bot.accuracy:=stuffjson.GetFloat(['bots', 'accuracy']);
-
-  if myfegyv >= 128 then
-    bot.maxlovescd := stuffjson.GetInt(['bots', 'gun_cd'])
-  else
-    bot.maxlovescd := stuffjson.GetInt(['bots', 'tech_cd']);
-    
-  bot.allok := random(50);
-  bot.lovescd := bot.maxlovescd;
-  bot.mukso:=uresplayer;
-  bot.mukso.net.ip := 0;
-  bot.mukso.net.port := 0;
-  bot.mukso.net.UID := 0;
-  bot.mukso.pls.nev := 'BOT-1';
-  bot.mukso.pls.clan := '';
-  if myfegyv >= 128 then
-  begin
-    bot.mukso.pls.fegyv := FEGYV_M4A1;
-    bot.mukso.pls.fegyvskin := FEGYV_B_M4A1;
-  end
-  else
-  begin
-    bot.mukso.pls.fegyv := FEGYV_MPG;
-    bot.mukso.pls.fegyvskin := FEGYV_B_MPG;
-  end;
-
-  bot.mukso.pls.fejcucc := 1;
-  bot.mukso.pls.kills := 0;
-  bot.mukso.pls.autoban := FALSE;
-  bot.mukso.pls.visible := TRUE;
-  bot.mukso.pos.pos.x := stuffjson.GetFloat(['bots', 'spawn_x'])+(random(30)-15);
-  bot.mukso.pos.pos.y := stuffjson.GetFloat(['bots', 'spawn_y']);
-  bot.mukso.pos.pos.z := stuffjson.GetFloat(['bots', 'spawn_z'])+(random(30)-15);
-  m:=random(round(2.5 * d3dx_pi/3));
-  bot.mukso.pos.irany := arctan2((bot.front.x - bot.mukso.pos.pos.x),(bot.front.z - bot.mukso.pos.pos.z)) + (random(m) - (m/2));
-  //bot.mukso.pos.irany := random(30)/10;
-  bot.mukso.pos.irany2 := 0;
-  bot.mukso.pos.state := MSTAT_ALL;
-  SetLength(bots, length(bots) + 1);
-  bots[length(bots)-1] := bot;
+  for groupIndex := low(botGroupArr) to high(botGroupArr) do
+    for botIndex := low(botGroupArr[groupIndex].bots) to high(botGroupArr[groupIndex].bots) do
+      if not botGroupArr[groupIndex].bots[botIndex].getIsDead then
+      begin
+        setlength(result, succ(length(result)));
+        result[high(result)] := botGroupArr[groupIndex].bots[botIndex];
+      end;
 end;
-
 
 procedure handlebots;
 var
-  i,j,k,l,m,alive:Integer;
-  pos,pos2,tmp,targetpos:TD3DXVector3;
-  gravity,visibilityradius,hatvanfok,dst:single;
-  vankoztunkepulet,vankoztunkfold:boolean;
+  groupIndex, botIndex: Integer;
 begin
-  gravity:=0.2;
-  visibilityradius:=stuffjson.GetFloat(['bots', 'visibilityradius']);
-  hatvanfok:=d3dx_pi/3;
-
-  for i:=0 to high(bots) do
-  if(bots[i].dead = 0) then
-  begin
-    if (bots[i].mukso.pos.pos.y < waterlevel) and (not bots[i].partotert) then
-      bots[i].speed:=stuffjson.GetFloat(['bots', 'speed_water'])
-    else
-      bots[i].speed:=stuffjson.GetFloat(['bots', 'speed']);
-	
-    k := random(round(2.5 * hatvanfok));
-
-    if bots[i].lovescd > -1 then bots[i].lovescd := bots[i].lovescd - 1;
-    if bots[i].allok > -1 then bots[i].allok := bots[i].allok - 1;
-
-    bots[i].nekimegyekepuletnek := FALSE;
-    bots[i].latomjatekost := TRUE;//ugyis false lesz
-
-    if bots[i].partotert then
+  laststate:='handlebots';
+  if menu.lap >= 0 then exit;
+  if length(ppl) > 1 then exit;
+  for groupIndex := low(botGroupArr) to high(botGroupArr) do
+    for botIndex := low(botGroupArr[groupIndex].bots) to high(botGroupArr[groupIndex].bots) do
     begin
-      if tavpointpointsq(bots[i].mukso.pos.pos, D3DXVector3(bots[i].front.x, bots[i].mukso.pos.pos.y, bots[i].front.z)) > 300 then
-      begin
-          m:=random(round(0.5 * hatvanfok));
-          bots[i].mukso.pos.irany := arctan2((bots[i].front.x - bots[i].mukso.pos.pos.x),(bots[i].front.z - bots[i].mukso.pos.pos.z)) + (random(m) - (m/2));
-          bots[i].partotert:= false;
-      end;
-      if random(75) = 1 then
-        bots[i].mukso.pos.irany := bots[i].mukso.pos.irany + (random(k)-k/2);
-      if bots[i].allok <= 0 then if random(200) = 1 then bots[i].allok := random(50);
-    end
-    else
-    begin
-      bots[i].allok := -1;
-      if tavpointpointsq(bots[i].mukso.pos.pos, D3DXVector3(bots[i].front.x, bots[i].mukso.pos.pos.y, bots[i].front.z)) > 50 then
-       bots[i].partotert:= true;
+      botGroupArr[groupIndex].bots[botIndex].passInfo(
+        halal > 0, myfegyv, D3DXVector3(cpx^, cpy^, cpz^), mat_World, getAllBots
+      );
+      botGroupArr[groupIndex].bots[botIndex].doLogic;
     end;
-
-    targetpos:= D3DXVector3(
-      cpx^ + ((random(100)-50)/bots[i].accuracy),
-      cpy^+1.5 + ((random(100)-50)/bots[i].accuracy),
-      cpz^ + ((random(100)-50)/bots[i].accuracy)
-    );
-    for k:=0 to high(ojjektumnevek) do
-      for j:=0 to ojjektumarr[k].hvszam - 1 do
-      begin
-        tmp:=bots[i].mukso.pos.pos;
-        tmp.x:=tmp.x + (sin(bots[i].mukso.pos.irany) * 2);
-        tmp.y:=tmp.y + 1;
-        tmp.z:=tmp.z + (cos(bots[i].mukso.pos.irany) * 2);
-        if ojjektumarr[k].raytestbol(bots[i].mukso.pos.pos, tmp, j, COLLISION_SOLID) then
-          bots[i].nekimegyekepuletnek := TRUE
-        else
-        begin
-          pos := bots[i].mukso.pos.pos;
-          pos.y := pos.y + 1.5;
-          vankoztunkepulet := ojjektumarr[k].raytestbol(pos, targetpos, j, COLLISION_BULLET);
-          vankoztunkfold := raytestlvl(pos,targetpos,1,pos2);
-          if ((not bots[i].nekimegyekepuletnek)
-           and ((tavpointpointsq(pos,targetpos) < visibilityradius*visibilityradius))
-           and (not vankoztunkepulet)
-           and (not vankoztunkfold))
-           and (halal = 0)
-            and stuffjson.GetBool(['bots', 'attack_player'])
-            then
-              bots[i].latomjatekost := bots[i].latomjatekost AND TRUE
-            else
-              bots[i].latomjatekost := FALSE; 
-        end;
-      end;
-
-    if bots[i].latomjatekost then
-    begin
-      bots[i].allok := 1;
-      bots[i].mukso.pos.irany := arctan2((cpx^ - bots[i].mukso.pos.pos.x),(cpz^ - bots[i].mukso.pos.pos.z));
-      if bots[i].lovescd <= 0 then
-      begin
-        bots[i].lovescd := bots[i].maxlovescd;
-        setlength(multip2p.lovesek,length(multip2p.lovesek)+1);
-        multip2p.lovesek[high(multip2p.lovesek)].fegyv := bots[i].mukso.pls.fegyv;
-        multip2p.lovesek[high(multip2p.lovesek)].pos:=bots[i].mukso.pos.pos;
-        multip2p.lovesek[high(multip2p.lovesek)].pos.y:=multip2p.lovesek[high(multip2p.lovesek)].pos.y + 1.5;
-        multip2p.lovesek[high(multip2p.lovesek)].v2 := targetpos;
-        multip2p.lovesek[high(multip2p.lovesek)].kilotte:= -2;
-      end;
-    end;
-
-	  for l := 0 to high(multip2p.lovesek) do
-      if (multip2p.lovesek[l].kilotte = -1) and
-      (tavpointlinesq(bots[i].mukso.pos.pos, multip2p.lovesek[l].pos, multip2p.lovesek[l].v2, tmp, dst)) and
-       (dst < stuffjson.GetInt(['bots', 'player_accuracy'])) then
-        begin
-          bots[i].dead:=1;
-          alive:=0;
-          for k:=0 to length(bots) do
-            if(bots[k].dead = 0) then
-              alive:=alive+1;
-          addHudMessage(lang[59] + lang[106] + lang[60], $FF0000);
-          if(alive <> 0) and not skirmish then
-            addHudMessage(lang[107] +' '+ inttostr(alive)+' '+lang[108], $FF0000);
-        end;
-    if bots[i].allok <= 0 then
-    begin
-      k := random(round(2.5 * hatvanfok));
-      if bots[i].nekimegyekepuletnek then
-        if random(1) = 1 then
-          bots[i].mukso.pos.irany := bots[i].mukso.pos.irany + k
-        else
-          bots[i].mukso.pos.irany := bots[i].mukso.pos.irany - k
-      else
-      begin
-        bots[i].mukso.pos.state := MSTAT_FUT;
-        bots[i].mukso.pos.pos.x := bots[i].mukso.pos.pos.x + (sin(bots[i].mukso.pos.irany) * bots[i].speed);
-        bots[i].mukso.pos.pos.z := bots[i].mukso.pos.pos.z + (cos(bots[i].mukso.pos.irany) * bots[i].speed);
-      end
-    end else
-        bots[i].mukso.pos.state := MSTAT_ALL;
-
-    //gravitacijo
-    tmp := bots[i].mukso.pos.pos;
-    tmp.y := tmp.y - gravity;
-    if raytestlvl(bots[i].mukso.pos.pos,tmp,1,pos) then
-    begin
-        tmp := bots[i].mukso.pos.pos;
-        tmp.y := tmp.y + 0.5;
-        if raytestlvl(tmp,bots[i].mukso.pos.pos,1,pos2) then //szembe jon a domb
-          bots[i].mukso.pos.pos := pos2
-        else
-          bots[i].mukso.pos.pos := pos;
-    end
-    else
-      bots[i].mukso.pos.pos.y := bots[i].mukso.pos.pos.y - gravity;
-
-  end
-   else
-    bots[i].mukso.pos.pos:=D3DXVector3(0,0,0);
 end;
 
-procedure handlebattle;
+procedure handlebotsGettingShot(loves: TLoves);
 var
-i,k,alive:integer;
-
+  groupIndex, botIndex: Integer;
 begin
-  if battle and not multisc.warevent then
+  laststate:='renderbots';
+  if menu.lap >= 0 then exit;
+  if length(ppl) > 1 then exit;
+  for groupIndex := low(botGroupArr) to high(botGroupArr) do
+    for botIndex := low(botGroupArr[groupIndex].bots) to high(botGroupArr[groupIndex].bots) do
+      botGroupArr[groupIndex].bots[botIndex].collideProjectile(loves);
+end;
+
+procedure renderbots;
+var
+  groupIndex, botIndex: Integer;
+begin
+  laststate:='renderbots';
+  if menu.lap >= 0 then exit;
+  if length(ppl) > 1 then exit;
+  for groupIndex := low(botGroupArr) to high(botGroupArr) do
+    for botIndex := low(botGroupArr[groupIndex].bots) to high(botGroupArr[groupIndex].bots) do
+      if not botGroupArr[groupIndex].bots[botIndex].getIsDead then
+        botGroupArr[groupIndex].bots[botIndex].Draw(muks, fegyv, campos);
+end;
+
+procedure renderbotFegyvs;
+var
+  groupIndex, botIndex: Integer;
+  worldMatr: TD3DMatrix;
+label skipEgyet;
+begin
+  laststate:='renderbotFegyvs';
+  if menu.lap >= 0 then exit;
+  if length(ppl) > 1 then exit;
+  for groupIndex := low(botGroupArr) to high(botGroupArr) do
+    for botIndex := low(botGroupArr[groupIndex].bots) to high(botGroupArr[groupIndex].bots) do
+    begin
+      if botGroupArr[groupIndex].bots[botIndex].getIsDead then goto skipEgyet;
+      
+      worldMatr := botGroupArr[groupIndex].bots[botIndex].getFegyvMatr;
+      g_pd3dDevice.SetTransform(D3DTS_WORLD, worldMatr);
+      fegyv.drawfegyv(botGroupArr[groupIndex].bots[botIndex].getFegyv, felho.coverage, 10); //TODO figure out fegyvlit
+
+      skipEgyet:
+    end;
+end;
+
+procedure handleSelfies;
+begin
+  if selfieMaker.isSelfieModeOn then
   begin
-    if stuffjson.GetBool(['event', 'fog']) then
-    begin
-      if radius_rainy > stuffjson.GetInt(['fog', 'radius_battle']) then
-        radius_rainy:= radius_rainy - 5;
-      if radius_sunny > stuffjson.GetInt(['fog', 'radius_battle']) then
-        radius_sunny:= radius_sunny - 5;
-    end;
+    if dine.keyprsd(DIK_X) then inc(selfieMaker.zoomlevel);
+    if dine.keyprsd(DIK_B) then selfieMaker.dab := not selfieMaker.dab;
 
-    col_fog_rainy:= stuffjson.GetInt(['fog', 'color_battle']);
-    col_fog_sunny:= stuffjson.GetInt(['fog', 'color_battle']);
-
-    if stuffjson.GetBool(['event', 'weather']) then
-    begin
-      multisc.weather:=0;
-
-      if multisc.weather <> felho.coverage then
-      begin
-        felho.coverage:=multisc.weather;
-        felho.makenew;
-      end;
-    end;
-
-    //rise of atlantis
-    if (ojjektumhv[atlantis][0].y < 7) and stuffjson.GetBool(['event', 'atlantis_rise']) then
-    begin
-      ojjektumhv[atlantis][0].y:= ojjektumhv[atlantis][0].y + 1;
-      ojjektumarr[atlantis]:=T3dojjektum.Create('data/models/buildings/' + ojjektumnevek[atlantis], g_pd3ddevice, ojjektumscalek[atlantis].x, ojjektumscalek[atlantis].y, ojjektumhv[atlantis], ojjektumflags[atlantis]);
-
-      ojjektumhv[atlantis_b][0].y:= ojjektumhv[atlantis_b][0].y + 1;
-      ojjektumarr[atlantis_b]:=T3dojjektum.Create('data/models/buildings/' + ojjektumnevek[atlantis_b], g_pd3ddevice, ojjektumscalek[atlantis_b].x, ojjektumscalek[atlantis_b].y, ojjektumhv[atlantis_b], ojjektumflags[atlantis_b]);
-
-      for i:=0 to length(bubbles) do
-        if(bubbles[i].posx = -780) then
-          bubbles[i].posy := bubbles[i].posy + 1;
-
-      ojjektumrenderer.Destroy;
-      ojjektumrenderer:=T3DORenderer.Create(g_pd3ddevice);
-      if ojjektumhv[atlantis][0].y = 7 then remaketerrain;
-    end;
-
-    if not skirmish then
-    begin
-    //waves
-      if(high(bots) > 0) then
-      begin
-        alive:=0;
-        for k:=0 to high(bots) do
-          if(bots[k].dead = 0) then
-            alive:=alive+1;
-        if(alive = 0) then
-        begin
-          setlength(bots, 0);
-          addHudMessage(stuffjson.GetString(['event', 'wave', wave-1, 'end']), $FF0000);
-          evalscript(stuffjson.GetString(['event', 'wave', wave-1, 'next']))
-        end;
-      end;
-    //skirmish
-    end
-    else
-    begin
-      if(high(bots) > 0) then
-      begin
-        alive:=0;
-        for k:=0 to high(bots) do
-          if(bots[k].dead = 0) then
-            alive:=alive+1;
-        if(alive < stuffjson.GetInt(['event', 'skirmish_bots'])) then
-        begin
-          accuracy_modif:=accuracy_modif+5;
-          for k:=alive to stuffjson.GetInt(['event', 'skirmish_bots']) do
-          begin
-            addbot(D3DXVector3(0, 0, 0));
-            bots[high(bots)].accuracy:=bots[high(bots)].accuracy+accuracy_modif;
-          end;
-        end;
-      end
-    end
-  end
-  else //RESET
-  begin
-    if radius_rainy < stuffjson.GetInt(['fog', 'radius_rainy']) then
-      radius_rainy:= radius_rainy + 5;
-    if radius_sunny < stuffjson.GetInt(['fog', 'radius_sunny']) then
-      radius_sunny:= radius_sunny + 5;
-
-    col_fog_rainy:= stuffjson.GetInt(['fog', 'color_rainy']);
-    col_fog_sunny:= stuffjson.GetInt(['fog', 'color_sunny']);
-    setlength(bots, 0);
-    wave:=0;
-    skirmish:=false;
+    //evalscriptline('fastinfo selfie mode on');
+    iranyithato := FALSE;
+    nemlohet := TRUE;
+    selfieMaker.muks := muks;
+    selfieMaker.fejcuccrenderer := fejcuccrenderer;
+    selfieMaker.fejcucc := myfejcucc;
+    selfieMaker.campos := D3DXVector3(cpx^, cpy^, cpz^);
+    selfieMaker.camrotX := szogx;
+    selfieMaker.camrotY := szogy;
+    selfieMaker.render;
   end;
 end;
 
@@ -7211,9 +7092,11 @@ var
   start, stop:cardinal;
 begin
   gtc:=gettickcount;
+  //evalscriptline('fastinfo ' + intToStr(gtc));
   korlat:=0;
   repeat
     inc(hanyszor);
+
     // if playrocks>1 then playrocks:=1;
     if vizben < 0 then vizben:=0;
     if vizben > 1 then vizben:=1;
@@ -7321,11 +7204,11 @@ begin
                         begin
                           tmp4:=randomvec2(animstat * 2 + j * 3, 0.3 * aauto.getseb, aauto.getseb + 0.04, 0.3 * aauto.getseb);
                           d3dxvec3add(tmp3, aauto.getmotionvec, tmp4);
-                          D3DXVec3Lerp(tmp3, tmp3, tmp4, Random(101) / 100); //random vs random + mozgás vektor //tmp4 vége
-                          tmp4:=D3DXVector3(0, 0, 2 * aauto.kerekvst * ((hanyszor mod 2) - 0.5)); //ne a kerék szélén legyen, hanem a közepén
+                          D3DXVec3Lerp(tmp3, tmp3, tmp4, Random(101) / 100); //random vs random + mozgï¿½s vektor //tmp4 vï¿½ge
+                          tmp4:=D3DXVector3(0, 0, 2 * aauto.kerekvst * ((hanyszor mod 2) - 0.5)); //ne a kerï¿½k szï¿½lï¿½n legyen, hanem a kï¿½zepï¿½n
                           D3DXVec3TransformCoord(tmp4, tmp4, aauto.kerektransformmatrix(hanyszor mod 4));
-                          d3dxvec3add(tmp4, tmp4, randomvec2(animstat * 2 + j * 3, 0.5 * aauto.kerekvst, 2 * aauto.kereknagy, 0.5 * aauto.kerekvst)); //egyéb random hely
-                          tmpfloat1:=random(1001) / 1000; //méret és súly
+                          d3dxvec3add(tmp4, tmp4, randomvec2(animstat * 2 + j * 3, 0.5 * aauto.kerekvst, 2 * aauto.kereknagy, 0.5 * aauto.kerekvst)); //egyï¿½b random hely
+                          tmpfloat1:=random(1001) / 1000; //mï¿½ret ï¿½s sï¿½ly
                           Particlesystem_add(GravityparticleCreate(tmp4, tmp3, tmpfloat1 * 0.25 + 0.012, tmpfloat1 * 0.10 + 0.005, 0.2 + tmpfloat1 * 0.1, colorlerp(col_mud, col_grass, Random(3) / 2), 0, random(100) + 170, TX_HOMALY));
                         end;
                         for j:=0 to round((((Random(1000) + 1) / 1000) + opt_particle / PARTICLE_MAX) * 10) do
@@ -7466,7 +7349,7 @@ begin
     laststate:= 'Doing Real Physics';
 
 
-    //Saját fizika
+    //Sajï¿½t fizika
 
     iranyithato:=false;
     docollisiontests;
@@ -7506,7 +7389,7 @@ begin
         if eses and (opt_particle > 0) then
         begin
           ppos:=D3DXVector3(cpx^, cpy^, cpz^);
-          if (felho.coverage > 5) and (ppos.y < 15) and (ppos.y > 10.35) then //parton + nincs esõ
+          if (felho.coverage > 5) and (ppos.y < 15) and (ppos.y > 10.35) then //parton + nincs esï¿½
           begin
             col:=col_dust_sand;
             for i:=0 to 20 * opt_particle do
@@ -7515,7 +7398,7 @@ begin
               Particlesystem_add(GravityparticleCreate(ppos, tmp, random(10) / 60 + 0.03, 0.1, 0.08, col, 0, random(100) + 170));
             end;
           end
-          else if (felho.coverage <= 5) and (ppos.y >= 15) then //földön + esõ
+          else if (felho.coverage <= 5) and (ppos.y >= 15) then //fï¿½ldï¿½n + esï¿½
           begin
             col:=col_mud;
             for i:=0 to 20 * opt_particle do
@@ -7524,7 +7407,7 @@ begin
               Particlesystem_add(GravityparticleCreate(ppos, tmp, random(5) / 60 + 0.02, 0.05, 0.18, col, 0, random(100) + 170));
             end;
           end
-          else if (ppos.y<(10.1 + singtc / 10)) then //vízben
+          else if (ppos.y<(10.1 + singtc / 10)) then //vï¿½zben
           begin
             col:=water1col; //logic
             for i:=0 to 30 * opt_particle do
@@ -7565,7 +7448,7 @@ begin
     else
       iranyithato:=true;
     if tulnagylokes then iranyithato:=false;
-    //PLR fizikája
+    //PLR fizikï¿½ja
 {$IFNDEF repkedomod}
     if not iranyithato then
     begin
@@ -7591,7 +7474,7 @@ begin
     if playrocks < 0 then playrocks:=0;
 
     laststate:= 'Doing Real Physics 2';
-    //Egyéb plr cucc
+    //Egyï¿½b plr cucc
 
     if (cpy^ < waterlevel) and ((mstat and MSTAT_MASK) > 0) then
       vizben:=vizben + 0.01
@@ -7689,7 +7572,7 @@ begin
       begin
 
         cpx^:=(cpx^ * 19 + rongybabak[rbid].gmbk[5].x) / 20; //ingadozik minta kvantum XD
-        cpy^:=(cpy^ * 19 + rongybabak[rbid].gmbk[5].y) / 20; //ki kell egynlíteni
+        cpy^:=(cpy^ * 19 + rongybabak[rbid].gmbk[5].y) / 20; //ki kell egynlï¿½teni
         cpz^:=(cpz^ * 19 + rongybabak[rbid].gmbk[5].z) / 20;
         cpox^:=(cpox^ * 19 + cpx^) / 20; //damp
         cpoy^:=(cpoy^ * 19 + cpy^) / 20;
@@ -7771,7 +7654,7 @@ begin
       else
         mszogy:=mszogy + sin(animstat * 2 * D3DX_PI) / 400;
     if ((mstat and MSTAT_MASK) = 5) then
-    begin //animstat kiteljsített formában
+    begin //animstat kiteljsï¿½tett formï¿½ban
       mszogx:=mszogx + sin(animstat * 2 * D3DX_PI) / 50;
       mszogy:=mszogy + sin(animstat * 4 * D3DX_PI) / 200;
     end;
@@ -7861,7 +7744,7 @@ end;
       multisc.Medal('U', 'L');
 
 
-    // nézzük a beérkezett medálokat
+    // nï¿½zzï¿½k a beï¿½rkezett medï¿½lokat
     if (multisc.medallist[0] <> '') and (menu.medalanimstart = 0) then
     begin
       LTFF(g_pd3dDevice, 'data/textures/medals/' + multisc.medallist[0] + '.png', menu.medaltex, 0, nil, false);
@@ -7914,7 +7797,7 @@ end;
         inc(colltim);
         inc(eletkor);
         tmp:=v1;
-        //gyorsuló
+        //gyorsulï¿½
 
         v1.x:=(v1.x - v2.x) * 1.0215 + v1.x;
         v1.y:=(v1.y - v2.y) * 1.0215 + v1.y;
@@ -8027,7 +7910,7 @@ end;
         end;
       end;
 
-    //lövedékek
+    //lï¿½vedï¿½kek
 
     for i:=0 to high(h31_tproj) do
       with h31_tproj[i] do
@@ -8247,7 +8130,7 @@ end;
 
 
     //0  TECH //12 killing spreek   //18 GUN //32 killing spreek
-    //Haláli rádiók :P
+    //Halï¿½li rï¿½diï¿½k :P
 
     if opt_taunts and tauntvolt then
     begin
@@ -8409,7 +8292,7 @@ end;
 
 procedure handlefizikVEGE;
 begin
-  // üres, csak könyvjelzõ;
+  // ï¿½res, csak kï¿½nyvjelzï¿½;
 end;
 {$ENDIF}
 
@@ -8489,7 +8372,7 @@ begin
         if cooldown < random(100) / 100 then
         begin
 
-          //ZÕD
+          //Zï¿½D
           rnd:=0;
           for i:=0 to 9 do
           begin
@@ -8530,7 +8413,7 @@ begin
             particlesystem_Add(fenycsikcreate(v1, v2, 0.005, weapons[2].col[8], 1));
           end;
 
-          //FEHÉR
+          //FEHï¿½R
 
           rnd:=0;
           for i:=0 to 9 do
@@ -8711,11 +8594,11 @@ var
 {$ENDIF}
 begin
 {$IFDEF undebug}
-  {windows féle debug kiiktatása}
+  {windows fï¿½le debug kiiktatï¿½sa}
   virt:=nil;
   try
     virt:=virtualalloc(nil, 4, MEM_COMMIT + MEM_RESERVE, PAGE_NOACCESS);
-    {noacces-es memóriadebug tesztelése}
+    {noacces-es memï¿½riadebug tesztelï¿½se}
     virt^:=$13370000;
     cpy^:=10000000;
   except
@@ -8772,7 +8655,7 @@ begin
     else
       stopSound(15, 25);
 
-  //Legközelebbi 3
+  //Legkï¿½zelebbi 3
 
   for i:=0 to high(sorrend) do
   begin
@@ -8829,7 +8712,7 @@ begin
   end;
 
 
-  //Rakéták
+  //Rakï¿½tï¿½k
 
   for i:=0 to 2 do
   begin
@@ -8837,7 +8720,7 @@ begin
     sortav[i]:=100000;
   end;
 
-  //Legközelebbi 3
+  //Legkï¿½zelebbi 3
   for i:=0 to high(lawproj) do
   begin
     tt:=tavpointpointsq(lawproj[i].v1, hol);
@@ -8870,7 +8753,7 @@ begin
     else
       StopSound(16, i);
 
-  //Noobgolyók
+  //Noobgolyï¿½k
 
   for i:=0 to 2 do
   begin
@@ -8878,7 +8761,7 @@ begin
     sortav[i]:=100000;
   end;
 
-  //Legközelebbi 6
+  //Legkï¿½zelebbi 6
   for i:=0 to high(noobproj) do
   begin
     tt:=tavpointpointsq(noobproj[i].v1, hol);
@@ -8913,7 +8796,7 @@ begin
 
 
   //Humi
-  //Legközelebbi 3
+  //Legkï¿½zelebbi 3
   for i:=0 to 2 do
   begin
     sorrend[i]:= -1;
@@ -8992,7 +8875,7 @@ begin
       StopSound(7, i);
   end;
 
-  //Player mozgás
+  //Player mozgï¿½s
 
   if (playrocks > 0) and (halal = 0) then
   begin
@@ -9039,7 +8922,7 @@ begin
 
   laststate:= 'CommitDeferredSoundstuff';
   CommitDeferredSoundStuff;
-  laststate:= 'HandleDS vége';
+  laststate:= 'HandleDS vï¿½ge';
 end;
 
 
@@ -9428,6 +9311,7 @@ begin
     aloves:=multip2p.lovesek[i];
     constraintvec(aloves.pos);
     constraintvec(aloves.v2);
+    handlebotsGettingShot(aloves);
     {for j:=0 to bunker.hvszam-1 do
      aloves.v2:=bunker.raytest(aloves.pos,aloves.v2,j);
     for k:=0 to high(ojjektumnevek) do
@@ -9440,7 +9324,7 @@ begin
     }
 
     case aloves.fegyv of //////
-      FEGYV_M4A1, FEGYV_M82A1, FEGYV_MP5A3, FEGYV_BM3, FEGYV_BM3_2, FEGYV_BM3_3:
+      FEGYV_M4A1, FEGYV_M82A1, FEGYV_MP5A3, FEGYV_BM3, FEGYV_BM3_2, FEGYV_BM3_3, FEGYV_GUNSUPP:
         begin
           Particlesystem_add(Bulletcreate(aloves.pos, aloves.v2, 3, 20, 0.01, $00A0A050, 1, false));
           tmp:=sikmetsz(aloves.pos, aloves.v2, 10);
@@ -9464,7 +9348,9 @@ begin
         end;
 
 
-      FEGYV_MPG:begin
+      FEGYV_MPG,
+      FEGYV_TECHSUPP:
+        begin
           particle_special_mpg(aloves.pos, aloves.v2);
           ParticleSystem_Add(Simpleparticlecreate(aloves.v2, D3DXVector3Zero, 0.14, 0.01, weapons[1].col[1], $00000000, 125));
         end;
@@ -9527,9 +9413,9 @@ begin
 {$ENDIF}
 
     case aloves.fegyv of
-      FEGYV_MPG:playsound(4, false, gtc, true, aloves.pos);
+      FEGYV_MPG, FEGYV_TECHSUPP:playsound(4, false, gtc, true, aloves.pos);
       FEGYV_M82A1:playsound(5, false, gtc, true, aloves.pos);
-      FEGYV_M4A1:playsound(0, false, gtc, true, aloves.pos);
+      FEGYV_M4A1, FEGYV_GUNSUPP:playsound(0, false, gtc, true, aloves.pos);
       FEGYV_QUAD:playsound(6, false, gtc, true, aloves.pos);
       FEGYV_NOOB:playsound(18, false, gtc, true, aloves.pos);
       FEGYV_LAW:playsound(20, false, gtc, true, aloves.pos);
@@ -9576,6 +9462,7 @@ begin
     love:= -1;
 
     //balance
+    //hitboxes
     if (aloves.fegyv >= 128) xor (myfegyv < 128) then love:= -1 else
       case aloves.fegyv of
         FEGYV_M4A1:love:=meglove(muks.gmbk, muks.kapcsk, aloves.pos, aloves.v2, 0.033);
@@ -9587,6 +9474,8 @@ begin
         FEGYV_BM3_2:love:=meglove(muks.gmbk, muks.kapcsk, aloves.pos, aloves.v2, 0.10);
         FEGYV_BM3_3:love:=meglove(muks.gmbk, muks.kapcsk, aloves.pos, aloves.v2, 0.13);
         FEGYV_HPL:love:=meglove(muks.gmbk, muks.kapcsk, aloves.pos, aloves.v2, 0.065);
+        FEGYV_GUNSUPP:love:=meglove(muks.gmbk, muks.kapcsk, aloves.pos, aloves.v2, 0.033);
+        FEGYV_TECHSUPP:love:=meglove(muks.gmbk, muks.kapcsk, aloves.pos, aloves.v2, 0.15);
       end;
 
     {if  ((aloves.fegyv=FEGYV_QUAD) or (aloves.fegyv=FEGYV_MPG)) then
@@ -9627,8 +9516,11 @@ begin
             addrongybaba(d3dxvector3(cpx^, cpy^, cpz^), d3dxvector3(cpox^, cpoy^, cpoz^), tmp, myfegyv, love, 0, aloves.kilotte);
           if aloves.kilotte >= 0 then
             addHudMessage(lang[65] + ' ' + ppl[aloves.kilotte].pls.nev, betuszin)
-          else
-            addHudMessage(lang[65] + ' ' + lang[105], betuszin);
+          else if aloves.kilotte = -1 then
+            addHudMessage(lang[65] + ' ' + lang[105], betuszin)
+          else if aloves.kilotte = -2 then
+            addHudMessage(lang[65] + ' ' + lang[109], betuszin);
+
           hudMessages[low(hudMessages)].fade:=200;
 
           meghaltam:=true;
@@ -10065,14 +9957,14 @@ begin
     if vegeffekt > 256 then begin
       menu.g_psprite.Flush;
       menu.g_psprite.SetTransform(identmatr);
-      menu.DrawText('Stickman Atlantis: Egy elveszett város  Letölthetõ a honlapról!',
+      menu.DrawText('Stickman Atlantis: Egy elveszett vï¿½ros  Letï¿½lthetï¿½ a honlaprï¿½l!',
         0.1, 0.4, 0.9, 0.8, 1, $02000000 * cardinal(min(vegeffekt - 256, 127)) + $000066FF);
       nohud:=true;
     end;
 
     if vegeffekt > 750 then begin
       gobacktomenu:=true;
-      kickmsg:= 'Stickman Atlantis: Egy elveszett város  Letölthetõ a honlapról!';
+      kickmsg:= 'Stickman Atlantis: Egy elveszett vï¿½ros  Letï¿½lthetï¿½ a honlaprï¿½l!';
       hardkick:=true;
     end;
 
@@ -10142,7 +10034,7 @@ begin
 
 
      // emberek fej feletti nevei
-     // és chatbubi
+     // ï¿½s chatbubi
 
     for i:=0 to high(ppl) do
     begin
@@ -10316,7 +10208,7 @@ begin
     //txt:=FloatToStr(szogy);
     //menu.DrawSzinesChat(txt,0.3,mag+0.05,1,0.29,$FF000000+betuszin);
 
-    txt:=#17#128 + inttostr(zonaellen) + #17#32 + ' / ' + inttostr(zonabarat); //ellenségek és barátok száma
+    txt:=#17#128 + inttostr(zonaellen) + #17#32 + ' / ' + inttostr(zonabarat); //ellensï¿½gek ï¿½s barï¿½tok szï¿½ma
     menu.DrawSzinesChat(txt, 0.9, mag + 0.075, 1, 0.31, $FF000000 + betuszin);
 
 
@@ -10388,7 +10280,7 @@ begin
       menu.drawtext(mp3stationname, 0, 0.85, 0.4, 0.9, 1, $FF000000 + betuszin); //d3dxvec3length(tmp)*360)
       menu.drawtext(inttostr(round(tegla.pillspd * 360)) + 'Km/h ', 0, 0.9, 0.4, 1, 2, $FF000000 + betuszin);
       // +inttostr(tegla.shift) + ': ' + inttostr(round(tegla.fordulatszam*1000))
-      // sebesség, fordulatszám
+      // sebessï¿½g, fordulatszï¿½m
       if tegla.axes[2].y < 0 then
       begin
         if latszonazR > 1 then dec(latszonazR) else
@@ -10517,7 +10409,7 @@ begin
      { for i:=0 to 10 do
        menu.drawtext(inttostr(i)+':'+inttostr(microprofile[i]),0.3,0.1+i/20,0.5,0.2+i/20,0,$FFFF0000); }
 
-     //Ezt a végére, mert matrix-flush-baszakodás van benne
+     //Ezt a vï¿½gï¿½re, mert matrix-flush-baszakodï¿½s van benne
 
     for i:=0 to high(ac) do
       if (ap[i].y - ap2[i].y) < 1 then ac[i]:= '';
@@ -10526,7 +10418,7 @@ begin
       menu.DrawChatsInGame(ac, ap, aa);
 
 
-    //Ez is flush-baszakodós
+    //Ez is flush-baszakodï¿½s
     if dine.keyd(DIK_TAB) then
     begin
 
@@ -10613,7 +10505,7 @@ begin
     else
       if multisc.kihivszam > 0 then //multisc.kihivas <> nil
       begin
-        // 1v1 kihívós menü
+        // 1v1 kihï¿½vï¿½s menï¿½
         dec(multisc.kihivszam);
         menu.DrawRect(0.70, 0.92, 0.98, 0.985, $A0000000);
         menu.g_psprite.Flush;
@@ -10927,11 +10819,16 @@ begin
 
 end;
 
-procedure rendermuks(i:integer;astate, afegyv:byte; isbot:boolean = FALSE);
+procedure rendermuks(i:integer;astate, afegyv:byte);
+var
+  tmp: TD3DXVector3;
 begin
 
-  if not isbot then
-  begin
+  //techsupp teszt code
+  //  tmp.x := (random(10)-5)/10;
+  //  tmp.z := (random(10)-5)/10;
+  //  evalscriptline('fastinfo ' +  FloatToStr(tmp.x));
+
   SetupMuksmatr(i);
   muks.jkez:=fegyv.jkez(afegyv, astate, clipszogy(ppl[i].pos.irany2));
   muks.bkez:=fegyv.bkez(afegyv, astate, clipszogy(ppl[i].pos.irany2));
@@ -10955,42 +10852,6 @@ begin
   else
     muks.Render(gunszin, mat_world, D3DXVector3(cpx^, cpy^, cpz^));
 
-  end
-  else
-  begin
-    SetupMuksmatr(i, TRUE);
-    muks.jkez:=fegyv.jkez(afegyv, astate, clipszogy(bots[i].mukso.pos.irany2));
-    muks.bkez:=fegyv.bkez(afegyv, astate, clipszogy(bots[i].mukso.pos.irany2));
-
-    case astate and MSTAT_MASK of
-      0:muks.stand((astate and MSTAT_GUGGOL) > 0);
-      1:muks.Walk(animstat, (astate and MSTAT_GUGGOL) > 0);
-      2:muks.Walk(1 - animstat, (astate and MSTAT_GUGGOL) > 0);
-      3:muks.SideWalk(animstat, (astate and MSTAT_GUGGOL) > 0);
-      4:muks.SideWalk(1 - animstat, (astate and MSTAT_GUGGOL) > 0);
-      5:muks.Runn(animstat, true);
-      //6:muks.Chat(animstate,(astate and MSTAT_GUGGOL) > 0);
-      7:muks.Greet(animstat,(astate and MSTAT_GUGGOL) > 0);
-      8:muks.Fegyverup(animstat,(astate and MSTAT_GUGGOL) > 0);
-    end;
-
-    bots[i].mukso.pls.fejh:=muks.gmbk[10];
-
-    if afegyv > 127 then
-      muks.Render(techszin, mat_world, D3DXVector3(cpx^, cpy^, cpz^))
-    else
-      muks.Render(gunszin, mat_world, D3DXVector3(cpx^, cpy^, cpz^));
-  end
-end;
-
-procedure renderbot(i:Integer);
-begin
-    if bots[i].mukso.pls.autoban then bots[i].mukso.pls.visible:=false;
-    if bots[i].mukso.pls.visible then
-      if tavpointpointsq(bots[i].mukso.pos.pos, campos) < sqr(500) then
-      begin
-        rendermuks(i, bots[i].mukso.pos.state, bots[i].mukso.pls.fegyv, TRUE); //nem skin mert ez a babu szine
-      end;
 end;
 
 procedure rendermykez;
@@ -11000,6 +10861,8 @@ var
   i:integer;
   //vallmag:single;
 begin
+  if selfieMaker.isSelfieModeOn then exit;
+  
   setupmymuksmatr;
   setupmyfegyvmatr;
   setupidentmatr;
@@ -11484,7 +11347,7 @@ begin
     g_pd3dDevice.SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
 
 
-    //közel
+    //kï¿½zel
     if not (cpy^ > 150) then
       if useoldterrain then
       begin
@@ -11543,7 +11406,7 @@ begin
     g_pd3dDevice.SetRenderState(D3DRS_ALPHABLENDENABLE, iFalse);
 
 
-    DrawLvl((cpy^ > 150)); //táv
+    DrawLvl((cpy^ > 150)); //tï¿½v
 
 
     g_pd3dDevice.SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
@@ -11567,7 +11430,7 @@ begin
     initojjektumok(g_pd3ddevice, FAKE_HDR);
     g_pd3dDevice.SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
     g_pd3dDevice.SetRenderState(D3DRS_TEXTUREFACTOR, $FF5050FF);
-    //Shaderek nélkül.
+    //Shaderek nï¿½lkï¿½l.
 
     g_pd3ddevice.SetTransform(D3DTS_TEXTURE1, identmatr);
     g_pd3ddevice.SetTransform(D3DTS_TEXTURE0, identmatr);
@@ -11701,7 +11564,7 @@ begin
   checksum:=checksum + (Pdword(addr)^);
   if checksum = 0 then
     exit;
-  // Ezért überbünti jár. Viszlát stack.
+  // Ezï¿½rt ï¿½berbï¿½nti jï¿½r. Viszlï¿½t stack.
   asm
   MOV ECX,-1
   MOV EDI,ESP         //REP STOSD
@@ -11842,7 +11705,7 @@ begin
   else
     (if lightIntensity > 0 then lightIntensity:=max(0, lightIntensity - 0.04));
 
-  //hát, ez elõre kell. pont.
+  //hï¿½t, ez elï¿½re kell. pont.
   if (opt_water > 0) and not winter then
     Renderreflectiontex;
 
@@ -11922,7 +11785,7 @@ begin
     begin
 
 
-      //KÖZELI fû
+      //Kï¿½ZELI fï¿½
 
       if useoldterrain then
       begin
@@ -11940,7 +11803,7 @@ begin
 
         g_pd3dDevice.SetTexture(0, kotex);
         g_pd3dDevice.SetTexture(1, noisetex);
-        //KÖZELI szikla
+        //Kï¿½ZELI szikla
 
         DrawSplat(splatinds[0], splatinds[1]);
       end
@@ -12011,7 +11874,7 @@ begin
     //    g_pd3dDevice.SetSamplerState(0, D3DSAMP_ADDRESSU,  D3DTADDRESS_CLAMP);
     //    g_pd3dDevice.SetSamplerState(0, D3DSAMP_ADDRESSV,  D3DTADDRESS_CLAMP);
     //     g_pd3dDevice.SetRenderState(D3DRS_ALPHABLENDENABLE, iFalse);
-    ////     TÁVOLI TEREP
+    ////     Tï¿½VOLI TEREP
 
       g_pd3dDevice.SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
       g_pd3dDevice.SetIndices(g_pIBlvl2);
@@ -12059,7 +11922,7 @@ begin
     g_pd3dDevice.SetRenderState(D3DRS_ALPHATESTENABLE, iTrue);
     g_pd3ddevice.SetRenderState(D3DRS_ALPHAREF, $5);
 
-    //noiseal szorzott távoli, nem kell
+    //noiseal szorzott tï¿½voli, nem kell
 //     DrawLvl((cpy^>150));
     g_pd3dDevice.SetRenderState(D3DRS_ALPHABLENDENABLE, iFalse);
     g_pd3dDevice.SetRenderState(D3DRS_ALPHATESTENABLE, iFalse);
@@ -12077,7 +11940,7 @@ begin
     g_pd3dDevice.SetRenderState(D3DRS_AMBIENT, $FFFFFFFF);
 
 
-    // a bubblékat is ki kéne raj-zolni
+    // a bubblï¿½kat is ki kï¿½ne raj-zolni
 
 
     laststate:= 'Rendering Stickman and ragdolls';
@@ -12094,7 +11957,7 @@ begin
     setupidentmatr;
     laststate:= 'setupidentmatr';
 
-    if (menu.lap = -1) then //MENÜBÕL nem kéne...
+    if (menu.lap = -1) then //MENï¿½Bï¿½L nem kï¿½ne...
     begin
       if (halal = 0) and (not autoban) and (not kulsonezet) and (mapmode = 0) then
         if (csipo) or ((myfegyv <> FEGYV_M82A1) and (myfegyv <> FEGYV_HPL)) then
@@ -12126,17 +11989,16 @@ begin
             Rendermuks(i, ppl[i].pos.state, ppl[i].pls.fegyv); //nem skin mert ez a babu szine
           end;
       end;
-      for i:=0 to high(bots) do
-        if(bots[i].dead = 0) then
-          renderbot(i);
       
       muks.Flush;
+
+      renderbotfegyvs;
 
       g_pd3ddevice.SetRenderState(D3DRS_ALPHATESTENABLE, iFALSE);
       g_pd3ddevice.SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_ALWAYS);
       g_pd3dDevice.SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG2);
       g_pd3ddevice.Settexture(0, mt1);
-      //MUKSÓKÁK VÉGE
+      //MUKSï¿½Kï¿½K Vï¿½GE
 
       g_pd3dDevice.SetRenderState(D3DRS_LIGHTING, iTrue);
       g_pd3dDevice.SetRenderState(D3DRS_AMBIENT, $FF606060);
@@ -12162,7 +12024,7 @@ begin
 
       g_pd3dDevice.SetRenderState(D3DRS_AMBIENT, ambientszin);
 
-    end; //Menübõl nemkéne vége
+    end; //Menï¿½bï¿½l nemkï¿½ne vï¿½ge
 
     laststate:= 'Rendering bunker and stuff';
 
@@ -12178,7 +12040,6 @@ begin
 
     ojjektumrenderer.Draw(g_peffect, (((myfegyv <> FEGYV_M82A1) and (myfegyv <> FEGYV_HPL)) or csipo) and not mapbol and opt_imposters, felho);
 
-
     uninitojjektumok(g_pd3ddevice);
     g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
 
@@ -12188,25 +12049,24 @@ begin
     //g_pd3dDevice.SetTextureStageState(0, D3DTSS_COLOROP,   D3DTOP_SELECTARG1);
     g_pd3dDevice.SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
-    if (menu.lap = -1) then //MENÜBÕL nem kéne...
+    if (menu.lap = -1) then //MENï¿½Bï¿½L nem kï¿½ne...
     begin
-
       setupmyfegyvmatr;
       if not kulsonezet then
         if (not csipo) and ((myfegyv = FEGYV_M82A1) or (myfegyv = FEGYV_HPL)) then
         begin
-
           setupprojmat;
           fegyv.drawscope(FEGYV_M82A1);
         end
         else
-
           if myfegyv <> FEGYV_NOOB then
           begin
             setupfegyvlights(fegylit);
             setupmyfegyvprojmat;
             if not nofegyv then
+            begin
               fegyv.drawfegyv(myfegyv_skin, felho.coverage, fegylit);
+            end;
             setupprojmat;
           end
          else
@@ -12224,13 +12084,12 @@ begin
     drawDebug;
 {$ENDIF}
 
-
     setupfegyvlights(10);
 
 
-
-
     quadeffect;
+
+    renderbotFegyvs;
 
     for i:=0 to high(ppl) do
       if ppl[i].pls.visible then
@@ -12241,17 +12100,8 @@ begin
           SetupFegyvmatr(i, 0<(ppl[i].pos.state and MSTAT_CSIPO));
           fegyv.drawfegyv(ppl[i].pls.fegyvskin, felho.coverage, 10);
         end;
-    for i:=0 to high(bots) do  //ez valamiert nem mukodik bot renderben
-      if bots[i].mukso.pls.visible then
-        if tavpointpointsq(bots[i].mukso.pos.pos, campos) < sqr(150) then
-        begin
-          pos:=bots[i].mukso.pos.pos;
-          //  if (abs(pos.x-MMO.mypos.pos.x)+abs(pos.z-MMO.mypos.pos.z))<0.5 then continue;
-          SetupFegyvmatr(i, 0<(bots[i].mukso.pos.state and MSTAT_CSIPO),TRUE);
-          fegyv.drawfegyv(bots[i].mukso.pls.fegyvskin, felho.coverage, 10);
-        end;
-
     pos:=D3DXVector3(cpx^, cpy^, cpz^);
+
 
     laststate:= 'Rendering projectiles';
 
@@ -12312,7 +12162,7 @@ begin
 
     for i:=0 to Length(foliages) - 1 do
     begin
-      if not (foliages[i].level > 2) and not tallgrass then continue; //fû és kikapcsolva van
+      if not (foliages[i].level > 2) and not tallgrass then continue; //fï¿½ ï¿½s kikapcsolva van
       foliages[i].init;
       foliages[i].render;
     end;
@@ -12368,7 +12218,7 @@ begin
 
     laststate:= 'Rendering Alpha stuff (fegyv)';
     fegyv.preparealpha;
-    if (menu.lap = -1) then //MENÜBÕL nem kéne...
+    if (menu.lap = -1) then //MENï¿½Bï¿½L nem kï¿½ne...
     begin
 
       if not (((myfegyv = FEGYV_M82A1) or (myfegyv = FEGYV_HPL)) and (not csipo)) then
@@ -12406,7 +12256,7 @@ begin
 
     setupidentmatr;
 
-    if (menu.lap = -1) then //MENÜBÕL nem kéne...
+    if (menu.lap = -1) then //MENï¿½Bï¿½L nem kï¿½ne...
       if not (enableeffects and (opt_postproc > 0)) then
       begin
         if (opt_radar) then begin
@@ -12457,7 +12307,7 @@ begin
       SetupLights;
       SetupMatrices(false);
 
-      if (menu.lap = -1) then //MENÜBÕL nem kéne...
+      if (menu.lap = -1) then //MENï¿½Bï¿½L nem kï¿½ne...
         if (G_peffect <> nil) and (opt_postproc >= POSTPROC_SNIPER) then
         begin
 
@@ -12507,7 +12357,7 @@ begin
           end;
         end;
 
-      if (menu.lap = -1) then //MENÜBÕL nem kéne...
+      if (menu.lap = -1) then //MENï¿½Bï¿½L nem kï¿½ne...
         if (G_peffect <> nil) and (opt_greyscale) then
           if (halal <> 0) and (spectate = 0) then
           begin
@@ -12557,7 +12407,7 @@ begin
         end;
 
 
-      if (menu.lap = -1) then //MENÜBÕL nem kéne...
+      if (menu.lap = -1) then //MENï¿½Bï¿½L nem kï¿½ne...
         if (G_peffect <> nil) and (opt_motionblur) then
           if autoban or ((rezg > 0) and (robhely.y <> 0) and (robhely.x <> 0)) then
             if halal = 0 then
@@ -12623,14 +12473,14 @@ begin
       g_pd3ddevice.SetRenderState(D3DRS_FOGENABLE, itrue);
       g_pd3dDevice.SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 
-      if (menu.lap = -1) then //MENÜBÕL nem kéne...
+      if (menu.lap = -1) then //MENï¿½Bï¿½L nem kï¿½ne...
         renderautok(true);
 
       g_pd3dDevice.SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
       setupidentmatr;
 
-      if (menu.lap = -1) then //MENÜBÕL nem kéne...
+      if (menu.lap = -1) then //MENï¿½Bï¿½L nem kï¿½ne...
       begin
         setupmyfegyvprojmat;
         if (myfegyv = FEGYV_NOOB) and not nofegyv and (not autoban) and (halal = 0) then
@@ -12742,7 +12592,7 @@ end;
 
 
 procedure undebug_untrace;
-asm  //minimális tudással szemet szúr
+asm  //minimï¿½lis tudï¿½ssal szemet szï¿½r
  {$IFNDEF undebug}
   ret
  {$ENDIF undebug}
@@ -12770,12 +12620,12 @@ begin
   QueryPerformanceCounter(profile_stop);
   profile_mecha:=(MSecsPerSec * (profile_stop - profile_start)) div profile_frequency;
   QueryPerformanceCounter(profile_start);
-{$ENDIF}
+{$ENDIF}     
 
+  handleSelfies;
   handlebots;
 
-  handlebattle;
-
+  renderbots;
   RenderScene;
   RenderPostprocess;
 
@@ -13065,6 +12915,10 @@ begin
           myfegyv:=FEGYV_BM3;
         end;
       FEGYV_BM3:
+//        begin
+//          myfegyv:=FEGYV_GUNSUPP;
+//        end;
+//      FEGYV_GUNSUPP:
         if winter then
         begin
           myfegyv:=FEGYV_H31_G;
@@ -13090,6 +12944,10 @@ begin
           myfegyv:=FEGYV_HPL;
         end;
       FEGYV_HPL:
+//        begin
+//          myfegyv:=FEGYV_TECHSUPP;
+//        end;
+//      FEGYV_TECHSUPP:
         if winter then
         begin
           myfegyv:=FEGYV_H31_T;
@@ -13563,7 +13421,6 @@ begin
   col_fog_rainy:= stuffjson.GetInt(['fog', 'color_rainy']);
   col_fog_sunny:= stuffjson.GetInt(['fog', 'color_sunny']);
   battle:=false;
-  SetLength(bots, 0);
 
   felho.coverage:=random(20);
   felho.makenew;
@@ -13650,8 +13507,8 @@ var
     value:single;
     r:TSingleArray;
   begin
-    // ! a vektor változó
-    // % a szám változó
+    // ! a vektor vï¿½ltozï¿½
+    // % a szï¿½m vï¿½ltozï¿½
 
     n:=length(words) + 1;
     SetLength(words, n);
@@ -13675,7 +13532,7 @@ var
         if words[i][1] = '%' then
           words[i]:=FloatToStr(getNumVar(copy(words[i], 2, length(words[i]) - 1)));
 
-    //számoljunk, most hogy nincsenek változók
+    //szï¿½moljunk, most hogy nincsenek vï¿½ltozï¿½k
     numnum:=0;
     varnum:=0;
     operator:= ' ';
@@ -13685,9 +13542,9 @@ var
         val(words[i], value, error);
 
         if error = 0 then
-        begin //szám!
+        begin //szï¿½m!
 
-          inc(numnum); //számoljuk hány szám jön egymás után
+          inc(numnum); //szï¿½moljuk hï¿½ny szï¿½m jï¿½n egymï¿½s utï¿½n
 
           if numnum > 3 then
           begin
@@ -13701,7 +13558,7 @@ var
         else
         begin
 
-          if (operator<> ' ') then // az operátorok mûködése
+          if (operator<> ' ') then // az operï¿½torok mï¿½kï¿½dï¿½se
           begin
             if (numnum = 1) and (varnum = 1) then
             begin
@@ -13777,7 +13634,7 @@ var
 
           end
           else
-            if (words[i] = '//') then //vége!
+            if (words[i] = '//') then //vï¿½ge!
             begin
               SetLength(r, 3);
               r[0]:=vars[0];
@@ -13940,7 +13797,7 @@ var
     response:string;
   begin
 
-    //bontsuk szavakra, és tegyük egy args arraybe
+    //bontsuk szavakra, ï¿½s tegyï¿½k egy args arraybe
     len:=Length(line);
     j:=0;
     SetLength(args, 1);
@@ -13962,7 +13819,7 @@ var
 
     DecimalSeparator:= '.';
     argnum:=Length(args);
-    //behelyettesítés
+    //behelyettesï¿½tï¿½s
     for i:=1 to Length(args) - 1 do
     begin
       if args[i] = '!playerpos' then
@@ -14094,7 +13951,7 @@ var
           end;
     end;
 
-    //új változó
+    //ï¿½j vï¿½ltozï¿½
     if (args[0] = 'var') and (Length(args) > 1) then
     begin
       if (args[1][1] = '%') then
@@ -14124,7 +13981,7 @@ var
         if (t = '$') then
         begin
           for i:=0 to Length(strvars) - 1 do
-            if args[1] = '$' + strvars[i].name then //megvan mibe tesszük
+            if args[1] = '$' + strvars[i].name then //megvan mibe tesszï¿½k
             begin
               tmp:= '';
               j:=trunc(computenums(copy(args, 2, argnum - 2)));
@@ -14184,7 +14041,7 @@ var
             end
             else
 
-              //nagy kiírás középre
+              //nagy kiï¿½rï¿½s kï¿½zï¿½pre
               if (args[0] = 'fastinfo') then
               begin
                 for i:=1 to Length(args) - 1 do
@@ -14195,7 +14052,7 @@ var
               end
               else
 
-              //nagy kiírás középre - piros
+              //nagy kiï¿½rï¿½s kï¿½zï¿½pre - piros
               if (args[0] = 'fastinfored') then
               begin
                 for i:=1 to Length(args) - 1 do
@@ -14234,7 +14091,7 @@ var
               end
               else
 
-                //chat kiírás
+                //chat kiï¿½rï¿½s
                 if (args[0] = 'print') then
                 begin
                   for i:=1 to Length(args) - 1 do
@@ -14246,7 +14103,7 @@ var
                 end
                 else
 
-                  //ablakos kiírás
+                  //ablakos kiï¿½rï¿½s
                   if (args[0] = 'display') then
                   begin
                     for i:=1 to Length(args) - 1 do
@@ -14264,7 +14121,8 @@ var
                       exit;
                     end;
 
-    //részecske rendszer kikapcs
+
+    //rï¿½szecske rendszer kikapcs
     if (args[0] = 'particle_stop') and (Length(args) > 2) then
     begin
       for i:=0 to Length(particlesSyses) - 1 do
@@ -14281,7 +14139,7 @@ var
     end
     else
 
-      //részecske rendszer bekapcs
+      //rï¿½szecske rendszer bekapcs
       if (args[0] = 'particle_start') and (Length(args) > 1) then
       begin
         for i:=0 to Length(particlesSyses) - 1 do
@@ -14291,7 +14149,7 @@ var
       end
       else
 
-        //prop elrejtés
+        //prop elrejtï¿½s
         if (args[0] = 'prop_hide') and (Length(args) > 1) then
         begin
           propsystem.setVisibility(args[1], false);
@@ -14299,7 +14157,7 @@ var
         end
         else
 
-          //prop elõhozás
+          //prop elï¿½hozï¿½s
           if (args[0] = 'prop_show') and (Length(args) > 1) then
           begin
             propsystem.setVisibility(args[1], true);
@@ -14380,22 +14238,10 @@ var
                         end
                         else
 
-                          //law robbanás
+                          //law robbanï¿½s
                           if (args[0] = 'explode') then
                           begin
                             AddLAW(D3DXVector3Zero, computevecs(copy(args, 1, argnum - 1)), -1);
-                            exit;
-                          end
-                          else
-
-                          //addbot
-                          if (args[0] = 'addbot') then
-                          begin
-                            if (Length(args) > 1) then
-                              for i:=0 to strtoint(args[1]) - 1 do
-                                addbot(D3DXVector3(0, 0, 0))
-                            else
-                              addbot(D3DXVector3(0, 0, 0));
                             exit;
                           end
                           else
@@ -14561,6 +14407,50 @@ var
     if pos(' /saveterrainmodel', mit) = 1 then
       saveterrainmodel;
 
+//    if pos(' /selfie 1', mit) = 1 then
+//    begin
+//      if autoban then exit;
+//
+//      selfieMaker.toggle;
+//      szogx := szogx + D3DX_PI;
+//      nofegyv := selfieMaker.isSelfieModeOn;
+//      selfieMaker.zoomlevel := 1;
+//      selfieMaker.dab := FALSE;
+//    end;
+
+    if pos(' /selfie', mit) = 1 then
+    begin
+      if autoban then exit;
+
+      selfieMaker.toggle;
+      szogx := szogx + D3DX_PI;
+      nofegyv := selfieMaker.isSelfieModeOn;
+      selfieMaker.zoomlevel := NORMAL;
+      selfieMaker.dab := FALSE;
+    end;
+
+//    if pos(' /selfie 3', mit) = 1 then
+//    begin
+//      if autoban then exit;
+//
+//      selfieMaker.toggle;
+//      szogx := szogx + D3DX_PI;
+//      nofegyv := selfieMaker.isSelfieModeOn;
+//      selfieMaker.zoomlevel := 5;
+//      selfieMaker.dab := FALSE;
+//    end;
+
+//    if pos(' /selfie dab', mit) = 1 then
+//    begin
+//      if autoban then exit;
+//
+//      selfieMaker.toggle;
+//      szogx := szogx + D3DX_PI;
+//     nofegyv := selfieMaker.isSelfieModeOn;
+//      selfieMaker.zoomlevel := 2;
+//      selfieMaker.dab := TRUE;
+//    end;
+
     if pos(' //', mit) = 1 then evalscriptline(copy(mit, 4, length(mit) - 3));
 
 {$IFDEF propeditor}
@@ -14640,19 +14530,19 @@ view.x := cos(szogy);
 view.y := sin(szogy);
 
 view.z := cos(szogx)*view.x; // +z *sin ,de Z = 0
-view.x := sin(szogx)*view.x; // -Z *cos , de Z még mindig 0
+view.x := sin(szogx)*view.x; // -Z *cos , de Z mï¿½g mindig 0
 
 D3DXVec3Normalize(view,view);
 
 
 for i:=0 to length(propsystem.objects)-1 do
 begin
- if tavPointPointsq(propsystem.objects[i].pos,campos) < 7 then // 1 méter minimum
+ if tavPointPointsq(propsystem.objects[i].pos,campos) < 7 then // 1 mï¿½ter minimum
  begin
-   //összekötõ vector
+   //ï¿½sszekï¿½tï¿½ vector
    D3DXVec3Subtract(vec,propsystem.objects[i].pos,campos);
    D3DXVec3Normalize(vec,vec) ;
-   //skaláris
+   //skalï¿½ris
    if (D3DXVec3Dot(vec,view)>0.9) then
      messagebox(0,'pickup',';)',0);
 
@@ -14945,18 +14835,18 @@ end;   {}
 					if (' hogy ' = lowercase(Copy(chatmost, 1, 6))) or
              (' hogyan ' = lowercase(Copy(chatmost, 1, 8))) or
              (' mennyi ' = lowercase(Copy(chatmost, 1, 8))) or
-             (' miért ' = lowercase(Copy(chatmost, 1, 7))) or
-             (' mért ' = lowercase(Copy(chatmost, 1, 6))) or
-             (' miér ' = lowercase(Copy(chatmost, 1, 6))) or
-             (' mié ' = lowercase(Copy(chatmost, 1, 5))) or
-             (' mér ' = lowercase(Copy(chatmost, 1, 5))) or
-             (' mé ' = lowercase(Copy(chatmost, 1, 4))) or
-             (' MIÉRT ' = Copy(chatmost, 1, 4)) or
-             (' MÉRT ' = Copy(chatmost, 1, 6)) or
-             (' MIÉR ' = Copy(chatmost, 1, 6)) or
-             (' MIÉ ' = Copy(chatmost, 1, 5)) or
-             (' MÉR ' = Copy(chatmost, 1, 5)) or
-             (' MÉ ' = Copy(chatmost, 1, 4)) then
+             (' miï¿½rt ' = lowercase(Copy(chatmost, 1, 7))) or
+             (' mï¿½rt ' = lowercase(Copy(chatmost, 1, 6))) or
+             (' miï¿½r ' = lowercase(Copy(chatmost, 1, 6))) or
+             (' miï¿½ ' = lowercase(Copy(chatmost, 1, 5))) or
+             (' mï¿½r ' = lowercase(Copy(chatmost, 1, 5))) or
+             (' mï¿½ ' = lowercase(Copy(chatmost, 1, 4))) or
+             (' MIï¿½RT ' = Copy(chatmost, 1, 4)) or
+             (' Mï¿½RT ' = Copy(chatmost, 1, 6)) or
+             (' MIï¿½R ' = Copy(chatmost, 1, 6)) or
+             (' MIï¿½ ' = Copy(chatmost, 1, 5)) or
+             (' Mï¿½R ' = Copy(chatmost, 1, 5)) or
+             (' Mï¿½ ' = Copy(chatmost, 1, 4)) then
 					  begin
 
             len:=Length(chatmost);
@@ -14980,24 +14870,24 @@ end;   {}
                 tmp := stringreplace(tmp,';','',[rfReplaceAll, rfIgnoreCase]);
                 tmp := stringreplace(tmp,'?','',[rfReplaceAll, rfIgnoreCase]);
                 tmp := stringreplace(tmp,'!','',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'á','a',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'é','e',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'õ','o',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'ö','o',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'ó','o',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'û','u',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'ü','u',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'ú','u',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'í','i',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'Á','a',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'É','e',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'Õ','o',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'Ö','o',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'Ó','o',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'Û','u',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'Ü','u',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'Ú','u',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'Í','i',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'ï¿½','a',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'ï¿½','e',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'ï¿½','o',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'ï¿½','o',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'ï¿½','o',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'ï¿½','u',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'ï¿½','u',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'ï¿½','u',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'ï¿½','i',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'ï¿½','a',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'ï¿½','e',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'ï¿½','o',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'ï¿½','o',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'ï¿½','o',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'ï¿½','u',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'ï¿½','u',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'ï¿½','u',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'ï¿½','i',[rfReplaceAll, rfIgnoreCase]);
                 args[j]:=args[j] + lowercase(tmp);
               end;
             end;
@@ -15149,7 +15039,7 @@ end;   {}
 
     bigtext:=0.8;
 
-    //Menü lap all
+    //Menï¿½ lap all
     for i:=0 to MENULAP_MAX do
     begin
       menu.Addteg(balstart, 0.3, balveg, 0.8, i);
@@ -15158,7 +15048,7 @@ end;   {}
       menu.AddText(balstart, 0.65, balveg, 0.75, bigtext, i, lang[2], true);
     end;
 
-    //Menü lap 0;
+    //Menï¿½ lap 0;
 
     // Invisible GazMSG
     menu.Addteg(jobbstart, 0.3, jobbveg, 0.8, 0);
@@ -15167,7 +15057,7 @@ end;   {}
     menu.AddText(jobbstart, 0.3, jobbveg, 0.8, 0.5, 0, 'WTF factor.', false);menufi[MI_GAZMSG]:=menu.items[0, 3];
     menufi[MI_GAZMSG].visible:=false;
 
-    //Menü lap 1 -- Connect
+    //Menï¿½ lap 1 -- Connect
     menu.Addteg(jobbstart, 0.3, jobbveg, 0.8, 1);
 
     menu.AddText(jobbstart, 0.7, jobbveg, 0.8, 1, 1, lang[3], true);menufi[MI_CONNECT]:=menu.items[1, 3];
@@ -15192,7 +15082,7 @@ end;   {}
 
 
 
-    //Menü lap 2 --- Options
+    //Menï¿½ lap 2 --- Options
     menu.Addteg(jobbstart, 0.3, jobbveg, 0.8, 2);
 
     sor:=0.08;
@@ -15211,14 +15101,14 @@ end;   {}
 
 
 
-    //Menü lap 3 --- Exit
+    //Menï¿½ lap 3 --- Exit
     menu.Addteg(jobbstart, 0.3, jobbveg, 0.8, 3);
 
-    menu.AddText(jobbstart, 0.5, jobbveg, 0.6, 0.5, 3, lang[58], true); // Idáig nem ért el a Menufi[]
+    menu.AddText(jobbstart, 0.5, jobbveg, 0.6, 0.5, 3, lang[58], true); // Idï¿½ig nem ï¿½rt el a Menufi[]
     menu.AddText(jobbstart, 0.6, jobbveg, 0.7, 0.5, 3, lang[15], true);
     menu.AddText(jobbstart, 0.4, jobbveg, 0.5, 0.5, 3, lang[16], false);
 
-    //Menü lap 4 --- Options-Graphics
+    //Menï¿½ lap 4 --- Options-Graphics
     sor:=0.034;
     fent:=0.3;
     menu.Addteg(jobbstart, 0.3, jobbveg, 0.8, 4);
@@ -15247,7 +15137,7 @@ end;   {}
     //menu.AddText(0.51 ,0.64,0.69,0.68,0.5,4,lang[75],false);
     //menu.AddText(0.69 ,0.64,0.77,0.68,0.5,4,'[X]',true); menufi[MI_IMPOSTER]:=menu.items[4,14];
 
-    //Menü lap 5 --- Options-Sound
+    //Menï¿½ lap 5 --- Options-Sound
     menu.Addteg(jobbstart, 0.3, jobbveg, 0.8, 5);
 
     menu.AddText(jobbstart, 0.350, jobbstart + 0.13 * korr, 0.400, 0.5, 5, lang[20], false);
@@ -15268,7 +15158,7 @@ end;   {}
     menu.AddText(jobbstart + korr * 0.2, 0.580, jobbstart + 0.35 * korr, 0.650, 0.5, 5, lang[25], false);
     menu.AddText(jobbstart + 0.35 * korr, 0.580, jobbstart + 0.4 * korr, 0.650, 1, 5, '[X]', true);menufi[MI_R_ACTION]:=menu.items[5, 14];
 
-    //Menü lap 6 --- Controls
+    //Menï¿½ lap 6 --- Controls
     sor:=0.034;
     fent:=0.5;
     hanyadik:=1;
@@ -15301,7 +15191,7 @@ end;   {}
     // menu.AddText(jobbstart+korr*0.2 ,fent+sor*hanyadik,jobbstart+korr*0.3,fent+sor*(hanyadik+1),0.5,lap,'[X]',true);   menufi[MI_MINVY]:=menu.items[lap,16];
 
 
-     //Menü lap 7 --- Interface
+     //Menï¿½ lap 7 --- Interface
 
     fent:=0.3;
     sor:=0.034;
@@ -15323,7 +15213,7 @@ end;   {}
     menu.AddText(jobbstart, fent + sor * 11, jobbstart + 0.3 * korr, fent + sor * 12, 0.5, 7, lang[76], false);
     menu.AddText(jobbstart + 0.3 * korr, fent + sor * 11, jobbveg - 0.03 * korr, fent + sor * 12, 1, 7, '[X]', true);menufi[MI_SAVEPW]:=menu.items[7, 12];
 
-    //Menü lap 8 --- Options-More graphics
+    //Menï¿½ lap 8 --- Options-More graphics
     sor:=0.034;
     fent:=0.3;
     hanyadik:=1;
@@ -15373,6 +15263,8 @@ end;   {}
       FEGYV_MP5A3:menufi[MI_FEGYV].valueS:=fegyvernev(FEGYV_MP5A3);
       FEGYV_BM3:menufi[MI_FEGYV].valueS:=fegyvernev(FEGYV_BM3);
       FEGYV_HPL:menufi[MI_FEGYV].valueS:=fegyvernev(FEGYV_HPL);
+      FEGYV_GUNSUPP:menufi[MI_FEGYV].valueS:=fegyvernev(FEGYV_GUNSUPP);
+      FEGYV_TECHSUPP:menufi[MI_FEGYV].valueS:=fegyvernev(FEGYV_TECHSUPP);
 
       FEGYV_H31_T:menufi[MI_FEGYV].valueS:=fegyvernev(FEGYV_H31_T);
       FEGYV_H31_G:menufi[MI_FEGYV].valueS:=fegyvernev(FEGYV_H31_G);
@@ -15553,7 +15445,7 @@ label men, jatek, vege;
 begin //                 BEGIIIN
 {$IFDEF undebug}
   asm
-//PEB mágia
+//PEB mï¿½gia
     MOV eax,FS:[$30]
     ADD eax,2
     MOV ECX,[EAX]
@@ -15576,9 +15468,9 @@ begin //                 BEGIIIN
     DecimalSeparator:= '.';
     //admin checking
     adm:= 'JEAH';
-    if fileexists('C:\Anyáddal szórakozz.txt') then
+    if fileexists('C:\Anyï¿½ddal szï¿½rakozz.txt') then
     begin
-      assignfile(logfile, 'C:\Anyáddal szórakozz.txt');
+      assignfile(logfile, 'C:\Anyï¿½ddal szï¿½rakozz.txt');
       reset(logfile);
       readln(logfile, adm);
       closefile(logfile);
@@ -15723,8 +15615,8 @@ begin //                 BEGIIIN
 
     if winter then
     begin
-      CMAP1_PATH := CMAP_PATH+'winter/cmap.png'; //régi terep
-      CMAP2_PATH := CMAP_PATH+'winter/cmap2.png'; //térkép
+      CMAP1_PATH := CMAP_PATH+'winter/cmap.png'; //rï¿½gi terep
+      CMAP2_PATH := CMAP_PATH+'winter/cmap2.png'; //tï¿½rkï¿½p
       CMAP3_PATH := CMAP_PATH+'winter/cmap3.png'; //shader terep
     end;
 
@@ -15823,10 +15715,10 @@ begin //                 BEGIIIN
         // messagebox(0,PChar('Lflngt:'+floattostr(lflngt2/lflngt)),'Stats',0);
         laststate:= 'Init Menu 1';
         writeln(logfile, 'Loaded geometry and data');flush(logfile);
-        //menü helye
+        //menï¿½ helye
 
           //FillupMenu;
-    //      crunchSettings; //tyúklife
+    //      crunchSettings; //tyï¿½klife
         //writeln(logfile, 'Checksum: ' + inttohex(checksum, 8));
 {$IFDEF nochecksumcheck}
         checksum:=datachecksum;
@@ -15952,7 +15844,7 @@ begin //                 BEGIIIN
 
 
 
-        multisc.weather:=felho.coverage; //ehh, ennyit a csodálatos OOP-rol.
+        multisc.weather:=felho.coverage; //ehh, ennyit a csodï¿½latos OOP-rol.
 
         multip2p:=TMMOPeerToPeer.Create(multisc.myport, myfegyv, myfegyv_skin);                         //JAEZAZ
         writeln(logfile, 'Network initialized');
@@ -16129,7 +16021,7 @@ begin //                 BEGIIIN
       closeSound;
       closewindow(hwindow);
       UnregisterClass('CLS12345', wc.hInstance);
-      messagebox(0, PChar(lang[28] + AnsiString(#13#10) + E.Message + AnsiString(#13#10) + 'Aktuális esemény:' + laststate + AnsiString(#13#10) + lang[29]), Pchar(lang[30]), MB_SETFOREGROUND or MB_ICONERROR);
+      messagebox(0, PChar(lang[28] + AnsiString(#13#10) + E.Message + AnsiString(#13#10) + 'Aktuï¿½lis esemï¿½ny:' + laststate + AnsiString(#13#10) + lang[29]), Pchar(lang[30]), MB_SETFOREGROUND or MB_ICONERROR);
       writeln(logfile, 'Unhandled error @' + inttohex(Integer(ExceptAddr), 8) + ':' + E.Message);
       writeln(logfile, 'Last state: ', laststate);
       writeln(logfile, 'Last sound action: ', lastsoundaction);
