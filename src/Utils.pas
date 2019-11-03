@@ -29,7 +29,7 @@ type
   end;
 
   type TPlayerArray = array of TPlayer;
-  TPayerArrayUtils = class
+  TPlayerArrayUtils = class
     public
     function isEqual(player1: TPlayer; player2: TPlayer): Boolean;
     function indexOf(arr: TPlayerArray; value: TPlayer): Integer;
@@ -178,7 +178,7 @@ begin
 end;
 
 //TPLAYER START
-function TPayerArrayUtils.isEqual(player1: TPlayer; player2: TPlayer): Boolean;
+function TPlayerArrayUtils.isEqual(player1: TPlayer; player2: TPlayer): Boolean;
 var
   DX: D3DXVector3Polyfill;
 begin
@@ -188,13 +188,13 @@ begin
             AND (DX.isEqual(player1.pos.pos, player2.pos.pos));
 end;
 
-function TPayerArrayUtils.indexOf(arr: TPlayerArray; value: TPlayer): Integer;
+function TPlayerArrayUtils.indexOf(arr: TPlayerArray; value: TPlayer): Integer;
 var
   i: Integer;
-  PU: TPayerArrayUtils;
+  PU: TPlayerArrayUtils;
 label skip;
 begin
-  PU := TPayerArrayUtils.Create();
+  PU := TPlayerArrayUtils.Create();
   result := -1;
   for i := 0 to high(arr) do
     if PU.isEqual(arr[i], value) then
@@ -205,7 +205,7 @@ begin
   skip:
 end;
 
-function TPayerArrayUtils.findByName(arr: TPlayerArray; value: string): Integer;
+function TPlayerArrayUtils.findByName(arr: TPlayerArray; value: string): Integer;
 var
   i: Integer;
 label skip;
@@ -220,7 +220,7 @@ begin
   skip:
 end;
 
-function TPayerArrayUtils.findByProximity(arr: TPlayerArray; point: TD3DXVector3; radius: Single): Integer;
+function TPlayerArrayUtils.findByProximity(arr: TPlayerArray; point: TD3DXVector3; radius: Single): Integer;
 var
   i: Integer;
 label skip;
@@ -235,7 +235,7 @@ begin
   skip:
 end;
 
-procedure TPayerArrayUtils.filterByFegyv(result: TPlayerArray; arr: TPlayerArray; fegyv: byte);
+procedure TPlayerArrayUtils.filterByFegyv(result: TPlayerArray; arr: TPlayerArray; fegyv: byte);
 var
   len, i: Integer;
 begin
@@ -250,7 +250,7 @@ begin
     end;
 end;
 
-procedure TPayerArrayUtils.filterByClan(result: TPlayerArray; arr: TPlayerArray; clan: string);
+procedure TPlayerArrayUtils.filterByClan(result: TPlayerArray; arr: TPlayerArray; clan: string);
 var
   len, i: Integer;
 begin
@@ -265,7 +265,7 @@ begin
     end;
 end;
 
-procedure TPayerArrayUtils.filterByTeam(result: TPlayerArray; arr: TPlayerArray; team: string);
+procedure TPlayerArrayUtils.filterByTeam(result: TPlayerArray; arr: TPlayerArray; team: string);
 var
   len, i: Integer;
 begin
@@ -283,7 +283,7 @@ begin
     end;
 end;
 
-procedure TPayerArrayUtils.filterByKills(result: TPlayerArray; arr: TPlayerArray; kills: Integer; method: string = 'GE');
+procedure TPlayerArrayUtils.filterByKills(result: TPlayerArray; arr: TPlayerArray; kills: Integer; method: string = 'GE');
 var
   len, i: Integer;
 begin
@@ -304,7 +304,7 @@ begin
     end;
 end;
 
-procedure TPayerArrayUtils.filterByProximity(result: TPlayerArray; arr: TPlayerArray; point: TD3DXVector3; radius: Single);
+procedure TPlayerArrayUtils.filterByProximity(result: TPlayerArray; arr: TPlayerArray; point: TD3DXVector3; radius: Single);
 var
   len, i: Integer;
 begin
@@ -319,7 +319,7 @@ begin
     end;
 end;
 
-procedure TPayerArrayUtils.filterByZone(result: TPlayerArray; arr: TPlayerArray; zone: string);
+procedure TPlayerArrayUtils.filterByZone(result: TPlayerArray; arr: TPlayerArray; zone: string);
 var
   len, i, j, index, k: Integer;
   instancedOjjektumarr, ojjektumokInZone: TBuildingArray;
