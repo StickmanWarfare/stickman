@@ -14,28 +14,12 @@ uses
   winsock2,
   qjson;
 
-type
- Tgmbk= array [0..10] of TD3dvector;
- Tkapcsk = array [0..9,0..1] of byte;
-
 const
   PROG_VER=209073;
   datachecksum=$A219091E;
 type
 
   array4ofbyte=array[0..3] of byte;
-
-  TRongybaba = class (TObject)
-  public
-    ID:cardinal;
-    disabled:boolean;
-    ido:cardinal;
-    gmbk,voltgmbk:Tgmbk;                                  //meglövési erõ      meglõtt gömb
-    szin:cardinal;
-    constructor create(mat:TD3DMatrix;Muks:TMuksoka;pos,vpos,gmbvec:TD3DXVector3;mlgmb:byte;azID,aszin:cardinal);
-    procedure step(advwove:Tadvwove;nondis:boolean;bubi:boolean);
-    procedure transfertomuks(muks:Tmuksoka);
-  end;
 
   THUDmessage=class(TObject)
   public
@@ -573,8 +557,6 @@ var
   cpx:Psingle;///FRÖCCCS
   cpy:Psingle;///FRÖCCCS
   cpz:Psingle;///FRÖCCCS
-
-  rongybabak:array[0..50] of Trongybaba;//FASZOM
 
   sundir:TD3DXVector3;
   texturefilelist:string;

@@ -61,8 +61,6 @@ var
   szin: Cardinal;
   matWorld, matWorld2, matb: TD3DMatrix;
   pos: TD3DXVector3;
-  rotX: single;
-  rotY: single;
   cameraDistance: 1..5;
 begin
   if not isSelfieModeOn then exit;

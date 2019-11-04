@@ -66,7 +66,7 @@ type
     actionStart: Cardinal; //tick
     actionLength: Cardinal; //tick num
     checkTargets: Cardinal; //tick num, checks on zero, resets to baseReactionTime
-    canShoot: Single; //tick num, resets to baseLovesCooldown
+    canShootCd: Single; //tick num, resets to baseLovesCooldown
     aiming: boolean;
   end;
 
@@ -82,7 +82,6 @@ type
     function findTarget: TD3DXVector3;
     procedure facePoint(_pos: TD3DXVector3);
     procedure shootPoint(_pos: TD3DXVector3);
-    function applyAccuracy(_pos: TD3DXVector3): TD3DXVector3; //actually inaccuracy
     procedure putRagdoll(_pos: TD3DXVector3; forceRajtam: TD3DXVector3);
   public
     constructor Create(_id: Integer; _botMode: TBotMode; _fegyv: Byte; _pos: TD3DXVector3);
@@ -101,23 +100,23 @@ type
 
   TBotGroup = class
   private
-    id: Integer;
-    size: Integer;
+    id: Cardinal;
+    size: Cardinal;
   public
     botMode: TBotMode;
     bots: TBotArray;
     fegyvs: array of Byte;
     spawnpos: TD3DXVector3;
-    spawnrad: Integer;
-    maxSize: Integer;
+    spawnrad: Cardinal;
+    maxSize: Cardinal;
     team: string;
     constructor Create(
-      _id: Integer;
-      _maxSize: Integer;
+      _id: Cardinal;
+      _maxSize: Cardinal;
       _team: string;
       _botMode: TBotMode;
       _spawnpos: TD3DXVector3;
-      _spawnrad: Integer
+      _spawnrad: Cardinal
     );
     //optional TODO: destructor Destroy();
     function Add(bot: TBot): Integer;
@@ -338,7 +337,7 @@ begin
   state.actionStart := getTickCount; //tick
   state.actionLength := ownProps.baseReactionTime;
   state.checkTargets := ownProps.baseReactionTime;
-  //state.canShoot
+  //state.canShootCd
   state.aiming := TRUE;
 end;
 
@@ -346,7 +345,8 @@ function
   TBot.Draw(mukso: TMuksoka; fegyver: TFegyv; campos: TD3DXVector3): boolean;
 var
   szin: Cardinal;
-  matWorld, matWorld2, matb:TD3DMatrix;
+  matWorld, matWorld2: TD3DMatrix;
+  //matb: TD3DMatrix;
   isMoving: boolean;
   animstate: Byte;
 begin
@@ -389,27 +389,20 @@ begin
 
   if (ownProps.fegyv = FEGYV_HPL) and state.aiming then
       D3DXMatrixTranslation(matWorld, -0.05, 0.02, -0.11)
-    else
-      if (ownProps.fegyv = FEGYV_M82A1) and not state.aiming then
-        D3DXMatrixTranslation(matWorld, -0.05, -0.05, 0.15)
-      else
-        if (ownProps.fegyv = FEGYV_BM3) and state.aiming then
-          D3DXMatrixTranslation(matWorld, -0.05, -0.05, 0.06)
-        else
-          if (ownProps.fegyv = FEGYV_BM3) and not state.aiming then
-            D3DXMatrixTranslation(matWorld, -0.05, 0.01, -0.08)
-          else
-            if (ownProps.fegyv = FEGYV_LAW) then
-              D3DXMatrixTranslation(matWorld, 0.05, 0, 0)
-            else
-              if (ownProps.fegyv = FEGYV_H31_T)
-              or (ownProps.fegyv = FEGYV_H31_G) then
-                D3DXMatrixTranslation(matWorld, 0.05, 0, 0)
-              else
-                if (ownProps.fegyv = FEGYV_QUAD) and state.aiming then
-                  D3DXMatrixTranslation(matWorld, -0.00, -0.1, -0.03)
-                else
-                  D3DXMatrixTranslation(matWorld, -0.05, 0, 0);
+  else if (ownProps.fegyv = FEGYV_M82A1) and not state.aiming then
+      D3DXMatrixTranslation(matWorld, -0.05, -0.05, 0.15)
+  else if (ownProps.fegyv = FEGYV_BM3) and state.aiming then
+      D3DXMatrixTranslation(matWorld, -0.05, -0.05, 0.06)
+  else if (ownProps.fegyv = FEGYV_BM3) and not state.aiming then
+      D3DXMatrixTranslation(matWorld, -0.05, 0.01, -0.08)
+  else if (ownProps.fegyv = FEGYV_LAW) then
+      D3DXMatrixTranslation(matWorld, 0.05, 0, 0)
+  else if (ownProps.fegyv = FEGYV_H31_T) or (ownProps.fegyv = FEGYV_H31_G) then
+      D3DXMatrixTranslation(matWorld, 0.05, 0, 0)
+  else if (ownProps.fegyv = FEGYV_QUAD) and state.aiming then
+      D3DXMatrixTranslation(matWorld, -0.00, -0.1, -0.03)
+  else
+      D3DXMatrixTranslation(matWorld, -0.05, 0, 0);
 
    //if (ppl[mi].pos.state and MSTAT_MASK) = 8 then
    // D3DXMatrixTranslation(matWorld, -0.2, 0.2, -0.1);
@@ -475,7 +468,8 @@ function TBot.findTarget(): TD3DXVector3;
 var
   canSee, isCloseEnough: boolean;
   tmpVec1, tmpVec2, botHeadPos: TD3DXVector3;
-  distance, vetuletDistance, absTmpRad, absRotateY, absRotateX: Single;
+  distance, vetuletDistance, absTmpRad, absRotateY: Single;
+  //absRotateX: Single;
   xDiff, zDiff, radDiff: Single;
   botIndex, ojjektumIndex, ojjektumInstanceIndex: Integer; 
   isGun, amGun, isAlly: boolean;
@@ -491,8 +485,8 @@ begin
   botHeadPos.y := botHeadPos.y + 1.5;
   absRotateY :=
     round(D3DXToDegree(state.rotateY)) mod round(D3DXToDegree(2 * D3DX_PI));
-  absRotateX :=
-    round(D3DXToDegree(state.rotateX)) mod round(D3DXToDegree(2 * D3DX_PI));
+  //absRotateX :=
+    //round(D3DXToDegree(state.rotateX)) mod round(D3DXToDegree(2 * D3DX_PI));
 
   //check line of sight for enemy bots
   if (length(foreignProps.enemies) = 0) then goto skipBotOjjektumok;
@@ -655,21 +649,6 @@ begin
   state.rotateY := arctan2(xDst, zDst) + D3DX_PI;
 end;
 
-function TBot.applyAccuracy(_pos: TD3DXVector3): TD3DXVector3;
-var
-  halfAccuracyModifier: Integer;
-begin
-  halfAccuracyModifier := round(ownProps.baseAccuracy * 50);
-  result := _pos;
-  result.x :=
-    result.x + (random(halfAccuracyModifier * 2) - halfAccuracyModifier) / 100;
-  result.y :=
-    result.y + (random(halfAccuracyModifier * 2) - halfAccuracyModifier) / 100;
-  result.z :=
-    result.z + (random(halfAccuracyModifier * 2) - halfAccuracyModifier) / 100;
-end;
-
-
 procedure TBot.shootPoint(_pos: TD3DXVector3);
 var
   tmpVec: TD3DXVector3;
@@ -688,16 +667,14 @@ begin
   multip2p.lovesek[high(multip2p.lovesek)].pos.y := state.pos.y + 1.5;
   multip2p.lovesek[high(multip2p.lovesek)].v2 := tmpVec;
   multip2p.lovesek[high(multip2p.lovesek)].kilotte:= -2;
-  state.canShoot := ownProps.baseLovesCooldown;
+  state.canShootCd := ownProps.baseLovesCooldown;
 end;
 
 procedure TBot.collideProjectile(loves: TLoves);
 var
-  lovesIndex: Integer;
   isGun, amGun, isHit: boolean;
-  matWorld, matWorld2, matb:TD3DMatrix;
+  matWorld, matWorld2 :TD3DMatrix;
   muks: TMuksoka;
-  tmp: TD3DXVector3;
 begin
   if state.isDead > 0 then exit;
 
@@ -739,18 +716,17 @@ const
   gravity = 0.3;
 var
   mapHeight: Single;
-  ojjektumCollideVec, directionVec, tmpVec: TD3DXVector3;
-  isOnSurface, isColliding, isBusy, hasTarget: boolean;
-  moveOnZ, moveOnX: boolean;
+  tmpVec: TD3DXVector3;
+  isOnSurface, isColliding, hasTarget: boolean;
   xSpeed, zSpeed: Single;
-  rotateYChange: Single;
-  tickNow: Cardinal;
+  //rotateYChange: Single;
+  //tickNow: Cardinal;
 begin
-  tickNow := getTickCount;
+  //tickNow := getTickCount;
   if state.checkTargets > 0 then
     state.checkTargets := state.checkTargets - 1;
-  if state.canShoot > 0 then
-    state.canShoot := state.canShoot - 0.01;
+  if state.canShootCd > 0 then
+    state.canShootCd := state.canShootCd - 0.01;
   if state.isDead > 0 then
   begin
     state.isDead := state.isDead - 1;
@@ -762,8 +738,8 @@ begin
     //state.pos := ownProps.respawnPos;
   end;
 
-  hasTarget := FALSE;
-  isOnSurface := FALSE;
+  //hasTarget := FALSE;
+  //isOnSurface := FALSE;
   resetMozgas;
 
   mapHeight := _advwove(state.pos.x, state.pos.z);
@@ -803,7 +779,7 @@ begin
     BOT_DUMMY: state.mozgas := D3DXVector3(0, 0, 0);
     BOT_NORMAL:
     begin
-        if hasTarget and (state.canShoot <= 0) then
+        if hasTarget and (state.canShootCd <= 0) then
         begin
            tmpVec := state.targetVec;
            tmpVec.y := tmpVec.y + 1.5;
@@ -813,13 +789,13 @@ begin
         end
         else
         begin
-          case random(11) of
-            0..2: rotateYChange := DegToRad(15);
-            3..5: rotateYChange := -DegToRad(15);
-            6..7: rotateYChange := DegToRad(45);
-            8..9: rotateYChange := -DegToRad(45);
-            10: rotateYChange := D3DX_PI;
-          end;
+          //case random(11) of
+          //  0..2: rotateYChange := DegToRad(15);
+          //  3..5: rotateYChange := -DegToRad(15);
+          //  6..7: rotateYChange := DegToRad(45);
+          //  8..9: rotateYChange := -DegToRad(45);
+          //  10: rotateYChange := D3DX_PI;
+          //end;
           //state.rotateY := state.rotateY + rotateYChange;
 
           xSpeed := (sin(state.rotateY) * ownProps.baseSpeed);
@@ -916,12 +892,12 @@ end;
 ///////////////////////
 
 constructor TBotGroup.Create(
-      _id: Integer;
-      _maxSize: Integer;
+      _id: Cardinal;
+      _maxSize: Cardinal;
       _team: string;
       _botMode: TBotMode;
       _spawnpos: TD3DXVector3;
-      _spawnrad: Integer
+      _spawnrad: Cardinal
     );
 begin
   id := _id;

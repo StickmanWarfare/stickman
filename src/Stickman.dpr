@@ -235,17 +235,12 @@ var
 
   hWindow:HWND;
   wndpos:Tpoint = (x:0;y:0);
-  cpox:Psingle; ///FRÖCCCS
   toind, allind:integer;
   muks:Tmuksoka;
-  rongybabak:array[0..50] of Trongybaba;
   halalhorg:integer;
+  cpox:Psingle; ///FRÖCCCS
   cpoy:Psingle; ///FRÖCCCS
-  rbido:integer;
-  rbszam:integer = -1;
   cpoz:Psingle; ///FRÖCCCS
-  rbm:integer = 0;
-  mat_world, mat_bajusz, mfm:TD3DMatrix;
   mousesens:single;
   mouseacc:boolean;
   oopos:TD3DXVector3;
@@ -10820,8 +10815,8 @@ begin
 end;
 
 procedure rendermuks(i:integer;astate, afegyv:byte);
-var
-  tmp: TD3DXVector3;
+//var
+  //tmp: TD3DXVector3;
 begin
 
   //techsupp teszt code
@@ -14406,17 +14401,6 @@ var
     if pos(' /saveterrainmodel', mit) = 1 then
       saveterrainmodel;
 
-//    if pos(' /selfie 1', mit) = 1 then
-//    begin
-//      if autoban then exit;
-//
-//      selfieMaker.toggle;
-//      szogx := szogx + D3DX_PI;
-//      nofegyv := selfieMaker.isSelfieModeOn;
-//      selfieMaker.zoomlevel := 1;
-//      selfieMaker.dab := FALSE;
-//    end;
-
     if pos(' /selfie', mit) = 1 then
     begin
       if autoban then exit;
@@ -14427,28 +14411,6 @@ var
       selfieMaker.zoomlevel := NORMAL;
       selfieMaker.dab := FALSE;
     end;
-
-//    if pos(' /selfie 3', mit) = 1 then
-//    begin
-//      if autoban then exit;
-//
-//      selfieMaker.toggle;
-//      szogx := szogx + D3DX_PI;
-//      nofegyv := selfieMaker.isSelfieModeOn;
-//      selfieMaker.zoomlevel := 5;
-//      selfieMaker.dab := FALSE;
-//    end;
-
-//    if pos(' /selfie dab', mit) = 1 then
-//    begin
-//      if autoban then exit;
-//
-//      selfieMaker.toggle;
-//      szogx := szogx + D3DX_PI;
-//     nofegyv := selfieMaker.isSelfieModeOn;
-//      selfieMaker.zoomlevel := 2;
-//      selfieMaker.dab := TRUE;
-//    end;
 
     if pos(' //', mit) = 1 then evalscriptline(copy(mit, 4, length(mit) - 3));
 
