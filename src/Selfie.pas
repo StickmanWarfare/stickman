@@ -12,7 +12,7 @@ uses
 type TSelfie = class
 public
   isSelfieModeOn: boolean;
-  zoomlevel: (CLOSE, NORMAL, FAR);
+  zoomlevel: (CLOSE, NORMAL, WIDE);
   dab: boolean;
   muks: TMuksoka;
   fejcuccrenderer: TFejcuccrenderer;
@@ -69,7 +69,7 @@ begin
   case zoomlevel of
     CLOSE: cameraDistance := 1;
     NORMAL: cameraDistance := 2;
-    FAR: cameraDistance := 5;
+    WIDE: cameraDistance := 5;
   end;
 
   if fegyv < 128 then szin := gunszin else szin := techszin;

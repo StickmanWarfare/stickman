@@ -85,7 +85,7 @@ type
     procedure putRagdoll(_pos: TD3DXVector3; forceRajtam: TD3DXVector3);
   public
     constructor Create(_id: Integer; _botMode: TBotMode; _fegyv: Byte; _pos: TD3DXVector3);
-    function Draw(mukso: TMuksoka; fegyver: TFegyv; campos: TD3DXVector3): boolean;
+    procedure Draw(mukso: TMuksoka; fegyver: TFegyv; campos: TD3DXVector3);
     //
     function getFegyv: BYTE;
     function getIsDead: boolean;
@@ -341,8 +341,8 @@ begin
   state.aiming := TRUE;
 end;
 
-function
-  TBot.Draw(mukso: TMuksoka; fegyver: TFegyv; campos: TD3DXVector3): boolean;
+procedure
+  TBot.Draw(mukso: TMuksoka; fegyver: TFegyv; campos: TD3DXVector3);
 var
   szin: Cardinal;
   matWorld, matWorld2: TD3DMatrix;
@@ -706,7 +706,7 @@ begin
   if isHit then
   begin
     state.isDead := ownProps.baseRespawnTime;
-    putRagdoll(state.pos, loves.v2);
+    putRagdoll(state.pos, loves.pos);
     exit;
   end;
 end;

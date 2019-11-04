@@ -8,11 +8,6 @@ uses
   ojjektumok;
 
 type
-  D3DXVector3Polyfill = class
-    public
-    function isEqual(vec1: TD3DXVector3; vec2: TD3DxVector3): Boolean;
-  end;
-
   ByteArrayUtils = class
     public
     function indexOf(arr: array of Byte; value: Byte): Integer;
@@ -179,13 +174,10 @@ end;
 
 //TPLAYER START
 function TPlayerArrayUtils.isEqual(player1: TPlayer; player2: TPlayer): Boolean;
-var
-  DX: D3DXVector3Polyfill;
 begin
-  DX := D3DXVector3Polyfill.Create();
   result := (player1.pls.nev = player2.pls.nev)
             AND (player1.pls.fegyv = player2.pls.fegyv)
-            AND (DX.isEqual(player1.pos.pos, player2.pos.pos));
+            AND (D3DXVector3Equal(player1.pos.pos, player2.pos.pos));
 end;
 
 function TPlayerArrayUtils.indexOf(arr: TPlayerArray; value: TPlayer): Integer;
@@ -356,14 +348,6 @@ begin
     end;
 
     bigskip:
-end;
-
-//D3DXVECTOR3 START
-function D3DXVector3Polyfill.isEqual(vec1: TD3DXVector3; vec2: TD3DxVector3): Boolean;
-begin
-  result := (vec1.x = vec2.x)
-            AND (vec1.y = vec2.y)
-            AND (vec1.z = vec2.z)
 end;
 
 end.
