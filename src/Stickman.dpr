@@ -12,7 +12,7 @@
  *                                           *)
 {$R stickman.RES}
 {$DEFINE force16bitindices} //ez hibás, pár helyen, ha nincs kipontozva, meg kell majd nézni
-{$DEFINE undebug} //Remove dot for release, add dot for dev
+{.$DEFINE undebug} //Remove dot for release, add dot for dev
 {.$DEFINE nochecksumcheck}
 {.$DEFINE speedhack}
 {.$DEFINE repkedomod}
@@ -24,6 +24,7 @@
 {.$DEFINE profiler}
 {.$DEFINE propeditor}
 {.$DEFINE localhost}
+{.$DEFINE nomodifier}
 {.$DEFINE oldterrain}
 {.$DEFINE fegyverteszt}
 {.$DEFINE terraineditor}
@@ -15565,7 +15566,8 @@ begin //                 BEGIIIN
       if servername = '' then
         servername:='server.stickman.hu';
     end;
-    if stuffjson.GetString(['modname']) = 'Official' then //if not modded
+    {$IFNDEF nomodifier}
+    if (stuffjson.GetString(['modname']) = 'Official') then //if not modded
     try
       laststate:= 'Fetching modifier.json';
       writeln(logfile, 'Fetching modifier.json');
@@ -15593,6 +15595,7 @@ begin //                 BEGIIIN
     except
       writeln(logfile, 'Failed to fetch modifier.json');
     end;
+    {$ENDIF}
     closefile(hostfile);
 {$ENDIF}
 
