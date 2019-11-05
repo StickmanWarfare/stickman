@@ -765,6 +765,21 @@
 			],
 			"scalex": 2,
 			"scaley": 2
+		},
+		"full_wall": {
+			"scalex": 1.5,
+			"scaley": 1.5,
+			"zone": "Frontline",
+			"position": [
+				{
+					"x": -604.75,
+					"y": 10.5,
+					"z": 128.46
+				}
+			],
+			"special": [
+				"dontflattenterrain"
+			]
 		}
 	},
 	"materials": {
@@ -2068,7 +2083,7 @@
 			"y": 67.84,
 			"z": 44.39,
 			"radius": 2,
-			"text": "Admin\r\n\t\t\r\n\t\tA játék kitalálója, és fõ fejlesztõje, neki köszönhetitek a legtöbbet. Pár éve átadta a fejlesztést Hectornak."
+			"text": "Admin\r\n\t\t\r\n\t\tA játék kitalálója és fõ fejlesztõje, neki köszönhetitek a legtöbbet. Pár éve átadta a fejlesztést Hectornak, majd Banánnak és Wasnak."
 		},
 		{
 			"x": -130.07,
@@ -2089,7 +2104,7 @@
 			"y": 67.84,
 			"z": 58.36,
 			"radius": 2,
-			"text": "Banán\r\n\t\t\r\n\t\tKorai modellezõ, aki tevékenyen segítette a játék fejlõdését - ma már csak pofánbasznánk."
+			"text": "Banán\r\n\t\t\r\n\t\tKorai modellezõ, egykori munkái közûl a Fantasy Tower még mindig megtalálható a csatamezõn.\r\nKésõbb moderátor lett, jelenleg Was-al közösen fejlesztik a játékot."
 		},
 		{
 			"x": -108.63,
@@ -2103,7 +2118,7 @@
 			"y": 67.84,
 			"z": 28.99,
 			"radius": 2,
-			"text": "Pityuli\r\n\t\t\r\n\t\tSzervert futtatott sok évvel ezelött."
+			"text": "Pityuli\r\n\t\t\r\n\t\tSzervert futtatott sok évvel ezelõtt."
 		},
 		{
 			"x": -123.66,
@@ -2117,35 +2132,35 @@
 			"y": 67.84,
 			"z": 40.96,
 			"radius": 2,
-			"text": "Fradi\r\n\t\t\r\n\t\tA 2012-es Nagy nullázás elött vezette az összesített toplistát 271.468 ponttal. Még ma is aktív és jó helyezése van, most az ELIT klán tagja."
+			"text": "Fradi\r\n\t\t\r\n\t\tA 2012-es Nagy nullázás elõtt vezette az összesített toplistát 271.468 ponttal. Jelenleg az -ELIT- klán vezetõje."
 		},
 		{
 			"x": -117.32,
 			"y": 67.84,
 			"z": 74.68,
 			"radius": 2,
-			"text": "Damisz\r\n\t\t\r\n\t\tA 2012-es Nagy nullázás elött 2. helyen volt az összesített toplistán. A mostani damisz már egy másik ember."
+			"text": "Damisz\r\n\t\t\r\n\t\tA 2012-es Nagy nullázás elõtt 2. helyen volt az összesített toplistán. A mostani damisz már egy másik ember."
 		},
 		{
 			"x": -94.91,
 			"y": 67.84,
 			"z": 47.24,
 			"radius": 2,
-			"text": "Csiga\r\n\t\t\r\n\t\tA 2012-es Nagy nullázás elött 3. helyen volt az összesített toplistán."
+			"text": "Csiga\r\n\t\t\r\n\t\tA 2012-es Nagy nullázás elõtt 3. helyen volt az összesített toplistán."
 		},
 		{
 			"x": -123.4,
 			"y": 67.84,
 			"z": 75.4,
 			"radius": 2,
-			"text": "Béjbi - ma Lejla\r\n\t\t\r\n\t\tA 2012-es Nagy nullázás elött 4. helyen volt az összesített toplistán."
+			"text": "Béjbi - ma Lejla\r\n\t\t\r\n\t\tA 2012-es Nagy nullázás elõtt 4. helyen volt az összesített toplistán."
 		},
 		{
 			"x": -114.77,
 			"y": 67.84,
 			"z": 46.13,
 			"radius": 2,
-			"text": "Hector\r\n\t\t\r\n\t\tJelenlegi admin, neki köszönhetjük az 1v1-et és a portál eventet. Régebb óta modellezett, õ készítette a steelworksöt, atlantist, apartment, és az új mpgt, quadot, x72-t. A modjait is érdemes megnézni."
+			"text": "Hector\r\n\t\t\r\n\t\tEgykori fejlesztõ.\r\nNeki köszönhetjük az 1v1-et és a portál eventet.\r\nRégebb óta modellezett, õ készítette a Steelworks-t, Atlantiszt, Apartment, és az új MPGt, QUADot, X72-t.\r\nA modjait is érdemes megnézni."
 		},
 		{
 			"x": -151.35,
@@ -2159,21 +2174,21 @@
 			"y": 67.84,
 			"z": 37.87,
 			"radius": 2,
-			"text": "HelloTibi\r\n\t\t\r\n\t\tA sticktool készítõje, ami a mai napig nagy segítség a moddereknek."
+			"text": "HelloTibi\r\n\t\t\r\n\t\tA StickTool készítõje, ami a mai napig nagy segítség a moddereknek."
 		},
 		{
 			"x": -122.48,
 			"y": 67.84,
 			"z": 55.64,
 			"radius": 2,
-			"text": "Oli és Kléni\r\n\t\t\r\n\t\tAz új honlapot készítették. Kléni készítette a rendszert, és mai napig felügyeli. Oli a designért volt fõképp felelõs. Természetesen moderátorok is. Oli készítette annó az Omodot."
+			"text": "Oli és Kléni\r\n\t\t\r\n\t\tAz új honlapot készítették. Kléni készítette a rendszert, Oli a designért volt fõképp felelõs. Természetesen moderátorok is. Oli készítette az Omodot."
 		},
 		{
 			"x": -132.03,
 			"y": 67.84,
 			"z": 48.1,
 			"radius": 2,
-			"text": "Mark575 - ma simán Mark\r\n\t\t\r\n\t\tHosszú ideje, még ma is aktív moderátor. Ezen kívül szép fragvideókat készített."
+			"text": "Mark575 - ma simán Mark\r\n\t\t\r\n\t\tHosszú ideje moderátor. Ezen kívül szép fragvideókat készített."
 		},
 		{
 			"x": -152.2,
@@ -2579,6 +2594,40 @@
 	],
 	"scripts": {},
 	"triggers": {},
+	"botgroups": [
+		{
+			"count": 20,
+			"team": "GUN",
+			"mode": "NORMAL",
+			"weapons": [
+				"M4A1",
+				"M82A1",
+				"BM3"
+			],
+			"spawnpos": {
+				"x": -250,
+				"y": 60,
+				"z": -70
+			},
+			"spawnrad": 200
+		},
+		{
+			"count": 20,
+			"team": "TECH",
+			"mode": "NORMAL",
+			"weapons": [
+				"MPG",
+				"QUADRO",
+				"HPL"
+			],
+			"spawnpos": {
+				"x": -250,
+				"y": 60,
+				"z": -70
+			},
+			"spawnrad": 200
+		}
+	],
 	"foliages": [
 		{
 			"texture": "bush256.png",
