@@ -1998,10 +1998,10 @@ begin
   if not X72.betoltve then exit;
   BM3:=TF_BM3.create(a_D3Ddevice, 'bm3', skin);
   if not BM3.betoltve then exit;
-  GUNSUPP:=TF_GUNSUPP.Create(a_D3Ddevice, 'gunsupp', skin);
-  if not GUNSUPP.betoltve then exit;
-  TECHSUPP:=TF_TECHSUPP.Create(a_D3Ddevice, 'techsupp', skin);
-  if not TECHSUPP.betoltve then exit;
+  //GUNSUPP:=TF_GUNSUPP.Create(a_D3Ddevice, 'gunsupp', skin);
+  //if not GUNSUPP.betoltve then exit;
+  //TECHSUPP:=TF_TECHSUPP.Create(a_D3Ddevice, 'techsupp', skin);
+  //if not TECHSUPP.betoltve then exit;
   HPL:=TF_HPL.create(a_D3Ddevice, 'hpl', skin);
   if not HPL.betoltve then exit;
 
