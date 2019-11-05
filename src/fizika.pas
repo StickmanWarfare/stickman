@@ -87,6 +87,11 @@ type
 var
  kim:integer;
  kic:array [0..12] of integer;
+ rongybabak:array[0..50] of Trongybaba;//FASZOM
+ rbido:integer;
+ rbszam:integer = -1;
+ rbm:integer = 0;
+ mat_world, mat_bajusz, mfm:TD3DMatrix;
 var
  hummkerekarr:Tkerekarray=((x:-1;y:-1;z:0.8),(x:-1;y:-1;z:-0.7),(x:1;y:-1;z:0.8),(x:1;y:-1;z:-0.7));
  agkerekarr:Tkerekarray=((x:-0.9;y:-1;z:1),(x:-0.9;y:-1;z:-0.9),(x:0.9;y:-1;z:1),(x:0.9;y:-1;z:-0.9));
