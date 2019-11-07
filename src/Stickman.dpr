@@ -241,17 +241,12 @@ var
 
   hWindow:HWND;
   wndpos:Tpoint = (x:0;y:0);
-  cpox:Psingle; ///FRÖCCCS
   toind, allind:integer;
   muks:Tmuksoka;
-  rongybabak:array[0..50] of Trongybaba;
   halalhorg:integer;
+  cpox:Psingle; ///FRÖCCCS
   cpoy:Psingle; ///FRÖCCCS
-  rbido:integer;
-  rbszam:integer = -1;
   cpoz:Psingle; ///FRÖCCCS
-  rbm:integer = 0;
-  mat_world, mat_bajusz, mfm:TD3DMatrix;
   mousesens:single;
   mouseacc:boolean;
   oopos:TD3DXVector3;
