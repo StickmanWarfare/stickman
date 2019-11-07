@@ -466,7 +466,7 @@ end;
 
 function TBot.canSeePoint(_pos: TD3DXVector3): boolean;
 var
-  fejem: TD3DXVector3;
+  fejem, junk: TD3DXVector3;
   ojjektumIndex, ojjektumInstanceIndex: Integer;
   distance: Single;
 label skip;
@@ -475,18 +475,13 @@ begin
   fejem.y := fejem.y + 1.5;
 
   //check against terrain
-  result := not _raytestlvl(fejem, _pos, 10, _pos);
+  result := not _raytestlvl(fejem, _pos, 10, junk);
   if not result then exit;
 
   //check against ojjektumok
   for ojjektumIndex := 0 to high(ojjektumnevek) do
     for ojjektumInstanceIndex := 0 to ojjektumarr[ojjektumIndex].hvszam - 1 do
     begin
-      distance :=
-        tavPointPoint(fejem, ojjektumarr[ojjektumIndex].holvannak[ojjektumInstanceIndex]);
-
-      if distance > ownProps.baseVisibilityRadius then
-        goto skip;
 
       result :=
         ojjektumarr[ojjektumIndex].raytestbol(fejem, _pos, ojjektumInstanceIndex, COLLISION_BULLET);
@@ -497,17 +492,16 @@ begin
         exit;
       end;
 
-      result := TRUE;
-
       skip:
     end;
 
+    result := TRUE;
 end;
 
 //optional TODO: remove code duplication
 function TBot.findTarget(): TD3DXVector3;
 const
-  inaccuracyModifier = 3;
+  inaccuracyModifier = 2;
 var
   tmpVec1, tmpVec2, botHeadPos, inaccuracy: TD3DXVector3;
   botIndex: Integer;
