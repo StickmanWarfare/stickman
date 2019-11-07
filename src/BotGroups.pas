@@ -476,6 +476,7 @@ begin
 
   //check against terrain
   result := not _raytestlvl(fejem, _pos, 10, _pos);
+  if not result then exit;
 
   //check against ojjektumok
   for ojjektumIndex := 0 to high(ojjektumnevek) do
@@ -488,10 +489,14 @@ begin
         goto skip;
 
       result :=
-        not ojjektumarr[ojjektumIndex].raytestbol(fejem, _pos, ojjektumInstanceIndex, COLLISION_BULLET);
+        ojjektumarr[ojjektumIndex].raytestbol(fejem, _pos, ojjektumInstanceIndex, COLLISION_BULLET);
 
-      if not result then exit;
-      
+      if result then
+      begin
+        result := FALSE;
+        exit;
+      end;
+
       result := TRUE;
 
       skip:
@@ -540,6 +545,7 @@ begin
   if foreignProps.playerHalott then exit;
   isGun := foreignProps.playerFegyv < 128;
   isAlly := isGun = amGun;
+  if isAlly then exit;
 
   tmpVec1 := foreignProps.playerPos;
   tmpVec1.y := tmpVec1.y + 1.5; //fejre lovok
