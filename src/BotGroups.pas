@@ -81,6 +81,7 @@ type
     procedure applyMozgas;
     function findTarget: TD3DXVector3;
     procedure facePoint(_pos: TD3DXVector3);
+    function canSeePoint(_pos: TD3DXVector3): boolean;
     procedure shootPoint(_pos: TD3DXVector3);
     procedure putRagdoll(_pos: TD3DXVector3; forceRajtam: TD3DXVector3);
   public
@@ -463,181 +464,94 @@ begin
     end;
 end;
 
+function TBot.canSeePoint(_pos: TD3DXVector3): boolean;
+var
+  fejem: TD3DXVector3;
+  ojjektumIndex, ojjektumInstanceIndex: Integer;
+  distance: Single;
+label skip;
+begin
+  fejem := state.pos;
+  fejem.y := fejem.y + 1.5;
+
+  //check against terrain
+  result := not _raytestlvl(fejem, _pos, 10, _pos);
+
+  //check against ojjektumok
+  for ojjektumIndex := 0 to high(ojjektumnevek) do
+    for ojjektumInstanceIndex := 0 to ojjektumarr[ojjektumIndex].hvszam - 1 do
+    begin
+      distance :=
+        tavPointPoint(fejem, ojjektumarr[ojjektumIndex].holvannak[ojjektumInstanceIndex]);
+
+      if distance > ownProps.baseVisibilityRadius then
+        goto skip;
+
+      result :=
+        not ojjektumarr[ojjektumIndex].raytestbol(fejem, _pos, ojjektumInstanceIndex, COLLISION_BULLET);
+
+      if not result then exit;
+      
+      result := TRUE;
+
+      skip:
+    end;
+
+end;
+
 //optional TODO: remove code duplication
 function TBot.findTarget(): TD3DXVector3;
+const
+  inaccuracyModifier = 5;
 var
-  canSee, isCloseEnough: boolean;
-  tmpVec1, tmpVec2, botHeadPos: TD3DXVector3;
-  distance, vetuletDistance, absTmpRad, absRotateY: Single;
-  //absRotateX: Single;
-  xDiff, zDiff, radDiff: Single;
-  botIndex, ojjektumIndex, ojjektumInstanceIndex: Integer; 
+  tmpVec1, botHeadPos, inaccuracy: TD3DXVector3;
+  botIndex: Integer;
   isGun, amGun, isAlly: boolean;
-label
-  skipEgyPlayerOjjektum,
-  skipEgyBotOjjektum,
-  skipPlayerOjjektumok,
-  skipBotOjjektumok;
+label skipbots;
 begin
   result := D3DXVector3(0, 0, 0);
+  inaccuracy := D3DXVector3(
+    -inaccuracyModifier + random(inaccuracyModifier + 1),
+    -inaccuracyModifier + random(inaccuracyModifier + 1),
+    -inaccuracyModifier + random(inaccuracyModifier + 1)
+  );
+  D3DXVec3Scale(inaccuracy, inaccuracy, 0.1);
   amGun := ownProps.fegyv < 128;
-  botHeadPos := state.pos;
-  botHeadPos.y := botHeadPos.y + 1.5;
-  absRotateY :=
-    round(D3DXToDegree(state.rotateY)) mod round(D3DXToDegree(2 * D3DX_PI));
-  //absRotateX :=
-    //round(D3DXToDegree(state.rotateX)) mod round(D3DXToDegree(2 * D3DX_PI));
 
-  //check line of sight for enemy bots
-  if (length(foreignProps.enemies) = 0) then goto skipBotOjjektumok;
+  //pick enemy bot
+  if length(foreignProps.enemies) <= 0 then goto skipbots;
   botIndex := low(foreignProps.enemies) + random(length(foreignProps.enemies));
-  //for botIndex := low(foreignProps.enemies) to high(foreignProps.enemies) do
-  //begin
-    //D3DXVec3Add(foreignProps.enemies[botIndex], foreignProps.enemies[botIndex], D3DXVector3Zero); 
-    distance := _tavPointPoint(botHeadPos, foreignProps.enemies[botIndex]);
-    isCloseEnough := distance < ownProps.baseVisibilityRadius;
-    if isCloseEnough then
-    begin
-//      //check horizontal sight radius
-//      zDiff := pos.z - playerPos.z;
-//      xDiff := pos.x - playerPos.x;
-//      absTmpRad :=
-//        round(D3DXToDegree(arctan2(xDiff, zDiff) + D3DX_PI))
-//        mod round(D3DXToDegree(2 * D3DX_PI));
-//
-//      radDiff := D3DXToRadian(abs(absRotateY - absTmpRad));
-//      if radDiff > (D3DX_PI / 2) then
-//        goto skipBotOjjektumok;
+  tmpVec1 := foreignProps.enemies[botIndex];
+  tmpVec1.y := tmpVec1.y + 1.5; //fejre lovok
 
-      //check vertical sight radius
-      tmpVec1 := foreignProps.enemies[botIndex];
-      tmpVec1.y := 0;
-      tmpVec2 := botHeadPos;
-      tmpVec2.y := 0;
+  //apply inaccuracy
+  if random(10) > 5 then D3DXVec3Add(tmpVec1, tmpVec1, inaccuracy);
+  if canSeePoint(tmpVec1) then
+  begin
+    D3DXVec3Add(tmpVec1, foreignProps.enemies[botIndex], inaccuracy);
+    result := tmpVec1;
+    exit;
+  end;
 
-      //apply inaccuracy
-      if random(10) > 5 then
-        D3DXVec3Add(tmpVec1, tmpVec1, D3DXVector3((-5 + random(6)) / 10, (-5 + random(6)) / 10, (-5 + random(6)) / 10));
-
-      vetuletDistance := tavPointPoint(tmpVec2, tmpVec1);
-      radDiff := arccos(vetuletDistance / distance);
-      if radDiff > (D3DX_PI / 6) then
-        goto skipBotOjjektumok;
-
-      //check against terrain
-      tmpVec1 := foreignProps.enemies[botIndex];
-      tmpVec1.y := tmpVec1.y + 1.5;
-      canSee := not _raytestlvl(botHeadPos, tmpVec1, 10, tmpVec1);
-      if canSee then result := foreignProps.enemies[botIndex];
-      if not canSee then exit;
-
-      //check against ojjektumok
-      for ojjektumIndex := 0 to high(ojjektumnevek) do
-        for ojjektumInstanceIndex := 0 to ojjektumarr[ojjektumIndex].hvszam - 1 do
-        begin
-          tmpVec1 := foreignProps.enemies[botIndex];
-          tmpVec1.y := tmpVec1.y + 1.5;
-          distance :=
-            tavPointPoint(botHeadPos, ojjektumarr[ojjektumIndex].holvannak[ojjektumInstanceIndex]);
-
-          if distance > ownProps.baseVisibilityRadius then
-            goto skipEgyBotOjjektum;
-
-          canSee :=
-            not ojjektumarr[ojjektumIndex].raytestbol(botHeadPos, tmpVec1, ojjektumInstanceIndex, COLLISION_BULLET);
-
-          if not canSee then
-          begin
-             result := D3DXVector3(0, 0, 0);
-             goto skipBotOjjektumok;
-          end;
-          result := foreignProps.enemies[botIndex];
-          skipEgyBotOjjektum:
-        end;
-
-      if not D3DXVector3Equal(result, D3DXVector3(0, 0, 0)) then
-        exit; //TODO: scale and collide
-
-      skipBotOjjektumok:
-
-    end;
-  //end;
-
-  if not D3DXVector3Equal(result, D3DXVector3(0, 0, 0)) then
-        exit; //TODO: scale and collide
-
-  //goto skipPlayerOjjektumok; //DONT SHOOT ME
+  skipbots:
+  //exit; //DONT SHOOT ME
 
   //should target player
-  if foreignProps.playerHalott then goto skipPlayerOjjektumok;
+  if foreignProps.playerHalott then exit;
   isGun := foreignProps.playerFegyv < 128;
   isAlly := isGun = amGun;
-  if isAlly then goto skipPlayerOjjektumok;
 
-  //check line of sight for player
-  distance := tavPointPoint(botHeadPos, foreignProps.playerPos);
-  isCloseEnough := distance < ownProps.baseVisibilityRadius;
-  if isCloseEnough then
+  tmpVec1 := foreignProps.playerPos;
+  tmpVec1.y := tmpVec1.y + 1.5; //fejre lovok
+
+  //apply inaccuracy
+  if random(10) > 5 then D3DXVec3Add(tmpVec1, tmpVec1, inaccuracy);
+  if canSeePoint(tmpVec1) then
   begin
-    //check horizontal sight radius
-    zDiff := state.pos.z - foreignProps.playerPos.z;
-    xDiff := state.pos.x - foreignProps.playerPos.x;
-    absTmpRad :=
-      round(D3DXToDegree(arctan2(xDiff, zDiff) + D3DX_PI))
-      mod round(D3DXToDegree(2 * D3DX_PI));
-
-    radDiff := D3DXToRadian(abs(absRotateY - absTmpRad));
-    if radDiff > (D3DX_PI / 2) then
-      goto skipPlayerOjjektumok;
-
-    //check vertical sight radius
-    tmpVec1 := foreignProps.playerPos;
-    tmpVec1.y := 0;
-    tmpVec2 := botHeadPos;
-    tmpVec2.y := 0;
-
-    //apply inaccuracy
-    if random(10) > 5 then
-      D3DXVec3Add(tmpVec1, tmpVec1, D3DXVector3((-5 + random(6)) / 10, (-5 + random(6)) / 10, (-5 + random(6)) / 10));
-
-    vetuletDistance := tavPointPoint(tmpVec2, tmpVec1);
-    radDiff := arccos(vetuletDistance / distance);
-    if radDiff > (D3DX_PI / 6) then
-      goto skipPlayerOjjektumok;
-
-    //check against terrain
-    tmpVec1 := foreignProps.playerPos;
-    tmpVec1.y := tmpVec1.y + 1;
-    canSee := not _raytestlvl(botHeadPos, tmpVec1, 10, tmpVec1);
-    if canSee then result := foreignProps.playerPos;
-    if not canSee then exit;
-
-    //check against ojjektumok
-    for ojjektumIndex := 0 to high(ojjektumnevek) do
-      for ojjektumInstanceIndex := 0 to ojjektumarr[ojjektumIndex].hvszam - 1 do
-      begin
-        tmpVec1 := foreignProps.playerPos;
-        tmpVec1.y := tmpVec1.y + 1.5;
-        distance :=
-         tavPointPoint(botHeadPos, ojjektumarr[ojjektumIndex].holvannak[ojjektumInstanceIndex]);
-
-        if distance > ownProps.baseVisibilityRadius then goto skipEgyPlayerOjjektum;
-
-        canSee :=
-          not ojjektumarr[ojjektumIndex].raytestbol(botHeadPos, tmpVec1, ojjektumInstanceIndex, COLLISION_BULLET);
-
-        if not canSee then
-        begin
-           result := D3DXVector3(0, 0, 0);
-           goto skipPlayerOjjektumok;
-        end;
-        result := foreignProps.playerPos;
-        skipEgyPlayerOjjektum:
-      end;
-
-    skipPlayerOjjektumok:
-
+    D3DXVec3Add(tmpVec1, foreignProps.playerPos, inaccuracy);
+    result := tmpVec1;
   end;
+
 end;
 
 procedure TBot.facePoint(_pos: TD3DXVector3);
