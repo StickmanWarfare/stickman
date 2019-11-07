@@ -507,17 +507,17 @@ end;
 //optional TODO: remove code duplication
 function TBot.findTarget(): TD3DXVector3;
 const
-  inaccuracyModifier = 5;
+  inaccuracyModifier = 3;
 var
-  tmpVec1, botHeadPos, inaccuracy: TD3DXVector3;
+  tmpVec1, tmpVec2, botHeadPos, inaccuracy: TD3DXVector3;
   botIndex: Integer;
-  isGun, amGun, isAlly: boolean;
+  isGun, amGun, isAlly, isInaccurate: boolean;
 label skipbots;
 begin
   result := D3DXVector3(0, 0, 0);
   inaccuracy := D3DXVector3(
     -inaccuracyModifier + random(inaccuracyModifier + 1),
-    -inaccuracyModifier + random(inaccuracyModifier + 1),
+    0,
     -inaccuracyModifier + random(inaccuracyModifier + 1)
   );
   D3DXVec3Scale(inaccuracy, inaccuracy, 0.1);
@@ -530,11 +530,16 @@ begin
   tmpVec1.y := tmpVec1.y + 1.5; //fejre lovok
 
   //apply inaccuracy
-  if random(10) > 5 then D3DXVec3Add(tmpVec1, tmpVec1, inaccuracy);
-  if canSeePoint(tmpVec1) then
+  tmpVec2 := D3DXVector3Zero;
+  isInaccurate := random(10) > 7;
+  if isInaccurate then
+    D3DXVec3Add(tmpVec2, tmpVec1, inaccuracy)
+  else
+    tmpVec2 := tmpVec1;
+
+  if canSeePoint(tmpVec2) then
   begin
-    D3DXVec3Add(tmpVec1, foreignProps.enemies[botIndex], inaccuracy);
-    result := tmpVec1;
+    result := tmpVec2;
     exit;
   end;
 
@@ -551,12 +556,15 @@ begin
   tmpVec1.y := tmpVec1.y + 1.5; //fejre lovok
 
   //apply inaccuracy
-  if random(10) > 5 then D3DXVec3Add(tmpVec1, tmpVec1, inaccuracy);
-  if canSeePoint(tmpVec1) then
-  begin
-    D3DXVec3Add(tmpVec1, foreignProps.playerPos, inaccuracy);
-    result := tmpVec1;
-  end;
+  tmpVec2 := D3DXVector3Zero;
+  isInaccurate := random(10) > 7;
+  if isInaccurate then
+    D3DXVec3Add(tmpVec2, tmpVec1, inaccuracy)
+  else
+    tmpVec2 := tmpVec1;
+
+  if canSeePoint(tmpVec2) then
+    result := tmpVec2;
 
 end;
 
@@ -701,11 +709,7 @@ begin
     begin
         if hasTarget and (state.canShootCd <= 0) then
         begin
-           tmpVec := state.targetVec;
-           tmpVec.y := tmpVec.y + 1.5;
-           //TODO: make them not shoot through things
-           //tmpVec := applyAccuracy(tmpVec)
-           shootPoint(tmpVec);
+           shootPoint(state.targetVec);
         end
         else
         begin
