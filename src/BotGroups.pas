@@ -348,7 +348,6 @@ var
   szin: Cardinal;
   matWorld, matWorld2: TD3DMatrix;
   //matb: TD3DMatrix;
-  isMoving: boolean;
   animstate: Byte;
 begin
   state.isMoving := (state.mozgas.x <> 0) or (state.mozgas.z <> 0);
@@ -365,7 +364,7 @@ begin
   //D3DXMatrixTranslation(matWorld, pos.x, pos.y, pos.z);    //
   //D3DXMatrixMultiply(matb, matb, matWorld);                //
 
-  if isMoving then
+  if state.isMoving then
     animstate := MSTAT_FUT
   else
     animstate := MSTAT_ALL;
@@ -468,7 +467,6 @@ function TBot.canSeePoint(_pos: TD3DXVector3): boolean;
 var
   fejem, junk: TD3DXVector3;
   ojjektumIndex, ojjektumInstanceIndex: Integer;
-  distance: Single;
 label skip;
 begin
   fejem := state.pos;
@@ -503,7 +501,7 @@ function TBot.findTarget(): TD3DXVector3;
 const
   inaccuracyModifier = 2;
 var
-  tmpVec1, tmpVec2, botHeadPos, inaccuracy: TD3DXVector3;
+  tmpVec1, tmpVec2, inaccuracy: TD3DXVector3;
   botIndex: Integer;
   isGun, amGun, isAlly, isInaccurate: boolean;
 label skipbots;
@@ -638,7 +636,6 @@ const
   gravity = 0.3;
 var
   mapHeight: Single;
-  tmpVec: TD3DXVector3;
   isOnSurface, isColliding, hasTarget: boolean;
   xSpeed, zSpeed: Single;
   //rotateYChange: Single;

@@ -319,6 +319,9 @@ var
 label
   skip, bigskip;
 begin
+  setLength(instancedOjjektumarr, 0);
+  setLength(ojjektumokInZone, 0);
+
   BU := TBuildingArrayUtils.Create();
   BU.make(instancedOjjektumarr, ojjektumarr);
   BU.filterByZone(ojjektumokInZone, instancedOjjektumarr, zone);
