@@ -319,9 +319,9 @@ begin
   //
   ownProps.baseSpeed := 0.08;
   ownProps.baseAccuracy := (random(35) + 15) / 100;
-  ownProps.baseVisibilityRadius := 100;
-  ownProps.baseReactionTime := random(20) + 40;
-  ownProps.baseLovesCooldown := _fegyvercooldown(_fegyv);
+  ownProps.baseVisibilityRadius := 50;
+  ownProps.baseReactionTime := random(30) + 60;
+  ownProps.baseLovesCooldown := _fegyvercooldown(_fegyv) * 1.2;
   ownProps.baseRespawnTime := 500;
 
   //Init State
