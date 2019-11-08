@@ -2506,8 +2506,8 @@ var
   groupCount, weaponCount, maxSize: Integer;
   groupIndex, weaponIndex, botIndex, i: Integer;
   team, mode, fegyvname: string;
-  spawnpos, tmpPos: TD3DXVector3;
-  spawnrad: Integer;
+  spawnpos: TD3DXVector3;
+  spawnrad: Cardinal;
   tmode: TBotMode;
   bot: TBot;
   tfegyv: Byte;
@@ -2557,9 +2557,6 @@ begin
       tmode := botGroupArr[groupIndex].botMode;
       spawnpos := botGroupArr[groupIndex].spawnpos;
       spawnrad := botGroupArr[groupIndex].spawnrad;
-      tmpPos.x := spawnpos.x + random(spawnrad) - spawnrad div 2;
-      tmpPos.y := spawnpos.y;
-      tmpPos.z := spawnpos.z + random(spawnrad) - spawnrad div 2;
 
       if length(botGroupArr[groupIndex].fegyvs) > 0 then
           tfegyv := botGroupArr[groupIndex].fegyvs[random(high(botGroupArr[groupIndex].fegyvs) + 1)]
@@ -2571,7 +2568,8 @@ begin
         botIndex,
         tmode,
         tfegyv,
-        tmpPos
+        spawnpos,
+        spawnrad
       );
 
       botGroupArr[groupIndex].Add(bot);

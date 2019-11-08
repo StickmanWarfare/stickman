@@ -32,6 +32,7 @@ type
     id: Integer;
     botMode: TBotMode;
     respawnPos: TD3DXVector3;
+    respawnRad: Cardinal;
     fegyv: Byte;
     //
     baseSpeed: Single;
@@ -85,7 +86,7 @@ type
     procedure shootPoint(_pos: TD3DXVector3);
     procedure putRagdoll(_pos: TD3DXVector3; forceRajtam: TD3DXVector3);
   public
-    constructor Create(_id: Integer; _botMode: TBotMode; _fegyv: Byte; _pos: TD3DXVector3);
+    constructor Create(_id: Integer; _botMode: TBotMode; _fegyv: Byte; _pos: TD3DXVector3; _rad: Cardinal);
     procedure Draw(mukso: TMuksoka; fegyver: TFegyv; campos: TD3DXVector3);
     //
     function getFegyv: BYTE;
@@ -299,6 +300,18 @@ begin
   result:= -1;
 end;
 
+function _getRandomPos(
+  base:TD3DXvector3;
+  radius:Cardinal
+):TD3DXvector3;
+var
+  tmp:TD3DXvector3;
+begin
+   tmp.x := base.x + random(radius) - radius div 2;
+   tmp.y := base.y;
+   tmp.z := base.z + random(radius) - radius div 2;
+   result := tmp;
+end;
 
 ///////////////////////
 //       TBOT       //
@@ -308,13 +321,15 @@ constructor TBot.Create(
   _id: Integer;
   _botMode: TBotMode;
   _fegyv: Byte;
-  _pos: TD3DXVector3
+  _pos: TD3DXVector3;
+  _rad: Cardinal
 );
 begin
   //Init OwnProps
   ownProps.id := _id;
   ownProps.botMode := _botMode;
   ownProps.respawnPos := _pos;
+  ownProps.respawnRad := _rad;
   ownProps.fegyv := _fegyv;
   //
   ownProps.baseSpeed := 0.08;
@@ -325,7 +340,7 @@ begin
   ownProps.baseRespawnTime := 500;
 
   //Init State
-  state.pos := _pos;
+  state.pos := _getRandomPos(ownProps.respawnPos, ownProps.respawnRad);
   state.mozgas := D3DXVector3(0, 0, 0);
   //state.lastMozgas
   state.rotateX := 0;
@@ -540,6 +555,7 @@ begin
 
   //should target player
   if foreignProps.playerHalott then exit;
+  if tavPointPoint(foreignProps.playerPos, state.pos) > ownProps.baseVisibilityRadius then exit;
   isGun := foreignProps.playerFegyv < 128;
   isAlly := isGun = amGun;
   if isAlly then exit;
@@ -642,10 +658,6 @@ var
   //tickNow: Cardinal;
 begin
   //tickNow := getTickCount;
-  if state.checkTargets > 0 then
-    state.checkTargets := state.checkTargets - 1;
-  if state.canShootCd > 0 then
-    state.canShootCd := state.canShootCd - 0.01;
   if state.isDead > 0 then
   begin
     state.isDead := state.isDead - 1;
@@ -653,10 +665,15 @@ begin
   end
   else if state.isDead = 0 then
   begin
+    state.pos := _getRandomPos(ownProps.respawnPos, ownProps.respawnRad);
     state.isDead := -1;
-    //state.pos := ownProps.respawnPos;
   end;
-
+  
+  if state.checkTargets > 0 then
+    state.checkTargets := state.checkTargets - 1;
+  if state.canShootCd > 0 then
+    state.canShootCd := state.canShootCd - 0.01;
+	
   //hasTarget := FALSE;
   //isOnSurface := FALSE;
   resetMozgas;
@@ -664,7 +681,7 @@ begin
   mapHeight := _advwove(state.pos.x, state.pos.z);
 
   //underwater
-  if (state.pos.y + 1.5) < 8.5 then
+  if state.pos.y < (waterlevel-1.5) then
   begin
     state.isDead := ownProps.baseRespawnTime;
     putRagdoll(state.pos, state.pos);
@@ -757,8 +774,8 @@ begin
   setlength(foreignProps.enemies, 0);
   for botIndex := low(_bots) to high(_bots) do
   begin 
-    if _bots[botIndex].state.isDead > 0 then goto skip;
-    if _bots[botIndex].state.mozgas.y = -0.3 then goto skip; //is falling
+    if _bots[botIndex].state.isDead > -1 then goto skip;
+    if _bots[botIndex].state.mozgas.y <= -0.3 then goto skip; //is falling
     if tavPointPoint(_bots[botIndex].state.pos, state.pos) > ownProps.baseVisibilityRadius
       then goto skip;
     isGun := _bots[botIndex].ownProps.fegyv < 128;
