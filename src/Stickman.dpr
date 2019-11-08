@@ -4391,6 +4391,22 @@ begin
   //ICE
   if (cpy^ <= waterlevel+0.5) and winter then cpy^ := cpy^+0.008;
 
+  //SELFIE
+  if selfieMaker.isSelfieModeOn then
+  begin
+    if dine.keyprsd(DIK_X) then
+    begin
+      //evalscriptline('fastinfo X');
+      case selfieMaker.zoomlevel of
+        CLOSE: selfieMaker.zoomlevel := NORMAL;
+        NORMAL: selfieMaker.zoomlevel := WIDE;
+        WIDE: selfieMaker.zoomlevel := CLOSE;
+      end;
+      // y u no work ??? inc(selfieMaker.zoomlevel);
+    end;
+    if dine.keyprsd(DIK_B) then selfieMaker.dab := not selfieMaker.dab;
+  end;
+
   // TODO
   inspect:=dine.keyd(DIK_O) and (halal = 0) and iranyithato and csipo;
   gugg:=dine.keyd(DIK_LCONTROL) and (halal = 0) and iranyithato and (not inspect);
@@ -7051,9 +7067,6 @@ procedure handleSelfies;
 begin
   if selfieMaker.isSelfieModeOn then
   begin
-    if dine.keyprsd(DIK_X) then inc(selfieMaker.zoomlevel);
-    if dine.keyprsd(DIK_B) then selfieMaker.dab := not selfieMaker.dab;
-
     //evalscriptline('fastinfo selfie mode on');
     iranyithato := FALSE;
     nemlohet := TRUE;
