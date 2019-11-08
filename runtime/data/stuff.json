@@ -2579,6 +2579,41 @@
 	],
 	"scripts": {},
 	"triggers": {},
+	"bots_default_enabled": true,
+	"botgroups": [
+		{
+			"count": 20,
+			"team": "GUN",
+			"mode": "NORMAL",
+			"weapons": [
+				"M4A1",
+				"M82A1",
+				"BM3"
+			],
+			"spawnpos": {
+				"x": -250,
+				"y": 60,
+				"z": -70
+			},
+			"spawnrad": 200
+		},
+		{
+			"count": 20,
+			"team": "TECH",
+			"mode": "NORMAL",
+			"weapons": [
+				"MPG",
+				"QUADRO",
+				"HPL"
+			],
+			"spawnpos": {
+				"x": -250,
+				"y": 60,
+				"z": -70
+			},
+			"spawnrad": 200
+		}
+	],
 	"foliages": [
 		{
 			"texture": "bush256.png",
