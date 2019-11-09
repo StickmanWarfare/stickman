@@ -380,8 +380,10 @@ var
   matWorld, matWorld2: TD3DMatrix;
   //matb: TD3DMatrix;
   animstate: Byte;
+  isFalling: boolean;
 begin
   state.isMoving := (state.mozgas.x <> 0) or (state.mozgas.z <> 0);
+  isFalling := _advwove(state.pos.x, state.pos.z) < state.pos.y - 1; //above map height
   if ownProps.fegyv < 128 then szin := gunszin else szin := techszin;
 
   D3DXMatrixRotationY(matWorld2, state.rotateY + D3DX_PI);
@@ -395,15 +397,15 @@ begin
   //D3DXMatrixTranslation(matWorld, pos.x, pos.y, pos.z);    //
   //D3DXMatrixMultiply(matb, matb, matWorld);                //
 
-  if state.isMoving then
+  if state.isMoving and not isFalling then
     animstate := MSTAT_FUT
   else
     animstate := MSTAT_ALL;
 
   mukso.jkez:=fegyver.jkez(ownProps.fegyv, animstate, clipszogy(state.rotateX));
   mukso.bkez:=fegyver.bkez(ownProps.fegyv, animstate, clipszogy(state.rotateX));
-  if not state.isMoving then mukso.Stand(FALSE); //ha true gugol.
-  if state.isMoving then
+  if not state.isMoving or isFalling then mukso.Stand(FALSE); //ha true gugol.
+  if state.isMoving and not isFalling then
     mukso.Runn((timegettime mod 1000) / 1000, state.aiming);
 
   state.lastMuks := mukso;
