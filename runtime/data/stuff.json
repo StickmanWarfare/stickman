@@ -2582,7 +2582,7 @@
 	"bots_default_enabled": true,
 	"botgroups": [
 		{
-			"count": 8,
+			"count": 5,
 			"team": "GUN",
 			"mode": "NORMAL",
 			"weapons": [
@@ -2598,7 +2598,7 @@
 			"spawnrad": 70
 		},
 		{
-			"count": 8,
+			"count": 5,
 			"team": "TECH",
 			"mode": "NORMAL",
 			"weapons": [
@@ -2614,7 +2614,7 @@
 			"spawnrad": 70
 		},
 		{
-			"count": 8,
+			"count": 5,
 			"team": "GUN",
 			"mode": "NORMAL",
 			"weapons": [
@@ -2627,10 +2627,10 @@
 				"y": 40,
 				"z": -66
 			},
-			"spawnrad": 50
+			"spawnrad": 70
 		},
 		{
-			"count": 8,
+			"count": 5,
 			"team": "TECH",
 			"mode": "NORMAL",
 			"weapons": [
@@ -2643,10 +2643,10 @@
 				"y": 40,
 				"z": -66
 			},
-			"spawnrad": 50
+			"spawnrad": 70
 		},
 		{
-			"count": 8,
+			"count": 5,
 			"team": "GUN",
 			"mode": "NORMAL",
 			"weapons": [
@@ -2655,14 +2655,14 @@
 				"BM3"
 			],
 			"spawnpos": {
-				"x": -282,
-				"y": 40,
-				"z": 166
+				"x": -321,
+				"y": 30,
+				"z": 139
 			},
 			"spawnrad": 70
 		},
 		{
-			"count": 8,
+			"count": 5,
 			"team": "TECH",
 			"mode": "NORMAL",
 			"weapons": [
@@ -2671,14 +2671,14 @@
 				"HPL"
 			],
 			"spawnpos": {
-				"x": -282,
-				"y": 40,
-				"z": 166
+				"x": -321,
+				"y": 30,
+				"z": 139
 			},
 			"spawnrad": 70
 		},
 		{
-			"count": 8,
+			"count": 5,
 			"team": "GUN",
 			"mode": "NORMAL",
 			"weapons": [
@@ -2691,10 +2691,10 @@
 				"y": 40,
 				"z": 14
 			},
-			"spawnrad": 50
+			"spawnrad": 70
 		},
 		{
-			"count": 8,
+			"count": 5,
 			"team": "TECH",
 			"mode": "NORMAL",
 			"weapons": [
@@ -2707,7 +2707,7 @@
 				"y": 40,
 				"z": 14
 			},
-			"spawnrad": 50
+			"spawnrad": 70
 		}
 	],
 	"foliages": [
