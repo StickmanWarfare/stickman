@@ -135,6 +135,18 @@ implementation
 //   HELPERS FUNCS   //
 ///////////////////////
 
+procedure _addHudMessage(input:string;col:longword;f:word = 500);
+var
+  i:byte;
+begin
+  for i:=high(hudMessages) downto low(hudMessages) + 1 do
+    hudMessages[i]:=hudMessages[i - 1];
+
+  i:=low(hudMessages);
+
+  hudMessages[i]:=THUDMessage.create(input, col, f);
+end;
+
 procedure _addrongybaba(apos, vpos, gmbvec:TD3DXVector3;fegyv, mlgmb:byte;ID:cardinal;muks:TMuksoka;matWorld:TD3DMatrix);
 var
   szin:cardinal;
@@ -643,6 +655,11 @@ begin
   begin
     state.isDead := ownProps.baseRespawnTime;
     putRagdoll(state.pos, loves.pos);
+    if loves.kilotte <> -2 then
+    begin
+      _addHudMessage(lang[59] + lang[109] + lang[110], $FF0000);
+      hudMessages[low(hudMessages)].fade:=200;
+    end;
     exit;
   end;
 end;
