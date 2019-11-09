@@ -41,6 +41,7 @@ type
     baseLovesCooldown: Single; //tick num
     baseReactionTime: Cardinal; //tick num
     baseRespawnTime: Cardinal; //tick num
+    baseInvulTime: Cardinal; //tick num
   end;
 
   ForeignProps =
@@ -62,6 +63,7 @@ type
     lastMuks: TMuksoka;
     targetVec: TD3DXVector3; //target labanal
     isDead: Integer; //tick num, resets to baseRespawnTime, -1 means alive
+    isInvul: Integer; //tick num, resetrs to baseInvulTime, -1 means not invul
     isMoving: boolean;
     //
     actionStart: Cardinal; //tick
@@ -350,6 +352,7 @@ begin
   ownProps.baseReactionTime := random(30) + 60;
   ownProps.baseLovesCooldown := _fegyvercooldown(_fegyv) * 1.2;
   ownProps.baseRespawnTime := 500;
+  ownProps.baseInvulTime := 100;
 
   //Init State
   state.pos := _getRandomPos(ownProps.respawnPos, ownProps.respawnRad);
@@ -360,6 +363,7 @@ begin
   //state.lastMuks
   state.targetVec := D3DXVector3(0, 0, 0);
   state.isDead := -1;
+  state.isInvul := -1;
   state.isMoving := FALSE;
   //
   state.actionStart := getTickCount; //tick
@@ -624,7 +628,8 @@ var
   matWorld, matWorld2 :TD3DMatrix;
   muks: TMuksoka;
 begin
-  if state.isDead > 0 then exit;
+  if state.isDead > -1 then exit;
+  if state.isInvul > -1 then exit;
 
   amGun := ownProps.fegyv < 128;
   isGun := loves.fegyv < 128;
@@ -684,7 +689,12 @@ begin
   begin
     state.pos := _getRandomPos(ownProps.respawnPos, ownProps.respawnRad);
     state.isDead := -1;
+    state.isInvul := ownProps.baseInvulTime;
   end;
+  if state.isInvul > 0 then
+    state.isInvul := state.isInvul - 1
+  else if state.isInvul = 0 then
+    state.isInvul := -1;
   
   if state.checkTargets > 0 then
     state.checkTargets := state.checkTargets - 1;
@@ -792,7 +802,7 @@ begin
   for botIndex := low(_bots) to high(_bots) do
   begin 
     if _bots[botIndex].state.isDead > -1 then goto skip;
-    if _bots[botIndex].state.mozgas.y <= -0.3 then goto skip; //is falling
+    if _bots[botIndex].state.isInvul > -1 then goto skip;
     if tavPointPoint(_bots[botIndex].state.pos, state.pos) > ownProps.baseVisibilityRadius
       then goto skip;
     isGun := _bots[botIndex].ownProps.fegyv < 128;
