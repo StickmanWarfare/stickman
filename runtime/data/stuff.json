@@ -2591,9 +2591,38 @@
 				"BM3"
 			],
 			"spawnpos": {
-				"x": -290,
-				"y": 40,
-				"z": -164
+				"x": -372,
+				"z": -179
+			},
+			"spawnrad": 50
+		},
+		{
+			"count": 5,
+			"team": "TECH",
+			"mode": "NORMAL",
+			"weapons": [
+				"MPG",
+				"QUADRO",
+				"HPL"
+			],
+			"spawnpos": {
+				"x": -372,
+				"z": -179
+			},
+			"spawnrad": 50
+		},
+		{
+			"count": 5,
+			"team": "GUN",
+			"mode": "NORMAL",
+			"weapons": [
+				"M4A1",
+				"M82A1",
+				"BM3"
+			],
+			"spawnpos": {
+				"x": -258,
+				"z": -157
 			},
 			"spawnrad": 70
 		},
@@ -2607,9 +2636,8 @@
 				"HPL"
 			],
 			"spawnpos": {
-				"x": -290,
-				"y": 40,
-				"z": -164
+				"x": -258,
+				"z": -157
 			},
 			"spawnrad": 70
 		},
@@ -2623,11 +2651,10 @@
 				"BM3"
 			],
 			"spawnpos": {
-				"x": -169,
-				"y": 40,
-				"z": -66
+				"x": -244,
+				"z": -53
 			},
-			"spawnrad": 70
+			"spawnrad": 50
 		},
 		{
 			"count": 5,
@@ -2639,11 +2666,10 @@
 				"HPL"
 			],
 			"spawnpos": {
-				"x": -169,
-				"y": 40,
-				"z": -66
+				"x": -244,
+				"z": -53
 			},
-			"spawnrad": 70
+			"spawnrad": 50
 		},
 		{
 			"count": 5,
@@ -2655,11 +2681,10 @@
 				"BM3"
 			],
 			"spawnpos": {
-				"x": -321,
-				"y": 30,
-				"z": 139
+				"x": -396,
+				"z": 5
 			},
-			"spawnrad": 70
+			"spawnrad": 50
 		},
 		{
 			"count": 5,
@@ -2671,43 +2696,10 @@
 				"HPL"
 			],
 			"spawnpos": {
-				"x": -321,
-				"y": 30,
-				"z": 139
+				"x": -396,
+				"z": 5
 			},
-			"spawnrad": 70
-		},
-		{
-			"count": 5,
-			"team": "GUN",
-			"mode": "NORMAL",
-			"weapons": [
-				"M4A1",
-				"M82A1",
-				"BM3"
-			],
-			"spawnpos": {
-				"x": -420,
-				"y": 40,
-				"z": 14
-			},
-			"spawnrad": 70
-		},
-		{
-			"count": 5,
-			"team": "TECH",
-			"mode": "NORMAL",
-			"weapons": [
-				"MPG",
-				"QUADRO",
-				"HPL"
-			],
-			"spawnpos": {
-				"x": -420,
-				"y": 40,
-				"z": 14
-			},
-			"spawnrad": 70
+			"spawnrad": 50
 		}
 	],
 	"foliages": [

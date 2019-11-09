@@ -322,8 +322,8 @@ var
   tmp:TD3DXvector3;
 begin
    tmp.x := base.x + random(radius) - radius div 2;
-   tmp.y := base.y;
    tmp.z := base.z + random(radius) - radius div 2;
+   tmp.y := _advwove(tmp.x, tmp.z) + 10;
    result := tmp;
 end;
 
@@ -351,7 +351,7 @@ begin
   ownProps.baseVisibilityRadius := 50;
   ownProps.baseReactionTime := random(30) + 60;
   ownProps.baseLovesCooldown := _fegyvercooldown(_fegyv) * 1.2;
-  ownProps.baseRespawnTime := 500;
+  ownProps.baseRespawnTime := 200;
   ownProps.baseInvulTime := 100;
 
   //Init State

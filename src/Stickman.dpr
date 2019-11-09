@@ -2529,7 +2529,7 @@ begin
     else tmode := BOT_DUMMY;
 
     spawnpos.x := stuffjson.GetFloat(['botgroups', groupIndex, 'spawnpos', 'x']);
-    spawnpos.y := stuffjson.GetFloat(['botgroups', groupIndex, 'spawnpos', 'y']);
+    spawnpos.y := 0;
     spawnpos.z := stuffjson.GetFloat(['botgroups', groupIndex, 'spawnpos', 'z']);
     spawnrad := stuffjson.GetInt(['botgroups', groupIndex, 'spawnrad']);
 
