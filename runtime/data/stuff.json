@@ -2594,9 +2594,10 @@
 	],
 	"scripts": {},
 	"triggers": {},
+	"bots_default_enabled": true,
 	"botgroups": [
 		{
-			"count": 20,
+			"count": 5,
 			"team": "GUN",
 			"mode": "NORMAL",
 			"weapons": [
@@ -2605,14 +2606,13 @@
 				"BM3"
 			],
 			"spawnpos": {
-				"x": -250,
-				"y": 60,
-				"z": -70
+				"x": -372,
+				"z": -179
 			},
-			"spawnrad": 200
+			"spawnrad": 50
 		},
 		{
-			"count": 20,
+			"count": 5,
 			"team": "TECH",
 			"mode": "NORMAL",
 			"weapons": [
@@ -2621,11 +2621,100 @@
 				"HPL"
 			],
 			"spawnpos": {
-				"x": -250,
-				"y": 60,
-				"z": -70
+				"x": -372,
+				"z": -179
 			},
-			"spawnrad": 200
+			"spawnrad": 50
+		},
+		{
+			"count": 5,
+			"team": "GUN",
+			"mode": "NORMAL",
+			"weapons": [
+				"M4A1",
+				"M82A1",
+				"BM3"
+			],
+			"spawnpos": {
+				"x": -258,
+				"z": -157
+			},
+			"spawnrad": 70
+		},
+		{
+			"count": 5,
+			"team": "TECH",
+			"mode": "NORMAL",
+			"weapons": [
+				"MPG",
+				"QUADRO",
+				"HPL"
+			],
+			"spawnpos": {
+				"x": -258,
+				"z": -157
+			},
+			"spawnrad": 70
+		},
+		{
+			"count": 5,
+			"team": "GUN",
+			"mode": "NORMAL",
+			"weapons": [
+				"M4A1",
+				"M82A1",
+				"BM3"
+			],
+			"spawnpos": {
+				"x": -244,
+				"z": -53
+			},
+			"spawnrad": 50
+		},
+		{
+			"count": 5,
+			"team": "TECH",
+			"mode": "NORMAL",
+			"weapons": [
+				"MPG",
+				"QUADRO",
+				"HPL"
+			],
+			"spawnpos": {
+				"x": -244,
+				"z": -53
+			},
+			"spawnrad": 50
+		},
+		{
+			"count": 5,
+			"team": "GUN",
+			"mode": "NORMAL",
+			"weapons": [
+				"M4A1",
+				"M82A1",
+				"BM3"
+			],
+			"spawnpos": {
+				"x": -396,
+				"z": 5
+			},
+			"spawnrad": 50
+		},
+		{
+			"count": 5,
+			"team": "TECH",
+			"mode": "NORMAL",
+			"weapons": [
+				"MPG",
+				"QUADRO",
+				"HPL"
+			],
+			"spawnpos": {
+				"x": -396,
+				"z": 5
+			},
+			"spawnrad": 50
 		}
 	],
 	"foliages": [

@@ -2511,8 +2511,8 @@ var
   groupCount, weaponCount, maxSize: Integer;
   groupIndex, weaponIndex, botIndex, i: Integer;
   team, mode, fegyvname: string;
-  spawnpos, tmpPos: TD3DXVector3;
-  spawnrad: Integer;
+  spawnpos: TD3DXVector3;
+  spawnrad: Cardinal;
   tmode: TBotMode;
   bot: TBot;
   tfegyv: Byte;
@@ -2534,7 +2534,7 @@ begin
     else tmode := BOT_DUMMY;
 
     spawnpos.x := stuffjson.GetFloat(['botgroups', groupIndex, 'spawnpos', 'x']);
-    spawnpos.y := stuffjson.GetFloat(['botgroups', groupIndex, 'spawnpos', 'y']);
+    spawnpos.y := 0;
     spawnpos.z := stuffjson.GetFloat(['botgroups', groupIndex, 'spawnpos', 'z']);
     spawnrad := stuffjson.GetInt(['botgroups', groupIndex, 'spawnrad']);
 
@@ -2562,9 +2562,6 @@ begin
       tmode := botGroupArr[groupIndex].botMode;
       spawnpos := botGroupArr[groupIndex].spawnpos;
       spawnrad := botGroupArr[groupIndex].spawnrad;
-      tmpPos.x := spawnpos.x + random(spawnrad) - spawnrad div 2;
-      tmpPos.y := spawnpos.y;
-      tmpPos.z := spawnpos.z + random(spawnrad) - spawnrad div 2;
 
       if length(botGroupArr[groupIndex].fegyvs) > 0 then
           tfegyv := botGroupArr[groupIndex].fegyvs[random(high(botGroupArr[groupIndex].fegyvs) + 1)]
@@ -2576,7 +2573,8 @@ begin
         botIndex,
         tmode,
         tfegyv,
-        tmpPos
+        spawnpos,
+        spawnrad
       );
 
       botGroupArr[groupIndex].Add(bot);
@@ -15611,6 +15609,9 @@ begin //                 BEGIIIN
 
     //WINTER
     winter:=stuffjson.getBool(['winter']);
+
+    //Bots
+    bots_enabled:=stuffjson.getBool(['bots_default_enabled']);
 
     if winter then
     begin

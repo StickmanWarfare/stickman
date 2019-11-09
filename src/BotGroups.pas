@@ -32,6 +32,7 @@ type
     id: Integer;
     botMode: TBotMode;
     respawnPos: TD3DXVector3;
+    respawnRad: Cardinal;
     fegyv: Byte;
     //
     baseSpeed: Single;
@@ -40,6 +41,7 @@ type
     baseLovesCooldown: Single; //tick num
     baseReactionTime: Cardinal; //tick num
     baseRespawnTime: Cardinal; //tick num
+    baseInvulTime: Cardinal; //tick num
   end;
 
   ForeignProps =
@@ -61,6 +63,7 @@ type
     lastMuks: TMuksoka;
     targetVec: TD3DXVector3; //target labanal
     isDead: Integer; //tick num, resets to baseRespawnTime, -1 means alive
+    isInvul: Integer; //tick num, resetrs to baseInvulTime, -1 means not invul
     isMoving: boolean;
     //
     actionStart: Cardinal; //tick
@@ -85,7 +88,7 @@ type
     procedure shootPoint(_pos: TD3DXVector3);
     procedure putRagdoll(_pos: TD3DXVector3; forceRajtam: TD3DXVector3);
   public
-    constructor Create(_id: Integer; _botMode: TBotMode; _fegyv: Byte; _pos: TD3DXVector3);
+    constructor Create(_id: Integer; _botMode: TBotMode; _fegyv: Byte; _pos: TD3DXVector3; _rad: Cardinal);
     procedure Draw(mukso: TMuksoka; fegyver: TFegyv; campos: TD3DXVector3);
     //
     function getFegyv: BYTE;
@@ -133,6 +136,18 @@ implementation
 ///////////////////////
 //   HELPERS FUNCS   //
 ///////////////////////
+
+procedure _addHudMessage(input:string;col:longword;f:word = 500);
+var
+  i:byte;
+begin
+  for i:=high(hudMessages) downto low(hudMessages) + 1 do
+    hudMessages[i]:=hudMessages[i - 1];
+
+  i:=low(hudMessages);
+
+  hudMessages[i]:=THUDMessage.create(input, col, f);
+end;
 
 procedure _addrongybaba(apos, vpos, gmbvec:TD3DXVector3;fegyv, mlgmb:byte;ID:cardinal;muks:TMuksoka;matWorld:TD3DMatrix);
 var
@@ -299,6 +314,18 @@ begin
   result:= -1;
 end;
 
+function _getRandomPos(
+  base:TD3DXvector3;
+  radius:Cardinal
+):TD3DXvector3;
+var
+  tmp:TD3DXvector3;
+begin
+   tmp.x := base.x + random(radius) - radius div 2;
+   tmp.z := base.z + random(radius) - radius div 2;
+   tmp.y := _advwove(tmp.x, tmp.z) + 10;
+   result := tmp;
+end;
 
 ///////////////////////
 //       TBOT       //
@@ -308,24 +335,27 @@ constructor TBot.Create(
   _id: Integer;
   _botMode: TBotMode;
   _fegyv: Byte;
-  _pos: TD3DXVector3
+  _pos: TD3DXVector3;
+  _rad: Cardinal
 );
 begin
   //Init OwnProps
   ownProps.id := _id;
   ownProps.botMode := _botMode;
   ownProps.respawnPos := _pos;
+  ownProps.respawnRad := _rad;
   ownProps.fegyv := _fegyv;
   //
   ownProps.baseSpeed := 0.08;
   ownProps.baseAccuracy := (random(35) + 15) / 100;
-  ownProps.baseVisibilityRadius := 100;
-  ownProps.baseReactionTime := random(20) + 40;
-  ownProps.baseLovesCooldown := _fegyvercooldown(_fegyv);
-  ownProps.baseRespawnTime := 500;
+  ownProps.baseVisibilityRadius := 50;
+  ownProps.baseReactionTime := random(30) + 60;
+  ownProps.baseLovesCooldown := _fegyvercooldown(_fegyv) * 1.2;
+  ownProps.baseRespawnTime := 200;
+  ownProps.baseInvulTime := 100;
 
   //Init State
-  state.pos := _pos;
+  state.pos := _getRandomPos(ownProps.respawnPos, ownProps.respawnRad);
   state.mozgas := D3DXVector3(0, 0, 0);
   //state.lastMozgas
   state.rotateX := 0;
@@ -333,6 +363,7 @@ begin
   //state.lastMuks
   state.targetVec := D3DXVector3(0, 0, 0);
   state.isDead := -1;
+  state.isInvul := -1;
   state.isMoving := FALSE;
   //
   state.actionStart := getTickCount; //tick
@@ -349,8 +380,10 @@ var
   matWorld, matWorld2: TD3DMatrix;
   //matb: TD3DMatrix;
   animstate: Byte;
+  isFalling: boolean;
 begin
   state.isMoving := (state.mozgas.x <> 0) or (state.mozgas.z <> 0);
+  isFalling := _advwove(state.pos.x, state.pos.z) < state.pos.y - 1; //above map height
   if ownProps.fegyv < 128 then szin := gunszin else szin := techszin;
 
   D3DXMatrixRotationY(matWorld2, state.rotateY + D3DX_PI);
@@ -364,15 +397,15 @@ begin
   //D3DXMatrixTranslation(matWorld, pos.x, pos.y, pos.z);    //
   //D3DXMatrixMultiply(matb, matb, matWorld);                //
 
-  if state.isMoving then
+  if state.isMoving and not isFalling then
     animstate := MSTAT_FUT
   else
     animstate := MSTAT_ALL;
 
   mukso.jkez:=fegyver.jkez(ownProps.fegyv, animstate, clipszogy(state.rotateX));
   mukso.bkez:=fegyver.bkez(ownProps.fegyv, animstate, clipszogy(state.rotateX));
-  if not state.isMoving then mukso.Stand(FALSE); //ha true gugol.
-  if state.isMoving then
+  if not state.isMoving or isFalling then mukso.Stand(FALSE); //ha true gugol.
+  if state.isMoving and not isFalling then
     mukso.Runn((timegettime mod 1000) / 1000, state.aiming);
 
   state.lastMuks := mukso;
@@ -540,6 +573,7 @@ begin
 
   //should target player
   if foreignProps.playerHalott then exit;
+  if tavPointPoint(foreignProps.playerPos, state.pos) > ownProps.baseVisibilityRadius then exit;
   isGun := foreignProps.playerFegyv < 128;
   isAlly := isGun = amGun;
   if isAlly then exit;
@@ -596,7 +630,8 @@ var
   matWorld, matWorld2 :TD3DMatrix;
   muks: TMuksoka;
 begin
-  if state.isDead > 0 then exit;
+  if state.isDead > -1 then exit;
+  if state.isInvul > -1 then exit;
 
   amGun := ownProps.fegyv < 128;
   isGun := loves.fegyv < 128;
@@ -627,6 +662,11 @@ begin
   begin
     state.isDead := ownProps.baseRespawnTime;
     putRagdoll(state.pos, loves.pos);
+    if loves.kilotte <> -2 then
+    begin
+      _addHudMessage(lang[110], $FF0000);
+      hudMessages[low(hudMessages)].fade:=200;
+    end;
     exit;
   end;
 end;
@@ -642,10 +682,6 @@ var
   //tickNow: Cardinal;
 begin
   //tickNow := getTickCount;
-  if state.checkTargets > 0 then
-    state.checkTargets := state.checkTargets - 1;
-  if state.canShootCd > 0 then
-    state.canShootCd := state.canShootCd - 0.01;
   if state.isDead > 0 then
   begin
     state.isDead := state.isDead - 1;
@@ -653,10 +689,20 @@ begin
   end
   else if state.isDead = 0 then
   begin
+    state.pos := _getRandomPos(ownProps.respawnPos, ownProps.respawnRad);
     state.isDead := -1;
-    //state.pos := ownProps.respawnPos;
+    state.isInvul := ownProps.baseInvulTime;
   end;
-
+  if state.isInvul > 0 then
+    state.isInvul := state.isInvul - 1
+  else if state.isInvul = 0 then
+    state.isInvul := -1;
+  
+  if state.checkTargets > 0 then
+    state.checkTargets := state.checkTargets - 1;
+  if state.canShootCd > 0 then
+    state.canShootCd := state.canShootCd - 0.01;
+	
   //hasTarget := FALSE;
   //isOnSurface := FALSE;
   resetMozgas;
@@ -664,7 +710,7 @@ begin
   mapHeight := _advwove(state.pos.x, state.pos.z);
 
   //underwater
-  if (state.pos.y + 1.5) < 8.5 then
+  if state.pos.y < (waterlevel-1.5) then
   begin
     state.isDead := ownProps.baseRespawnTime;
     putRagdoll(state.pos, state.pos);
@@ -691,7 +737,7 @@ begin
     state.checkTargets := ownProps.baseReactionTime;
     state.targetVec := findTarget;
   end;
-  hasTarget := not D3DXVector3Equal(state.targetVec, D3DXVector3(0, 0, 0));
+  hasTarget := isOnSurface and not D3DXVector3Equal(state.targetVec, D3DXVector3(0, 0, 0));
   if hasTarget then facePoint(state.targetVec);
 
   case ownProps.botMode of
@@ -757,8 +803,8 @@ begin
   setlength(foreignProps.enemies, 0);
   for botIndex := low(_bots) to high(_bots) do
   begin 
-    if _bots[botIndex].state.isDead > 0 then goto skip;
-    if _bots[botIndex].state.mozgas.y = -0.3 then goto skip; //is falling
+    if _bots[botIndex].state.isDead > -1 then goto skip;
+    if _bots[botIndex].state.isInvul > -1 then goto skip;
     if tavPointPoint(_bots[botIndex].state.pos, state.pos) > ownProps.baseVisibilityRadius
       then goto skip;
     isGun := _bots[botIndex].ownProps.fegyv < 128;
