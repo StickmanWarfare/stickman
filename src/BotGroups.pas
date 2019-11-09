@@ -735,7 +735,7 @@ begin
     state.checkTargets := ownProps.baseReactionTime;
     state.targetVec := findTarget;
   end;
-  hasTarget := not D3DXVector3Equal(state.targetVec, D3DXVector3(0, 0, 0));
+  hasTarget := isOnSurface and not D3DXVector3Equal(state.targetVec, D3DXVector3(0, 0, 0));
   if hasTarget then facePoint(state.targetVec);
 
   case ownProps.botMode of
