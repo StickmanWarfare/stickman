@@ -664,7 +664,7 @@ begin
     putRagdoll(state.pos, loves.pos);
     if loves.kilotte <> -2 then
     begin
-      _addHudMessage(lang[59] + lang[109] + lang[110], $FF0000);
+      _addHudMessage(lang[110], $FF0000);
       hudMessages[low(hudMessages)].fade:=200;
     end;
     exit;
