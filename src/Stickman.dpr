@@ -4516,7 +4516,7 @@ begin
       dine.keyd(DIK_A) or dine.keyd(DIK_D) then
       multisc.killscamping:=multisc.kills;
 
-  if dine.keyd(DIK_F) and (not autoban){$IFNDEF speedhack} and (autobaszallhat){$ENDIF} and (halal = 0) and (length(chatmost) = 0) then
+  if dine.keyd(DIK_F) and (not autoban){$IFNDEF speedhack} and (autobaszallhat){$ENDIF} and (halal = 0) and (length(chatmost) = 0) and (not selfieMaker.isSelfieModeOn) then
   begin
     freeandnil(tegla);autoban:=true;
     cpox^:=cpx^;cpoz^:=cpz^;cpoy^:=cpy^;
@@ -7611,7 +7611,8 @@ begin
     end
     else
     begin
-      kulsonezet:=false;
+      if not selfieMaker.isSelfieModeOn then
+        kulsonezet:=false;
       if vanishcar > 0 then
         inc(vanishcar);
     end;
@@ -8985,11 +8986,20 @@ begin
   // origin, and define "up" to be in the y-direction.    //campos camvec camcamcam
   vEyePt:=D3DXVector3(acpx + halal, acpy + 1.5 + halal / 3, acpz + halal);
   if kulsonezet then
+    if selfieMaker.isSelfieModeOn then
+    begin
+      case selfieMaker.zoomlevel of
+        CLOSE: vEyePt:=D3DXVector3(acpx - sin(szogx)* cos(szogy) * 1.75, acpy + 1.5 - sin(szogy) * 1.5, acpz - cos(szogx) * cos(szogy) * 1.75);
+        NORMAL: vEyePt:=D3DXVector3(acpx - sin(szogx) * 2, acpy + 1.5 - sin(szogy) * 2, acpz - cos(szogx) * 2);
+        WIDE: vEyePt:=D3DXVector3(acpx - sin(szogx) * 5, acpy + 1.5 - sin(szogy) * 5, acpz - cos(szogx) * 5);
+      end;
+    end else
     vEyePt:=D3DXVector3(acpx - sin(szogx) * cos(szogy) * 15, acpy + 1.5 - sin(szogy) * 15, acpz - cos(szogx) * cos(szogy) * 15);
 
   vLookatPt:=D3DXVector3(acpx + sin(szogx) * cos(szogy), acpy + 1.5 + sin(szogy), cos(szogx) * cos(szogy) + acpz);
   if halal > 0 then
   begin
+    selfieMaker.isSelfieModeOn := false;
     rbid:=getrongybababyID(0);
     if rbid >= 0 then
     begin
@@ -14428,7 +14438,7 @@ var
 
       selfieMaker.toggle;
       szogx := szogx + D3DX_PI;
-      nofegyv := selfieMaker.isSelfieModeOn;
+      kulsonezet := selfieMaker.isSelfieModeOn;
       selfieMaker.zoomlevel := NORMAL;
       selfieMaker.dab := FALSE;
     end;

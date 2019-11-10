@@ -60,34 +60,19 @@ procedure TSelfie.render;
 var
   szin: Cardinal;
   matWorld, matWorld2, matb: TD3DMatrix;
-  pos: TD3DXVector3;
-  cameraDistance: 1..5;
 begin
   if not isSelfieModeOn then exit;
 
-  cameraDistance := 2;
-  case zoomlevel of
-    CLOSE: cameraDistance := 1;
-    NORMAL: cameraDistance := 2;
-    WIDE: cameraDistance := 5;
-  end;
-
   if fegyv < 128 then szin := gunszin else szin := techszin;
-  D3DXVec3Add(
-    pos,
-    campos,
-    D3DXVector3(
-      sin(camrotX) * cameraDistance,
-      0,
-      cos(camrotX) * cameraDistance
-    )
-  );
   D3DXMatrixRotationY(matWorld2, camrotX); //+PI -PI lel
-  D3DXMatrixRotationX(matb, clipszogybajusz(camrotY));
+  if zoomlevel = CLOSE then begin
+    D3DXMatrixRotationX(matb, -camrotY*0.75);
+  end else
+    D3DXMatrixRotationX(matb, -camrotY*0.5);
   D3DXMatrixMultiply(matb, matb, matWorld2);
-  D3DXMatrixTranslation(matWorld, pos.x, pos.y, pos.z);
+  D3DXMatrixTranslation(matWorld, campos.x, campos.y, campos.z);
   D3DXMatrixMultiply(matWorld2, matWorld2, matWorld);
-  D3DXMatrixTranslation(matWorld, pos.x, pos.y, pos.z);
+  D3DXMatrixTranslation(matWorld, campos.x, campos.y, campos.z);
   D3DXMatrixMultiply(matb, matb, matWorld);
 
   if dab then
@@ -156,7 +141,7 @@ begin
   matb._41 := matb._41 + muks.gmbk[10].x;
   matb._42 := matb._42 + muks.gmbk[10].y;
   matb._43 := matb._43 + muks.gmbk[10].z;
-  fejcuccrenderer.render(fejcucc, matb, false, pos);
+  fejcuccrenderer.render(fejcucc, matb, false, campos);
 end;
 
 
