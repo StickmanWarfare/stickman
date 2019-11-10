@@ -172,7 +172,7 @@ var
 
   hogombmesh:ID3DXMesh = nil;
 
-  foliages:array of Tfoliage; //N�v�nyzet
+  foliages:array of Tfoliage; //Növényzet
   //  foliagelevels:array of integer;
   ojjektumrenderer:T3DORenderer;
   propsystem:TPropsystem;
@@ -3274,7 +3274,6 @@ procedure SetupMuksmatr(mi:integer);
 var
   matWorld, matWorld2, matb:TD3DMatrix;
   pos:TD3DVector;
-  modifier:TD3DXVector3;
 begin
     if mi >= 0 then
     begin
@@ -3283,15 +3282,13 @@ begin
       else
         pos:=ppl[mi].pos.pos;
 
-        D3DXVec3add(pos, pos, modifier);
-
      //pos:=pplpos[mi].pos;
      D3DXMatrixRotationY(matWorld2, ppl[mi].pos.irany + d3dx_pi);
      D3DXMatrixRotationX(matb, clipszogybajusz(ppl[mi].pos.irany2));
 
     end
     else
-     MessageBox(0, 'Benthagyott AI k�d', 'Hiba', 0);
+     MessageBox(0, 'Benthagyott AI kód', 'Hiba', 0);
 
   D3DXMatrixMultiply(matb, matb, matWorld2);
 
@@ -8280,7 +8277,7 @@ end;
   until (hanyszor * 10 > timegettime) or (korlat > 20);
   //////////
 
-  if rbszam > 4 then delrongybaba(-1);
+  if rbszam > 30 then delrongybaba(-1);
   hvolt:=false;
   i:=hanyszor * 10 - timegettime;
 
