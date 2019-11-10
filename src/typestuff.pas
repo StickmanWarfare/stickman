@@ -15,8 +15,8 @@ uses
   qjson;
 
 const
-  PROG_VER=209073;
-  datachecksum=$A219091E;
+  PROG_VER=209080;
+  datachecksum=$74D896D9;
 type
 
   array4ofbyte=array[0..3] of byte;
@@ -271,15 +271,6 @@ type
     pls:Tplayerpls;
     auto:Tplayerauto;
     isTyping:boolean;
-  end;
-
-  Tbot=record
-    dead:integer;
-    mukso:TPlayer;
-    allok,lovescd,maxlovescd:Integer;//ennyi ticken at maradok ebben az akcioban
-    speed,accuracy:single;
-    front:TD3DXVector3;
-    nekimegyekepuletnek,latomjatekost,partotert:boolean;
   end;
 
 const uresplayer:Tplayer=();
@@ -686,6 +677,7 @@ const
   FEGYV_LAW=2;
   FEGYV_MP5A3=3;
   FEGYV_BM3=4;//akkor most meg lesz baszva valami
+  FEGYV_GUNSUPP=5;
   FEGYV_H31_G=100;//a szerveren a 4 a kibaszott quad
   FEGYV_BM3_2=101;
   FEGYV_BM3_3=102;// különbözo golyófajták // Hector ne légy balfasz.
@@ -695,6 +687,7 @@ const
   FEGYV_NOOB=130;
   FEGYV_X72=131;
   FEGYV_HPL=132;
+  FEGYV_TECHSUPP=133;
   FEGYV_H31_T=200;
 
   //SKINEK: 10-19 m4; 140-149 mpg; kezdoertek mindig a golden

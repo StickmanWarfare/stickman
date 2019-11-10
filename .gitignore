@@ -3,3 +3,14 @@ src/*/
 src/Stickman.dof
 src/Stickman.cfg
 libs/
+runtime/
+!runtime/dokumentacio.docx
+!runtime/Download new version.url
+!runtime/Új verzió letöltése.url
+!runtime/windowed.bat
+!runtime/LICENSE
+!runtime/data/stuff.json
+!runtime/data/effects.fx
+!runtime/data/gui/lang
+*.md
+!README.md
