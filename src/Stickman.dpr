@@ -12,7 +12,7 @@
  *                                           *)
 {$R stickman.RES}
 {$DEFINE force16bitindices} //ez hibás, pár helyen, ha nincs kipontozva, meg kell majd nézni
-{$DEFINE undebug} //Remove dot for release, add dot for dev
+{.$DEFINE undebug} //Remove dot for release, add dot for dev
 {.$DEFINE nochecksumcheck}
 {.$DEFINE speedhack}
 {.$DEFINE repkedomod}
@@ -480,7 +480,7 @@ begin
   end;  
 end;
 
-type TPrintTopMode = (TOP_MONTH, TOP_WEEK, TOP_DAY, TOP_ALL);
+type TToplist = (TOP_MONTHLY, TOP_WEEKLY, TOP_DAILY, TOP_ALL);
 
 type TPrintTopThread = class(TAsync)
 private
@@ -490,17 +490,17 @@ private
 protected
   procedure Execute; override;
 public
-  constructor Create(startSuspended: boolean; mode: TPrintTopMode = TOP_ALL);
+  constructor Create(startSuspended: boolean; mode: TToplist = TOP_ALL);
 end;
 
-constructor TPrintTopThread.Create(startSuspended: boolean; mode: TPrintTopMode = TOP_ALL);
+constructor TPrintTopThread.Create(startSuspended: boolean; mode: TToplist = TOP_ALL);
 begin
   inherited Create(startSuspended);
 
   case mode of
-    TOP_MONTH: _endpoint := 'havitop';
-    TOP_WEEK: _endpoint := 'hetitop';
-    TOP_DAY: _endpoint := 'napitop';
+    TOP_MONTHLY: _endpoint := 'havitop';
+    TOP_WEEKLY: _endpoint := 'hetitop';
+    TOP_DAILY: _endpoint := 'napitop';
     TOP_ALL: _endpoint := 'top';
   end;
 end;
@@ -534,7 +534,53 @@ begin
     end;
   finally
     Terminate;
-  end;  
+  end;
+end;
+
+
+type TPrintRank = class(TAsync)
+private
+  _api: TApi;
+  _response: TApiResponse;
+  _uname: string;
+  _mode: string;
+protected
+  procedure Execute; override;
+public
+  constructor Create(startSuspended: boolean; uname: string; mode: TToplist = TOP_ALL);
+end;
+
+constructor TPrintRank.Create(startSuspended: boolean; uname: string; mode: TToplist = TOP_ALL);
+begin
+  inherited Create(startSuspended);
+
+  _uname := uname;
+  case mode of
+    TOP_MONTHLY: _mode := 'havi';
+    TOP_WEEKLY: _mode := 'heti';
+    TOP_DAILY: _mode := 'napi';
+    TOP_ALL: _mode := 'ossz';
+  end;
+end;
+
+procedure TPrintRank.Execute;
+var
+  output: string;
+begin
+  try
+    _api := TApi.Create;
+    _response := _api.GET(baseUrl + 'rank&nev=' + _uname + '&type=' + _mode);
+
+    if _response.success then
+    begin
+      output := _response.data.getString(['data', 'rank']);
+
+      evalscriptline('display ' + output);
+    end;
+
+  finally
+    Terminate;
+  end;
 end;
 
 
@@ -14482,13 +14528,14 @@ var
 
   end;
 
-  procedure handleparancsok(var mit:String);
-  var
-    i:integer;
+procedure handleparancsok(var mit:String);
+var
+   tmp: string;
+   i:integer;
   {$IFDEF propeditor}
     j, k:integer;
   {$ENDIF}
-  begin
+begin
 
     if pos(' /practice', mit) = 1 then
       mit:= ' /join Practice-' + inttohex(random(35536), 4);
@@ -14535,22 +14582,54 @@ var
 
     if pos(' /havitop', mit) = 1 then
     begin
-      TPrintTopThread.Create(FALSE, TOP_MONTH);
+      TPrintTopThread.Create(FALSE, TOP_MONTHLY);
     end; 
 
     if pos(' /hetitop', mit) = 1 then
     begin
-      TPrintTopThread.Create(FALSE, TOP_WEEK);
+      TPrintTopThread.Create(FALSE, TOP_WEEKLY);
     end;
 
     if pos(' /napitop', mit) = 1 then
     begin
-      TPrintTopThread.Create(FALSE, TOP_DAY);
+      TPrintTopThread.Create(FALSE, TOP_DAILY);
     end;
 
     if pos(' /top', mit) = 1 then
     begin
       TPrintTopThread.Create(FALSE);
+    end;
+
+    if pos(' /rank', mit) = 1 then
+    begin
+      tmp := '';
+      for i:=0 to high(ppl) do
+        if (ppl[i].net.UID = 0) then tmp := ppl[i].pls.nev;
+      TPrintRank.Create(FALSE, tmp);
+    end;
+
+    if pos(' /rank napi', mit) = 1 then
+    begin
+      tmp := '';
+      for i:=0 to high(ppl) do
+        if (ppl[i].net.UID = 0) then tmp := ppl[i].pls.nev;
+      TPrintRank.Create(FALSE, tmp, TOP_DAILY);
+    end;
+
+    if pos(' /rank heti', mit) = 1 then
+    begin
+      tmp := '';
+      for i:=0 to high(ppl) do
+        if (ppl[i].net.UID = 0) then tmp := ppl[i].pls.nev;
+      TPrintRank.Create(FALSE, tmp, TOP_WEEKLY);
+    end;
+
+    if pos(' /rank havi', mit) = 1 then
+    begin
+      tmp := '';
+      for i:=0 to high(ppl) do
+        if (ppl[i].net.UID = 0) then tmp := ppl[i].pls.nev;
+      TPrintRank.Create(FALSE, tmp, TOP_MONTHLY);
     end;
 
     if pos(' //', mit) = 1 then evalscriptline(copy(mit, 4, length(mit) - 3));
