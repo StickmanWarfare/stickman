@@ -584,6 +584,87 @@ begin
 end;
 
 
+type TPrintKoTH = class(TAsync)
+private
+  _api: TApi;
+  _response: TApiResponse;
+protected
+  procedure Execute; override;
+end;
+
+procedure TPrintKoTH.Execute;
+var
+  output: string;
+  nev: string;
+  pont: string;
+  line: string;
+  i: Cardinal;
+begin
+  try
+    _api := TApi.Create;
+    _response := _api.GET(baseUrl + 'koth');
+
+    if _response.success then
+    begin
+      for i := 0 to 9 do
+      begin
+        nev := _response.data.getString(['data', i, 'nev']);
+        if length(nev) = 0 then nev := '-';
+
+        pont := _response.data.getString(['data', i, 'pont']);
+        if length(pont) = 0 then pont := '';
+
+        line := inttostr(i + 1) + '. ' + nev + ' ' + pont;
+        output := output + NL + line;
+       end;
+       evalscriptline('display ' + output);
+    end;
+  finally
+    Terminate;
+  end;
+end;
+
+
+type TPrintToTH = class(TAsync)
+private
+  _api: TApi;
+  _response: TApiResponse;
+protected
+  procedure Execute; override;
+end;
+
+procedure TPrintToTH.Execute;
+var
+  output: string;
+  nev: string;
+  pont: string;
+  line: string;
+  i: Cardinal;
+begin
+  try
+    _api := TApi.Create;
+    _response := _api.GET(baseUrl + 'toth');
+
+    if _response.success then
+    begin
+      for i := 0 to 9 do
+      begin
+        nev := _response.data.getString(['data', i, 'nev']);
+        if length(nev) = 0 then nev := '-';
+
+        pont := _response.data.getString(['data', i, 'pont']);
+        if length(pont) = 0 then pont := '';
+
+        line := inttostr(i + 1) + '. ' + nev + ' ' + pont;
+        output := output + NL + line;
+       end;
+       evalscriptline('display ' + output);
+    end;
+  finally
+    Terminate;
+  end;
+end;
+
 //-----------------------------------------------------------------------------
 // FUNCTIONS
 //-----------------------------------------------------------------------------
@@ -14630,6 +14711,16 @@ begin
       for i:=0 to high(ppl) do
         if (ppl[i].net.UID = 0) then tmp := ppl[i].pls.nev;
       TPrintRank.Create(FALSE, tmp, TOP_MONTHLY);
+    end; 
+
+    if pos(' /koth', mit) = 1 then
+    begin
+      TPrintKoTH.Create(FALSE);
+    end;
+
+    if pos(' /toth', mit) = 1 then
+    begin
+      TPrintToTH.Create(FALSE);
     end;
 
     if pos(' //', mit) = 1 then evalscriptline(copy(mit, 4, length(mit) - 3));
