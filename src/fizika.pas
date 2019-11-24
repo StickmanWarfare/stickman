@@ -41,9 +41,10 @@ type
   axehossz,axearany:array [0..2] of single;
   friction,zsele:single;                                    //0..1 minél több annál jobban csúszik
   vmi,vma:TD3DXVector3;
+  boat:bool;
   procedure remakepontokfromaxes;
   procedure remakeaxesfrompontok;
-  constructor create(axe1,axe2,axe3,apos,seb:TD3DXVector3;afriction,azsele:single);
+  constructor create(axe1,axe2,axe3,apos,seb:TD3DXVector3;afriction,azsele:single;aboat:bool);
   procedure step;
   procedure constraintoter(advwove:Tadvwove);
   procedure constraintoteg;
@@ -77,7 +78,7 @@ type
   function getseb:single;
   function getmotionvec:TD3DXVector3;
   function kerektransformmatrix(mit:integer):TD3DMatrix;
-  constructor create(axe1,axe2,axe3,apos,seb:TD3DXVector3;afriction,azsele:single;akerekhely:Tkerekarray;afelf,afelfero,afelfdamp,akereknagy,akerekvst,akerekfriction,amaxseb,anyomatek:single;aantigrav:boolean);
+  constructor create(axe1,axe2,axe3,apos,seb:TD3DXVector3;afriction,azsele:single;akerekhely:Tkerekarray;afelf,afelfero,afelfdamp,akereknagy,akerekvst,akerekfriction,amaxseb,anyomatek:single;aantigrav:boolean;aboat:bool = false);
   procedure initkerekek;
   procedure usekerekek;
   procedure step;
@@ -96,6 +97,7 @@ var
  hummkerekarr:Tkerekarray=((x:-1;y:-1;z:0.8),(x:-1;y:-1;z:-0.7),(x:1;y:-1;z:0.8),(x:1;y:-1;z:-0.7));
  agkerekarr:Tkerekarray=((x:-0.9;y:-1;z:1),(x:-0.9;y:-1;z:-0.9),(x:0.9;y:-1;z:1),(x:0.9;y:-1;z:-0.9));
 implementation
+
 
 procedure constraintvectav(var v1,v2:TD3DXVector3;const tav:single);
 var
@@ -332,16 +334,31 @@ begin
  vp:=pontok;
  for i:=0 to 7 do
  begin
- if (pontok[i].y<10) then
+ if (pontok[i].y<waterlevel) then
  begin
-  pontok[i].x:=pontok[i].x+(pontok[i].x-vpontok[i].x)*0.95;
-  pontok[i].y:=pontok[i].y+(pontok[i].y-vpontok[i].y)*0.95-GRAVITACIO*0.45;
-  pontok[i].z:=pontok[i].z+(pontok[i].z-vpontok[i].z)*0.95;
+  if not boat then
+  begin
+   pontok[i].x:=pontok[i].x+(pontok[i].x-vpontok[i].x)*0.95;
+   pontok[i].y:=pontok[i].y+(pontok[i].y-vpontok[i].y)*0.95-GRAVITACIO*0.45;
+   pontok[i].z:=pontok[i].z+(pontok[i].z-vpontok[i].z)*0.95;
+  end
+  else
+  begin
+   pontok[i].x:=pontok[i].x+(pontok[i].x-vpontok[i].x)*0.985;
+   pontok[i].y:=pontok[i].y+(pontok[i].y-vpontok[i].y)*0.95+(waterlevel - pontok[i].y)*0.01;
+   pontok[i].z:=pontok[i].z+(pontok[i].z-vpontok[i].z)*0.985;
+  end;
  end
  else
  begin
   pontok[i].x:=pontok[i].x*2-vpontok[i].x;
-  pontok[i].y:=pontok[i].y*2-vpontok[i].y-GRAVITACIO;
+  if boat then
+   if (i >= 4) then
+    pontok[i].y:=pontok[i].y*2-vpontok[i].y
+   else
+    pontok[i].y:=pontok[i].y*2-vpontok[i].y-GRAVITACIO*2
+  else
+   pontok[i].y:=pontok[i].y*2-vpontok[i].y-GRAVITACIO;
   pontok[i].z:=pontok[i].z*2-vpontok[i].z;
  end;
  end;
@@ -349,10 +366,11 @@ begin
 end;
 
 
-constructor Ttegla.create(axe1,axe2,axe3,apos,seb:TD3DXVector3;afriction,azsele:single);
+constructor Ttegla.create(axe1,axe2,axe3,apos,seb:TD3DXVector3;afriction,azsele:single;aboat:bool);
 var
 i:integer;
 begin
+ boat:= aboat;
  inherited create;
  d3dxvec3scale(axes[0],axe1,-1);
  d3dxvec3scale(axes[1],axe2,-1);
@@ -546,12 +564,12 @@ end;
 
 //AUTÓ CLASS ITT
 
-constructor Tauto.create(axe1,axe2,axe3,apos,seb:TD3DXVector3;afriction,azsele:single;akerekhely:Tkerekarray;afelf,afelfero,afelfdamp,akereknagy,akerekvst,akerekfriction,amaxseb,anyomatek:single;aantigrav:boolean);
+constructor Tauto.create(axe1,axe2,axe3,apos,seb:TD3DXVector3;afriction,azsele:single;akerekhely:Tkerekarray;afelf,afelfero,afelfdamp,akereknagy,akerekvst,akerekfriction,amaxseb,anyomatek:single;aantigrav:boolean;aboat:bool);
 var
 i:integer;
 tmp,tmp2:TD3DXVector3;
 begin
- inherited create(axe1,axe2,axe3,apos,seb,afriction,azsele);
+ inherited create(axe1,axe2,axe3,apos,seb,afriction,azsele,aboat);
  agx:=aantigrav;
  for i:=0 to 3 do
   kerekhely[i]:=akerekhely[i];
@@ -623,7 +641,7 @@ begin
   d3dxvec3subtract(tmp2,kerekek[i],vkerekek[i]);
 
   d3dxvec3add(atlagseb,atlagseb,tmp2);
-  if kerekbol[i] then
+  if kerekbol[i] or (boat and (pontok[i].y < waterlevel)) then
   begin
    //d3dxvec3subtract(tmp2,kerekek[i],vkerekek[i]);
    a1:=axes[0];
@@ -779,9 +797,11 @@ tmp:TD3DXVector3;
 begin
  if disabled then exit;
  if jobb then
-  if kerekirany<31 then
-  inc(kerekirany);
- if bal then if kerekirany>-31 then dec(kerekirany);
+  if ((kerekirany<31) and not boat) or ((kerekirany<8) and boat) then
+   inc(kerekirany);
+ if bal then
+  if ((kerekirany>-31) and not boat) or ((kerekirany>-8) and boat) then
+   dec(kerekirany);
 
  if not (jobb or bal) then
   if kerekirany>0 then dec(kerekirany)

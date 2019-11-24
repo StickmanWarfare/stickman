@@ -7118,6 +7118,7 @@ begin
             if tavpointpointsq(d3dxvector3(cpx^, cpy^, cpz^), d3dxvector3(posx, posy, posz)) < rad * rad then
               tuleli:=true;
           end;
+        if tegla.boat then tuleli:=true;
         if (not tuleli) then
         begin
           halal:=1;
