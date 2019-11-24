@@ -14455,6 +14455,29 @@ var
       selfieMaker.dab := FALSE;
     end;
 
+    if pos(' /boat', mit) = 1 then
+    begin
+     freeandnil(tegla);autoban:=true;
+     cpox^:=cpx^;cpoz^:=cpz^;cpoy^:=cpy^;
+     tegla:=Tauto.create(d3dxvector3(stuffjson.GetFloat(['vehicle', 'gun', 'scale', 'x']), 0, 0),
+       d3dxvector3(0, 0, -stuffjson.GetFloat(['vehicle', 'gun', 'scale', 'z'])),
+       d3dxvector3(0, -stuffjson.GetFloat(['vehicle', 'gun', 'scale', 'y']), 0),
+       d3dxvector3(-335, 10, -60),
+       d3dxvector3zero,
+       stuffjson.GetFloat(['vehicle', 'gun', 'friction']),
+       0.5,
+       hummkerekarr,
+       stuffjson.GetFloat(['vehicle', 'gun', 'suspension', 'length']),
+       stuffjson.GetFloat(['vehicle', 'gun', 'suspension', 'strength']),
+       stuffjson.GetFloat(['vehicle', 'gun', 'suspension', 'absorb']),
+       stuffjson.GetFloat(['vehicle', 'gun', 'wheels', 'radius']),
+       stuffjson.GetFloat(['vehicle', 'gun', 'wheels', 'width']),
+       stuffjson.GetFloat(['vehicle', 'gun', 'wheels', 'friction']),
+       stuffjson.GetFloat(['vehicle', 'gun', 'max_speed']),
+       stuffjson.GetFloat(['vehicle', 'gun', 'torque']),
+       false, true)
+    end;
+
     if pos(' //', mit) = 1 then evalscriptline(copy(mit, 4, length(mit) - 3));
 
 {$IFDEF propeditor}
