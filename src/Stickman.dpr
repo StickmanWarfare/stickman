@@ -12,7 +12,7 @@
  *                                           *)
 {$R stickman.RES}
 {$DEFINE force16bitindices} //ez hibás, pár helyen, ha nincs kipontozva, meg kell majd nézni
-{$DEFINE undebug} //Remove dot for release, add dot for dev
+{.$DEFINE undebug} //Remove dot for release, add dot for dev
 {.$DEFINE nochecksumcheck}
 {.$DEFINE speedhack}
 {.$DEFINE repkedomod}
@@ -23,7 +23,7 @@
 {.$DEFINE matieditor}
 {.$DEFINE profiler}
 {.$DEFINE propeditor}
-{.$DEFINE localhost}
+{$DEFINE localhost}
 {.$DEFINE nomodifier}
 {.$DEFINE oldterrain}
 {.$DEFINE fegyverteszt}
@@ -109,7 +109,7 @@ const
   CMAP_SIZE = 1024;
   CMAP_PATH = 'data/textures/map/';
 
-
+  NL = AnsiString(#13#10);
 
   //-----------------------------------------------------------------------------
   // Global variables
@@ -453,32 +453,88 @@ procedure fillupmenu;forward;
 //TODO: move api related threads to stickApi unit
 //      (requires separate script handler unit at least)
 
-//EXAMPLE THREAD
-type TPrintTwoStringsThread = class(TAsync)
+type TPrintServerTimeThread = class(TAsync)
 private
-  _msg1: string;
-  _msg2: string;
+  _api: TApi;
+  _response: TApiResponse;
 protected
  procedure Execute; override;
-public
- constructor Create(startSuspended: boolean; msg1: string; msg2: string);
 end;
 
-constructor TPrintTwoStringsThread.Create(startSuspended: boolean; msg1: string; msg2: string);
+procedure TPrintServerTimeThread.Execute;
+var
+  output: string;
+begin
+  try
+    _api := TApi.Create;
+    _response := _api.GET(baseUrl + 'servertime');
+
+    if _response.success then
+    begin
+       output := _response.data.getString(['data','time']);
+
+       evalscriptline('display ' + output);
+    end;
+  finally
+    Terminate;
+  end;  
+end;
+
+type TPrintTopMode = (TOP_MONTH, TOP_WEEK, TOP_DAY, TOP_ALL);
+
+type TPrintTopThread = class(TAsync)
+private
+  _api: TApi;
+  _response: TApiResponse;
+  _endpoint: string;
+protected
+  procedure Execute; override;
+public
+  constructor Create(startSuspended: boolean; mode: TPrintTopMode = TOP_ALL);
+end;
+
+constructor TPrintTopThread.Create(startSuspended: boolean; mode: TPrintTopMode = TOP_ALL);
 begin
   inherited Create(startSuspended);
-  _msg1 := msg1;
-  _msg2 := msg2;
+
+  case mode of
+    TOP_MONTH: _endpoint := 'havitop';
+    TOP_WEEK: _endpoint := 'hetitop';
+    TOP_DAY: _endpoint := 'napitop';
+    TOP_ALL: _endpoint := 'top';
+  end;
 end;
 
-procedure TPrintTwoStringsThread.Execute;
+procedure TPrintTopThread.Execute;
+var
+  output: string;
+  nev: string;
+  pont: string;
+  line: string;
+  i: Cardinal;
 begin
-  sleep(2000);
-  evalscriptline('fastinfo ' + _msg1);
-  sleep(2000);
-  evalscriptline('fastinfo ' + _msg2);
+  try
+    _api := TApi.Create;
+    _response := _api.GET(baseUrl + _endpoint);
 
-  Terminate; //ALWAYS TERMINATE
+    if _response.success then
+    begin
+      for i := 0 to 9 do
+      begin
+        nev := _response.data.getString(['data', i, 'nev']);
+        if length(nev) = 0 then nev := '-';
+
+        pont := _response.data.getString(['data', i, 'pont']);
+        if length(pont) = 0 then pont := '';
+
+        line := inttostr(i + 1) + '. ' + nev + ' ' + pont;
+        output := output + NL + line;
+       end;
+       evalscriptline('display ' + output);
+    end;
+  finally
+    Terminate;
+  end;  
 end;
 
 
@@ -13741,6 +13797,7 @@ var
     varname:string;
   begin
     result:=input;
+    if length(input) < 2 then exit;
     if input[1] = '%' then
     begin
       varname:=copy(input, 2, length(input) - 1);
@@ -14471,9 +14528,29 @@ var
       selfieMaker.dab := FALSE;
     end;
 
-    if pos(' /ayylmao', mit) = 1 then
+    if pos(' /servertime', mit) = 1 then
     begin
-      TPrintTwoStringsThread.Create(FALSE, 'ayy', 'lmao');
+      TPrintServerTimeThread.Create(FALSE);
+    end;
+
+    if pos(' /havitop', mit) = 1 then
+    begin
+      TPrintTopThread.Create(FALSE, TOP_MONTH);
+    end; 
+
+    if pos(' /hetitop', mit) = 1 then
+    begin
+      TPrintTopThread.Create(FALSE, TOP_WEEK);
+    end;
+
+    if pos(' /napitop', mit) = 1 then
+    begin
+      TPrintTopThread.Create(FALSE, TOP_DAY);
+    end;
+
+    if pos(' /top', mit) = 1 then
+    begin
+      TPrintTopThread.Create(FALSE);
     end;
 
     if pos(' //', mit) = 1 then evalscriptline(copy(mit, 4, length(mit) - 3));

@@ -7,6 +7,7 @@ uses
  Windows,
  SysUtils,
  multiplayer,
+ qjson,
  IdHTTP;
 
 const baseUrl = 'http://stickman.hu/api?mode=';    
@@ -17,10 +18,10 @@ end;
 
 type TApiResponse = record
   success: boolean;
-  data: string; //TODO: TQJSON;
+  data: TQJSON;
 end;
 
-type TApi = class
+type TApi = class(TObject)
 private
 public
    function GET(const url: string): TApiResponse;
@@ -44,30 +45,26 @@ end;
   TApi
 }
 function TApi.GET(const url: string): TApiResponse;
-var
-  client: TIdHTTP;
-  responseString: TMemoryStream;
 begin
   try
-    responseString := TMemoryStream.Create;
-    client := TIdHTTP.Create(nil);
-    client.HandleRedirects := TRUE;
-
-//TODO: requires Indy10
+//TODO: requires Indy10 for https
+//    responseString := TMemoryStream.Create;
+//    client := TIdHTTP.Create(nil);
+//    client.HandleRedirects := TRUE;
 //    Id_HandlerSocket := TIdSSLIOHandlerSocketOpenSSL.Create(nil);
 //    Id_HandlerSocket.SSLOptions.Mode := sslmClient;
 //    Id_HandlerSocket.SSLOptions.Method := sslvTLSv1_2;
 //    client.IOHandler := Id_HandlerSocket;
-    
-    client.Get(url, responseString);
+//    client.Get(url, responseString);
+
     result.success := true;
-    result.data := StreamToString(responseString);//TQJSON.CreateFromHTTP(url);
+    result.data := TQJSON.CreateFromHTTP(url);
   except
     result.success := false;
-    result.data := ''; //TQJSON.Create;
+    result.data := TQJSON.Create;
   end;
 
-  client.Free;
+//  client.Free;
 end;
 
 end.
