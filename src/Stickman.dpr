@@ -12,7 +12,7 @@
  *                                           *)
 {$R stickman.RES}
 {$DEFINE force16bitindices} //ez hibás, pár helyen, ha nincs kipontozva, meg kell majd nézni
-{$DEFINE undebug} //Remove dot for release, add dot for dev
+{.$DEFINE undebug} //Remove dot for release, add dot for dev
 {.$DEFINE nochecksumcheck}
 {.$DEFINE speedhack}
 {.$DEFINE repkedomod}
@@ -23,7 +23,7 @@
 {.$DEFINE matieditor}
 {.$DEFINE profiler}
 {.$DEFINE propeditor}
-{.$DEFINE localhost}
+{$DEFINE localhost}
 {.$DEFINE nomodifier}
 {.$DEFINE oldterrain}
 {.$DEFINE fegyverteszt}
@@ -41,10 +41,8 @@ uses
   Directinput,
   eventscripts,
   fegyverek,
-  //filectrl,
   fizika,
   foliage,
-  //generated,
   Math,
   Messages,
   MMSystem,
@@ -63,13 +61,12 @@ uses
   Utils,
   StrUtils,
   SysUtils,
-  //SyncObjs,
-  //ShellApi,
   Typestuff,
   Windows,
   Winsock2,
   BotGroups,
-  Selfie;
+  Selfie,
+  stickApi;
 
 //StopWatch //TODO: kivenni
 
@@ -447,6 +444,47 @@ procedure evalscriptline(line:string);forward;
 procedure evalScript(name:string);forward;
 procedure writeChat(s:string);forward;
 procedure fillupmenu;forward;
+
+
+//-----------------------------------------------------------------------------
+// THREADS
+//-----------------------------------------------------------------------------
+
+//TODO: move api related threads to stickApi unit
+//      (requires separate script handler unit at least)
+
+//EXAMPLE THREAD
+type TPrintTwoStringsThread = class(TAsync)
+private
+  _msg1: string;
+  _msg2: string;
+protected
+ procedure Execute; override;
+public
+ constructor Create(startSuspended: boolean; msg1: string; msg2: string);
+end;
+
+constructor TPrintTwoStringsThread.Create(startSuspended: boolean; msg1: string; msg2: string);
+begin
+  inherited Create(startSuspended);
+  _msg1 := msg1;
+  _msg2 := msg2;
+end;
+
+procedure TPrintTwoStringsThread.Execute;
+begin
+  sleep(2000);
+  evalscriptline('fastinfo ' + _msg1);
+  sleep(2000);
+  evalscriptline('fastinfo ' + _msg2);
+
+  Terminate; //ALWAYS TERMINATE
+end;
+
+
+//-----------------------------------------------------------------------------
+// FUNCTIONS
+//-----------------------------------------------------------------------------
 
 function collerp(c1, c2:cardinal):cardinal;
 var
@@ -14431,6 +14469,11 @@ var
       nofegyv := selfieMaker.isSelfieModeOn;
       selfieMaker.zoomlevel := NORMAL;
       selfieMaker.dab := FALSE;
+    end;
+
+    if pos(' /ayylmao', mit) = 1 then
+    begin
+      TPrintTwoStringsThread.Create(FALSE, 'ayy', 'lmao');
     end;
 
     if pos(' //', mit) = 1 then evalscriptline(copy(mit, 4, length(mit) - 3));
