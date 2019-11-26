@@ -663,6 +663,7 @@ begin
    //wtf ennyi lenne a kerekes hozzáadós cucc?
    //ja lol ez a kerék tapadása
    d3dxvec3subtract(kerekek[i],kerekek[i],tmp2);
+   if (boat and kerekbol[i]) then D3DXVec3Scale(a1,a1,0.1);
    if elore then
    begin
     if porgetes<1.0 then porgetes:= porgetes + 0.005;
