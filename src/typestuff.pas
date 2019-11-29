@@ -263,6 +263,7 @@ type
     pos,seb,vpos,vseb:TD3DXVector3;
     axes,vaxes:array[0..2] of TD3DXVector3;
     fordszam:single;
+    watercraft:bool;
   end;
 
   Tplayer=record

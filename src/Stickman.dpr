@@ -8529,9 +8529,9 @@ var
 begin
   multisc.Update;
   if halal > 0 then
-    multip2p.Update(0, 0, 0, 0, 0, 0, 0, 0, 0, campos, false, not tegla.disabled, tegla.pos, tegla.vpos, tegla.axes, tegla.fordulatszam) //a tegla.pos minek?
+    multip2p.Update(0, 0, 0, 0, 0, 0, 0, 0, 0, campos, false, not tegla.disabled, tegla.pos, tegla.vpos, tegla.axes, tegla.fordulatszam, tegla.vehicletype <> 0) //a tegla.pos minek?
   else
-    multip2p.Update(cpx^, cpy^, cpz^, cpox^, cpoy^, cpoz^, szogx, szogy, mstat, campos, autoban, not tegla.disabled, tegla.pos, tegla.vpos, tegla.axes, tegla.fordulatszam);
+    multip2p.Update(cpx^, cpy^, cpz^, cpox^, cpoy^, cpoz^, szogx, szogy, mstat, campos, autoban, not tegla.disabled, tegla.pos, tegla.vpos, tegla.axes, tegla.fordulatszam, tegla.vehicletype <> 0);
 
   if multisc.kicked <> '' then
   begin
@@ -8647,6 +8647,13 @@ begin
       d3dxvec3subtract(vpos, pos, ppl[i].auto.seb);
 
       agx:=ppl[i].pls.fegyv > 127;
+      if ppl[i].auto.watercraft then
+        if ppl[i].pls.fegyv > 127 then
+          vehicletype:=2
+        else
+          vehicletype:=1
+      else
+        vehicletype:=0;
       initkerekek;
     end;
 end;
@@ -10812,7 +10819,7 @@ end;
 procedure renderAutok(enyem:boolean);
 var
   i, j:integer;
-  sautok, antigravok:array of Tauto;
+  sautok, antigravok, airboats, submarines:array of Tauto;
 begin
 
   laststate:= 'RenderAutok';
@@ -10855,17 +10862,46 @@ begin
       if high(tobbiekautoi) < i then continue;
       if tobbiekautoi[i] = nil then continue;
       if tobbiekautoi[i].disabled then continue;
-      if not tobbiekautoi[i].agx then
-      begin
-        setlength(sautok, length(sautok) + 1);
-        sautok[high(sautok)]:=tobbiekautoi[i];
-      end
-      else
-      begin
-        setlength(antigravok, length(antigravok) + 1);
-        antigravok[high(antigravok)]:=tobbiekautoi[i];
-      end
+      case tobbiekautoi[i].vehicletype of
+        0:
+        begin
+          if not tobbiekautoi[i].agx then
+          begin
+            setlength(sautok, length(sautok) + 1);
+            sautok[high(sautok)]:=tobbiekautoi[i];
+          end
+          else
+          begin
+            setlength(antigravok, length(antigravok) + 1);
+            antigravok[high(antigravok)]:=tobbiekautoi[i];
+          end;
+        end;
+        1:
+        begin
+          setlength(airboats, length(airboats) + 1);
+          airboats[high(airboats)]:=tobbiekautoi[i];
+        end;
+        2:
+        begin
+          setlength(submarines, length(submarines) + 1);
+          submarines[high(submarines)]:=tobbiekautoi[i];
+        end;
+      end;
     end;
+
+  g_pd3ddevice.SetTexture(0, airboattex);
+  for i:=0 to high(airboats) do
+  begin
+    g_pd3dDevice.SetTransform(D3DTS_WORLD, airboats[i].matrixfromaxes);
+    g_airboatmesh.DrawSubset(0);
+  end;
+
+  g_pd3ddevice.SetTexture(0, submarinetex);
+  for i:=0 to high(submarines) do
+  begin
+    g_pd3dDevice.SetTransform(D3DTS_WORLD, submarines[i].matrixfromaxes);
+    g_submarinemesh.DrawSubset(0);
+  end;
 
   g_pd3ddevice.SetTexture(0, cartex);
   for i:=0 to high(sautok) do
