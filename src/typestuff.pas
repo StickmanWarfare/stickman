@@ -310,6 +310,17 @@ type
     killoperator:string; //GT LT EQ GTE LTE
   end;
 
+  TLeaveTrigger=record
+    name:string; //idk minek de miért ne
+    pos:TD3DXVector3;
+    exitpos:TD3DXVector3;
+    rad:single;
+    touched:boolean;
+    vehicle:boolean;
+    watercraft:boolean;
+    teams:string;
+  end;
+
   TScript=record
     name:string;
     instructions:array of string;

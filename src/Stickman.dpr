@@ -336,6 +336,8 @@ var
   recovercar, vanishcar, kiszallas:integer;
   latszonazF, latszonazR:word;
   volthi, voltspeeder, voltbasejump:boolean;
+  nearleavetrigger:boolean = false;
+  leavetrigger_exitpos:TD3DXVector3;
 
 
   tegla:Tauto;
@@ -394,6 +396,7 @@ var
   particlesProtos:array of TParticleSys;
   labels:array of T3dLabel;
   triggers:array of TTrigger;
+  leavetriggers:array of TLeaveTrigger;
   binds:array of TBind;
   timedscripts:array of TTimedscript;
 
@@ -1625,6 +1628,20 @@ begin
       kill:=stuffjson.GetInt(['triggers', name, 'kill']);
       killoperator:=stuffjson.GetString(['triggers', name, 'killoperator']);
       active:=true;
+    end;
+
+  n:=stuffjson.GetNum(['leave_triggers']);
+  setlength(leavetriggers, n);
+  for i:=0 to n - 1 do
+    with leavetriggers[i] do
+    begin
+      name:=stuffjson.GetKey(['leave_triggers'], i);
+      pos:=D3DXVector3(stuffjson.GetFloat(['leave_triggers', name, 'pos', 'x']), stuffjson.GetFloat(['leave_triggers', name, 'pos', 'y']), stuffjson.GetFloat(['leave_triggers', name, 'pos', 'z']));
+      exitpos:=D3DXVector3(stuffjson.GetFloat(['leave_triggers', name, 'exit_pos', 'x']), stuffjson.GetFloat(['leave_triggers', name, 'exit_pos', 'y']), stuffjson.GetFloat(['leave_triggers', name, 'exit_pos', 'z']));
+      rad:=stuffjson.GetFloat(['leave_triggers', name, 'radius']);
+      vehicle:=stuffjson.GetBool(['leave_triggers', name, 'vehicle']);
+      watercraft:=stuffjson.GetBool(['leave_triggers', name, 'watercraft']);
+      teams:=LowerCase(stuffjson.GetString(['leave_triggers', name, 'teams']));
     end;
 
 end;
@@ -6820,6 +6837,45 @@ begin
   vege:
 end;
 
+procedure handleleavetriggers;
+var
+  i, j, n:integer;
+  atav:single;
+  predic:boolean;
+label
+  vege;
+begin
+  if autoban then
+    for i:=0 to Length(leavetriggers) - 1 do
+      with leavetriggers[i] do
+      begin
+        if ((tegla.vehicletype = 0) and vehicle) or ((not (tegla.vehicletype = 0)) and watercraft) then
+          if (teams = 'both') or ((teams = 'gun') and (myfegyv < 128)) or ((teams = 'tech') and (myfegyv > 127)) then
+            if tavpointpointsq(pos, tegla.pos) < sqr(rad) then
+            begin
+              if not touched then
+              begin
+                addHudMessage(lang[111], betuszin);
+                nearleavetrigger:= true;
+                leavetrigger_exitpos:= exitpos;
+                touched:= true;
+              end;
+            end
+            else
+            begin
+              nearleavetrigger:= false;
+              touched:= false;
+            end;
+      end
+  else
+  begin
+    nearleavetrigger:= false;
+    for i:=0 to Length(leavetriggers) - 1 do
+      with leavetriggers[i] do
+        touched:= false;
+  end;
+end;
+
 procedure handleteleports;
 var
   i, k:integer;
@@ -7573,6 +7629,7 @@ begin
     handleparticlesystems;
     handlelabels;
     handletriggers;
+    handleleavetriggers;
     handletimedscripts;
     propsystem.updatedynamic;
 
@@ -7714,6 +7771,13 @@ begin
       vanishcar:=1;
       cpy^:=cpy^ - 1;
       cpoy^:=cpy^;
+      if nearleavetrigger and (halal = 0) then
+      begin
+        cpx^:=leavetrigger_exitpos.x;
+        cpy^:=leavetrigger_exitpos.y;
+        cpz^:=leavetrigger_exitpos.z;
+        cpox^:=cpx^;cpoy^:=cpy^;cpoz^:=cpz^;
+      end;
     end;
     if mszogx>(szogx + pi) then
       mszogx:=mszogx * 0.8 + (szogx + 2 * pi) * 0.2
