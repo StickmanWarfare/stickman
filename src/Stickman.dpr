@@ -14485,6 +14485,17 @@ var
                           end
                           else
 
+                          //spawn airboat/submarine
+                          if (args[0] = 'watercraft') and (Length(args) > 3) then
+                          begin
+                            if myfegyv > 127 then
+                              SpawnVehicle(computevecs(copy(args, 1, argnum - 1)), 2)
+                            else
+                              SpawnVehicle(computevecs(copy(args, 1, argnum - 1)), 1);
+                            exit;
+                          end
+                          else
+
                             //hang
                             if (args[0] = 'sound') and (Length(args) > 4) then
                             begin
