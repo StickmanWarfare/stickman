@@ -167,10 +167,14 @@ var
   viztex:IDirect3DTexture9 = nil;
   cartex:IDirect3DTexture9 = nil;
   antigravtex:IDirect3DTexture9 = nil;
+  airboattex:IDirect3DTexture9 = nil;
+  submarinetex:IDirect3DTexture9 = nil;
   kerektex:IDirect3DTexture9 = nil;
   g_pautomesh:ID3DXMesh = nil;
   g_pantigravmesh:ID3DXMesh = nil;
   g_pkerekmesh:ID3DXMesh = nil;
+  g_airboatmesh:ID3DXMesh = nil;
+  g_submarinemesh:ID3DXMesh = nil;
   skytex:IDirect3DTexture9 = nil;
   skystrips:array[0..20] of array[0..31] of TSkyVertex;
 
@@ -3013,6 +3017,18 @@ begin
   if FAILED(D3DXLoadMeshFromX('data/models/vehicles/kerek.x', 0, g_pd3ddevice, nil, nil, nil, nil, tempmesh)) then Exit;
   if tempmesh = nil then exit;if FAILED(tempmesh.CloneMeshFVF(0, D3DFVF_XYZ or D3DFVF_NORMAL or D3DFVF_TEX1, g_pd3ddevice, g_pkerekmesh)) then exit;
   if tempmesh <> nil then tempmesh:=nil;
+
+  addfiletochecksum('data/models/vehicles/airboat.x');
+  if FAILED(D3DXLoadMeshFromX('data/models/vehicles/airboat.x', 0, g_pd3ddevice, nil, nil, nil, nil, tempmesh)) then Exit;
+  if tempmesh = nil then exit;if FAILED(tempmesh.CloneMeshFVF(0, D3DFVF_XYZ or D3DFVF_NORMAL or D3DFVF_TEX1, g_pd3ddevice, g_airboatmesh)) then exit;
+  if tempmesh <> nil then tempmesh:=nil;
+
+  addfiletochecksum('data/models/vehicles/submarine.x');
+  if FAILED(D3DXLoadMeshFromX('data/models/vehicles/submarine.x', 0, g_pd3ddevice, nil, nil, nil, nil, tempmesh)) then Exit;
+  if tempmesh = nil then exit;if FAILED(tempmesh.CloneMeshFVF(0, D3DFVF_XYZ or D3DFVF_NORMAL or D3DFVF_TEX1, g_pd3ddevice, g_submarinemesh)) then exit;
+  if tempmesh <> nil then tempmesh:=nil;
+  normalizemesh(G_airboatmesh);
+  normalizemesh(G_submarinemesh);
   normalizemesh(G_pkerekmesh);
   normalizemesh(g_pautomesh, false);
   normalizemesh(g_pantigravmesh);
@@ -3035,6 +3051,8 @@ begin
   if not LTFF(g_pd3dDevice, 'data/textures/hummer.jpg', cartex, TEXFLAG_COLOR) then exit;
   if not LTFF(g_pd3dDevice, 'data/textures/antigrav.jpg', antigravtex, TEXFLAG_COLOR) then exit;
   if not LTFF(g_pd3dDevice, 'data/textures/kerektex.jpg', kerektex, TEXFLAG_COLOR) then exit;
+  if not LTFF(g_pd3dDevice, 'data/textures/airboat.jpg', airboattex, TEXFLAG_COLOR) then exit;
+  if not LTFF(g_pd3dDevice, 'data/textures/submarine.jpg', submarinetex, TEXFLAG_COLOR) then exit;
   writeln(logfile, 'Loaded vehicles');
 
   result:=D3DXCreateTexture(g_pd3ddevice, SCWidth, SCheight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, effecttexture);
@@ -10804,15 +10822,30 @@ begin
 
   if enyem then
     if not tegla.disabled then
-      if myfegyv < 128 then
-      begin
-        g_pd3ddevice.SetTexture(0, cartex);
-        g_pautomesh.DrawSubset(0);
-      end
-      else
-      begin
-        g_pd3ddevice.SetTexture(0, antigravtex);
-        g_pantigravmesh.DrawSubset(0);
+      case tegla.vehicletype of
+        0:
+        begin
+          if myfegyv < 128 then
+          begin
+            g_pd3ddevice.SetTexture(0, cartex);
+            g_pautomesh.DrawSubset(0);
+          end
+          else
+          begin
+            g_pd3ddevice.SetTexture(0, antigravtex);
+            g_pantigravmesh.DrawSubset(0);
+          end;
+        end;
+        1:
+        begin
+          g_pd3ddevice.SetTexture(0, airboattex);
+          g_airboatmesh.DrawSubset(0);
+        end;
+        2:
+        begin
+          g_pd3ddevice.SetTexture(0, submarinetex);
+          g_submarinemesh.DrawSubset(0);
+        end;
       end;
 
 
