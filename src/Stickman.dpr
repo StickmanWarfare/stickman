@@ -331,6 +331,7 @@ var
   kulsonezet:boolean = false;
   autoban:boolean = false;
   autobaszallhat:boolean;
+  watercraftbaszallhat:boolean;
   autobaszallhatpos:TD3DXVector3;
   recovercar, vanishcar, kiszallas:integer;
   latszonazF, latszonazR:word;
@@ -4563,42 +4564,48 @@ begin
     d3dxvec3add(tmp, d3dxvector3(cpx^, cpy^, cpz^), d3dxvector3(0, 4, 0));
 {$ENDIF}
 
-    if myfegyv < 128 then
-      tegla:=Tauto.create(d3dxvector3(stuffjson.GetFloat(['vehicle', 'gun', 'scale', 'x']), 0, 0),
-        d3dxvector3(0, 0, -stuffjson.GetFloat(['vehicle', 'gun', 'scale', 'z'])),
-        d3dxvector3(0, -stuffjson.GetFloat(['vehicle', 'gun', 'scale', 'y']), 0),
-        tmp,
-        d3dxvector3zero,
-        stuffjson.GetFloat(['vehicle', 'gun', 'friction']),
-        0.5,
-        hummkerekarr,
-        stuffjson.GetFloat(['vehicle', 'gun', 'suspension', 'length']),
-        stuffjson.GetFloat(['vehicle', 'gun', 'suspension', 'strength']),
-        stuffjson.GetFloat(['vehicle', 'gun', 'suspension', 'absorb']),
-        stuffjson.GetFloat(['vehicle', 'gun', 'wheels', 'radius']),
-        stuffjson.GetFloat(['vehicle', 'gun', 'wheels', 'width']),
-        stuffjson.GetFloat(['vehicle', 'gun', 'wheels', 'friction']),
-        stuffjson.GetFloat(['vehicle', 'gun', 'max_speed']),
-        stuffjson.GetFloat(['vehicle', 'gun', 'torque']),
-        false)
+    if watercraftbaszallhat then
+      if myfegyv < 128 then
+        SpawnVehicle(tmp, 1)
+      else
+        SpawnVehicle(tmp, 2)
     else
-      tegla:=Tauto.create(d3dxvector3(stuffjson.GetFloat(['vehicle', 'tech', 'scale', 'x']), 0, 0),
-        d3dxvector3(0, 0, -stuffjson.GetFloat(['vehicle', 'tech', 'scale', 'z'])),
-        d3dxvector3(0, -stuffjson.GetFloat(['vehicle', 'tech', 'scale', 'y']), 0),
-        tmp,
-        d3dxvector3zero,
-        stuffjson.GetFloat(['vehicle', 'tech', 'friction']),
-        0.5,
-        agkerekarr,
-        stuffjson.GetFloat(['vehicle', 'tech', 'suspension', 'length']),
-        stuffjson.GetFloat(['vehicle', 'tech', 'suspension', 'strength']),
-        stuffjson.GetFloat(['vehicle', 'tech', 'suspension', 'absorb']),
-        stuffjson.GetFloat(['vehicle', 'tech', 'wheels', 'radius']),
-        stuffjson.GetFloat(['vehicle', 'tech', 'wheels', 'width']),
-        stuffjson.GetFloat(['vehicle', 'tech', 'wheels', 'friction']),
-        stuffjson.GetFloat(['vehicle', 'tech', 'max_speed']),
-        stuffjson.GetFloat(['vehicle', 'tech', 'torque']),
-        true);
+      if myfegyv < 128 then
+        tegla:=Tauto.create(d3dxvector3(stuffjson.GetFloat(['vehicle', 'gun', 'scale', 'x']), 0, 0),
+          d3dxvector3(0, 0, -stuffjson.GetFloat(['vehicle', 'gun', 'scale', 'z'])),
+          d3dxvector3(0, -stuffjson.GetFloat(['vehicle', 'gun', 'scale', 'y']), 0),
+          tmp,
+          d3dxvector3zero,
+          stuffjson.GetFloat(['vehicle', 'gun', 'friction']),
+          0.5,
+          hummkerekarr,
+          stuffjson.GetFloat(['vehicle', 'gun', 'suspension', 'length']),
+          stuffjson.GetFloat(['vehicle', 'gun', 'suspension', 'strength']),
+          stuffjson.GetFloat(['vehicle', 'gun', 'suspension', 'absorb']),
+          stuffjson.GetFloat(['vehicle', 'gun', 'wheels', 'radius']),
+          stuffjson.GetFloat(['vehicle', 'gun', 'wheels', 'width']),
+          stuffjson.GetFloat(['vehicle', 'gun', 'wheels', 'friction']),
+          stuffjson.GetFloat(['vehicle', 'gun', 'max_speed']),
+          stuffjson.GetFloat(['vehicle', 'gun', 'torque']),
+          false)
+      else
+        tegla:=Tauto.create(d3dxvector3(stuffjson.GetFloat(['vehicle', 'tech', 'scale', 'x']), 0, 0),
+          d3dxvector3(0, 0, -stuffjson.GetFloat(['vehicle', 'tech', 'scale', 'z'])),
+          d3dxvector3(0, -stuffjson.GetFloat(['vehicle', 'tech', 'scale', 'y']), 0),
+          tmp,
+          d3dxvector3zero,
+          stuffjson.GetFloat(['vehicle', 'tech', 'friction']),
+          0.5,
+          agkerekarr,
+          stuffjson.GetFloat(['vehicle', 'tech', 'suspension', 'length']),
+          stuffjson.GetFloat(['vehicle', 'tech', 'suspension', 'strength']),
+          stuffjson.GetFloat(['vehicle', 'tech', 'suspension', 'absorb']),
+          stuffjson.GetFloat(['vehicle', 'tech', 'wheels', 'radius']),
+          stuffjson.GetFloat(['vehicle', 'tech', 'wheels', 'width']),
+          stuffjson.GetFloat(['vehicle', 'tech', 'wheels', 'friction']),
+          stuffjson.GetFloat(['vehicle', 'tech', 'max_speed']),
+          stuffjson.GetFloat(['vehicle', 'tech', 'torque']),
+          true);
 
   end;
 
@@ -5566,6 +5573,7 @@ begin
   cp:=D3DXVector3(cpx^, cpy^ * 0.5 + 0.4, cpz^);
 
   autobaszallhat:=false;
+  watercraftbaszallhat:=false;
 
   tulnagylokes:=false;
   for j:=0 to high(ojjektumnevek) do
@@ -5578,6 +5586,14 @@ begin
         (cpy^ > 0) then
       begin
         autobaszallhat:=true;
+        d3dxvec3add(autobaszallhatpos, ojjektumarr[j].holvannak[i], d3dxvector3(0, ojjektumarr[j].rad2 * 0.5 + 2, -ojjektumarr[j].rad2 - 2));
+      end;
+      if (((ojjektumflags[j] and OF_WATERCRAFTGUN) > 0) and (myfegyv < 128) or
+        ((ojjektumflags[j] and OF_WATERCRAFTTECH) > 0) and (myfegyv >= 128)) and
+        (cpy^ > 0) then
+      begin
+        autobaszallhat:=true;
+        watercraftbaszallhat:=true;
         d3dxvec3add(autobaszallhatpos, ojjektumarr[j].holvannak[i], d3dxvector3(0, ojjektumarr[j].rad2 * 0.5 + 2, -ojjektumarr[j].rad2 - 2));
       end;
       adst:=sqrt(adst);
