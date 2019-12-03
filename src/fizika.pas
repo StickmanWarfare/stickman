@@ -92,7 +92,7 @@ type
   function getseb:single;
   function getmotionvec:TD3DXVector3;
   function kerektransformmatrix(mit:integer):TD3DMatrix;
-  function extrapartsmatrix(mit:integer;posindex:integer):TD3DMatrix;
+  function extrapartsmatrix(mit:integer;posindex:integer;fakerotate:bool = false):TD3DMatrix;
   constructor create(axe1,axe2,axe3,apos,seb:TD3DXVector3;afriction,azsele:single;akerekhely:Tkerekarray;afelf,afelfero,afelfdamp,akereknagy,akerekvst,akerekfriction,amaxseb,anyomatek:single;aantigrav:boolean;avehicletype:byte = 0);
   procedure initkerekek;
   procedure usekerekek;
@@ -813,13 +813,15 @@ begin
  //d3dxmatrixtranslation(result,kerekek[mit].x,kerekek[mit].y,kerekek[mit].z);
 end;
 
-function Tauto.extrapartsmatrix(mit:integer;posindex:integer):TD3DMatrix;
+function Tauto.extrapartsmatrix(mit:integer;posindex:integer;fakerotate:bool = false):TD3DMatrix;
 var
 tmp,tmp2,tmp3:TD3DXVector3;
 a1,a2:TD3DXVector3;
 rotmat:TD3DMatrix;
 i, tmp4:integer;
 begin
+ if fakerotate then
+  extrafor:=extrafor+D3DX_PI/5+(random(70)/1000)+0.03;
  if parts[mit].steeringflip then
   tmp4:=-kerekirany
  else

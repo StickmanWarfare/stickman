@@ -6890,9 +6890,7 @@ end;
 
 procedure handleleavetriggers;
 var
-  i, j, n:integer;
-  atav:single;
-  predic:boolean;
+  i:integer;
 label
   vege;
 begin
@@ -8782,7 +8780,10 @@ begin
         if ppl[i].pls.fegyv > 127 then
           vehicletype:=2
         else
-          vehicletype:=1
+        begin
+          vehicletype:=1;
+          parts:=LoadVehicleExtrasFromJson('gun');
+        end
       else
         vehicletype:=0;
       initkerekek;
@@ -10949,7 +10950,7 @@ end;
 
 procedure renderAutok(enyem:boolean);
 var
-  i, j:integer;
+  i, j, k:integer;
   sautok, antigravok, airboats, submarines:array of Tauto;
 begin
 
@@ -11058,6 +11059,20 @@ begin
             begin
               g_pd3dDevice.SetTransform(D3DTS_WORLD, tegla.extrapartsmatrix(extrapartassets[i].partnum, j));
               extrapartassets[i].mesh.DrawSubset(0);
+            end;
+          end;
+
+  if not enyem then
+    for i:=0 to high(tobbiekautoi) do
+      if not tobbiekautoi[i].disabled then
+        for j:=0 to high(extrapartassets) do
+          if extrapartassets[j].vehicletype = tobbiekautoi[i].vehicletype then
+          begin
+            g_pd3ddevice.SetTexture(0, extrapartassets[j].tex);
+            for k:=0 to high(tobbiekautoi[i].parts[extrapartassets[j].partnum].pos) do
+            begin
+              g_pd3dDevice.SetTransform(D3DTS_WORLD, tobbiekautoi[i].extrapartsmatrix(extrapartassets[j].partnum, k, true));
+              extrapartassets[j].mesh.DrawSubset(0);
             end;
           end;
 
