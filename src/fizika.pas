@@ -53,6 +53,18 @@ type
  // function SATray(v1,v2:TD3DXVector3):boolean;
  end;
 
+ TExtraParts=record
+  pos:array of TD3DXVector3;
+  scale:TD3DXVector3;
+  speedrotate:bool;
+  steeringrotate:bool;
+  steeringflip:bool;
+  rotateaxis:char;
+  rotatescale:single;
+ end;
+
+ TExtraPartsArray=array of TExtraParts;
+
  Tkerekarray = array [0..3] of TD3DXVector3;
  TAuto = class (TTegla)
  public
@@ -67,6 +79,7 @@ type
   kerekiranyszorzo:single;
   elore,fek,jobb,bal,iranyitjak:boolean;
   kerekfor:single;
+  extrafor:single;
   atlagseb:TD3DXVector3;
   fordulatszam,porgetes:single;
   pillspd:single;
@@ -75,9 +88,11 @@ type
   kerekfriction:single;
   lastsebgtc:Cardinal;
   sebcache:single;
+  parts:TExtraPartsArray;
   function getseb:single;
   function getmotionvec:TD3DXVector3;
   function kerektransformmatrix(mit:integer):TD3DMatrix;
+  function extrapartsmatrix(mit:integer;posindex:integer):TD3DMatrix;
   constructor create(axe1,axe2,axe3,apos,seb:TD3DXVector3;afriction,azsele:single;akerekhely:Tkerekarray;afelf,afelfero,afelfdamp,akereknagy,akerekvst,akerekfriction,amaxseb,anyomatek:single;aantigrav:boolean;avehicletype:byte = 0);
   procedure initkerekek;
   procedure usekerekek;
@@ -614,6 +629,7 @@ begin
  end;
  initkerekek;
  kerekfor:=0;
+ extrafor:=0;
 end;
 
 procedure Tauto.initkerekek;
@@ -637,8 +653,12 @@ procedure Tauto.usekerekek;
 var
 tmp,tmp2,a1,a2:TD3DXVector3;
 i,j:integer;
-elorescale,tt:single;
+elorescale,tt,tmp3:single;
 begin
+ if vehicletype = 1 then
+  tmp3:=kerekiranyszorzo/2.6
+ else
+  tmp3:=kerekiranyszorzo;
 
  if agx then
   tmp:=D3DXVector3(0,-felf,0)
@@ -658,11 +678,11 @@ begin
    if (i=0) or (i=2) then
    begin
      if kerekirany>=0 then
-     d3dxvec3lerp(a1,axes[0],axes[1],kerekirany*kerekiranyszorzo/32)
+     d3dxvec3lerp(a1,axes[0],axes[1],kerekirany*tmp3/32)
      else
      begin
       d3dxvec3scale(a1,axes[1],-1);
-      d3dxvec3lerp(a1,axes[0],a1,-kerekirany*kerekiranyszorzo/32);
+      d3dxvec3lerp(a1,axes[0],a1,-kerekirany*tmp3/32);
      end;
     d3dxvec3cross(a2,a1,axes[2]);
    end
@@ -793,6 +813,63 @@ begin
  //d3dxmatrixtranslation(result,kerekek[mit].x,kerekek[mit].y,kerekek[mit].z);
 end;
 
+function Tauto.extrapartsmatrix(mit:integer;posindex:integer):TD3DMatrix;
+var
+tmp,tmp2,tmp3:TD3DXVector3;
+a1,a2:TD3DXVector3;
+rotmat:TD3DMatrix;
+i, tmp4:integer;
+begin
+ if parts[mit].steeringflip then
+  tmp4:=-kerekirany
+ else
+  tmp4:=kerekirany;
+ //position adjusted for rotation and posindex
+ d3dxvec3scale(tmp,axes[2],-k3*parts[mit].pos[posindex].y);
+ d3dxvec3scale(tmp2,axes[1],k1*parts[mit].pos[posindex].z);
+ d3dxvec3add(tmp,tmp,tmp2);
+ d3dxvec3scale(tmp2,axes[0],k1*parts[mit].pos[posindex].x);
+ d3dxvec3add(tmp,tmp,tmp2);
+ d3dxvec3subtract(tmp,pos,tmp);
+
+ if parts[mit].steeringrotate then
+ begin
+  if tmp4>=0 then
+   d3dxvec3lerp(a1,axes[0],axes[1],tmp4*kerekiranyszorzo/32)
+  else
+  begin
+   d3dxvec3scale(a1,axes[1],-1);
+   d3dxvec3lerp(a1,axes[0],a1,-tmp4*kerekiranyszorzo/32);
+  end;
+  d3dxvec3cross(a2,a1,axes[2]);
+  i:=abs(kerekirany);
+  with result do
+  begin
+   _31:=a2.x/axehossz[1]*parts[mit].scale.z*kx2[i]/k2; _32:=a2.y/axehossz[1]*parts[mit].scale.z*kx2[i]/k2; _33:=a2.z/axehossz[1]*parts[mit].scale.z*kx2[i]/k2; _34:=0;
+   _11:=a1.x/axehossz[0]*parts[mit].scale.x*kx1[i]/k1; _12:=a1.y/axehossz[0]*parts[mit].scale.x*kx1[i]/k1; _13:=a1.z/axehossz[0]*parts[mit].scale.x*kx1[i]/k1; _14:=0;
+   _21:=axes[2].x/axehossz[2]*parts[mit].scale.y; _22:=axes[2].y/axehossz[2]*parts[mit].scale.y; _23:=axes[2].z/axehossz[2]*parts[mit].scale.y; _24:=0;
+   _41:=tmp.x;        _42:=tmp.y;        _43:=tmp.z;        _44:=1;
+  end;
+ end
+ else
+  with result do
+  begin
+   _31:=axes[1].x/axehossz[1]*parts[mit].scale.z; _32:=axes[1].y/axehossz[1]*parts[mit].scale.z; _33:=axes[1].z/axehossz[1]*parts[mit].scale.z; _34:=0;
+   _11:=axes[0].x/axehossz[0]*parts[mit].scale.x; _12:=axes[0].y/axehossz[0]*parts[mit].scale.x; _13:=axes[0].z/axehossz[0]*parts[mit].scale.x; _14:=0;
+   _21:=axes[2].x/axehossz[2]*parts[mit].scale.y; _22:=axes[2].y/axehossz[2]*parts[mit].scale.y; _23:=axes[2].z/axehossz[2]*parts[mit].scale.y; _24:=0;
+   _41:=tmp.x;        _42:=tmp.y;        _43:=tmp.z;        _44:=1;
+  end;
+ if parts[mit].speedrotate then
+ begin
+  case parts[mit].rotateaxis of
+   'x': d3dxmatrixrotationX(rotmat,extrafor/1.5*parts[mit].rotatescale);
+   'y': d3dxmatrixrotationY(rotmat,extrafor/1.5*parts[mit].rotatescale);
+   'z': d3dxmatrixrotationZ(rotmat,extrafor/1.5*parts[mit].rotatescale);
+  end;
+  d3dxmatrixmultiply(result,rotmat,result);
+ end;
+end;
+
 procedure Tauto.iranyit(aelore,afek,ajobb,abal,airanyitjak:boolean);
 begin
  if disabled then exit;
@@ -809,10 +886,10 @@ tmp:TD3DXVector3;
 begin
  if disabled then exit;
  if jobb then
-  if ((kerekirany<31) and not (vehicletype = 1)) or ((kerekirany<12) and (vehicletype = 1)) then
+  if kerekirany<31 then
    inc(kerekirany);
  if bal then
-  if ((kerekirany>-31) and not (vehicletype = 1)) or ((kerekirany>-12) and (vehicletype = 1)) then
+  if kerekirany>-31 then
    dec(kerekirany);
 
  if not (jobb or bal) then
@@ -821,6 +898,7 @@ begin
   if kerekirany<0 then inc(kerekirany);
   d3dxvec3subtract(tmp,pos,vpos);
  kerekfor:=kerekfor+d3dxvec3dot(axes[0],tmp);
+ extrafor:=extrafor+Min(d3dxvec3dot(axes[0],tmp), D3DX_PI/5+(random(70)/1000)+0.03); //max a propellerhez
   inherited;
 
 end;

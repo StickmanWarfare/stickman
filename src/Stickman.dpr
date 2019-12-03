@@ -177,6 +177,7 @@ var
   g_submarinemesh:ID3DXMesh = nil;
   skytex:IDirect3DTexture9 = nil;
   skystrips:array[0..20] of array[0..31] of TSkyVertex;
+  extrapartassets:array of TExtraPartAsset;
 
 
   hogombmesh:ID3DXMesh = nil;
@@ -2604,6 +2605,29 @@ begin
     end;
 end;
 
+function LoadVehicleExtrasFromJson(name:string):TExtraPartsArray;
+var
+  i, j:integer;
+  tmp:string;
+begin
+  SetLength(Result, stuffjson.GetNum(['vehicle', name, 'extra_parts']));
+  for i:=0 to high(Result) do
+    with Result[i] do
+    begin
+      SetLength(pos, stuffjson.GetNum(['vehicle', name, 'extra_parts', i, 'pos']));
+      for j:=0 to high(pos) do
+        pos[j]:=D3DXVector3(stuffjson.GetFloat(['vehicle', name, 'extra_parts', i, 'pos', j, 'x']), stuffjson.GetFloat(['vehicle', name, 'extra_parts', i, 'pos', j, 'y']), stuffjson.GetFloat(['vehicle', name, 'extra_parts', i, 'pos', j, 'z']));
+      scale:=D3DXVector3(stuffjson.GetFloat(['vehicle', name, 'extra_parts', i, 'scale', 'x']), stuffjson.GetFloat(['vehicle', name, 'extra_parts', i, 'scale', 'y']), stuffjson.GetFloat(['vehicle', name, 'extra_parts', i, 'scale', 'z']));
+      tmp:=stuffjson.GetString(['vehicle', name, 'extra_parts', i, 'rotate_axis']);
+      if tmp <> '' then
+        rotateaxis:=tmp[1];
+      steeringrotate:=stuffjson.GetBool(['vehicle', name, 'extra_parts', i, 'steering_rotate']);
+      steeringflip:=stuffjson.GetBool(['vehicle', name, 'extra_parts', i, 'steering_flip']);
+      speedrotate:=stuffjson.GetBool(['vehicle', name, 'extra_parts', i, 'speed_rotate']);
+      rotatescale:=stuffjson.GetFloat(['vehicle', name, 'extra_parts', i, 'rotate_scale']);
+    end;
+end;
+
 procedure SpawnVehicle(position:TD3DXVector3;vehicletype:byte);
 begin
   freeandnil(tegla);autoban:=true;
@@ -2625,7 +2649,31 @@ begin
     stuffjson.GetFloat(['vehicle', 'gun', 'wheels', 'friction']),
     stuffjson.GetFloat(['vehicle', 'gun', 'max_speed']),
     stuffjson.GetFloat(['vehicle', 'gun', 'torque']),
-    false, vehicletype)
+    false, vehicletype);
+  tegla.parts:=LoadVehicleExtrasFromJson('gun');
+end;
+
+procedure LoadVehicleExtraPartAssets;
+var
+  i, j, k:integer;
+  filename:string;
+  tempmesh:ID3DXMesh;
+begin
+  for i:=0 to stuffjson.GetNum(['vehicle'])-1 do
+    for j:=0 to stuffjson.GetNum(['vehicle', i, 'extra_parts'])-1 do
+    begin
+      setlength(extrapartassets, length(extrapartassets)+1);
+      extrapartassets[high(extrapartassets)].vehicletype:=1; //hardcode temporarily
+      extrapartassets[high(extrapartassets)].partnum:=j;
+      filename:=stuffjson.GetString(['vehicle', i, 'extra_parts', j, 'name']);
+
+      if FAILED(D3DXLoadMeshFromX(PAnsiChar('data/models/vehicles/'+filename+'.x'), 0, g_pd3ddevice, nil, nil, nil, nil, tempmesh)) then Exit;
+      if tempmesh = nil then exit;if FAILED(tempmesh.CloneMeshFVF(0, D3DFVF_XYZ or D3DFVF_NORMAL or D3DFVF_TEX1, g_pd3ddevice, extrapartassets[high(extrapartassets)].mesh)) then exit;
+      if tempmesh <> nil then tempmesh:=nil;
+      normalizemesh(extrapartassets[high(extrapartassets)].mesh);
+
+      if not LTFF(g_pd3dDevice, 'data/textures/'+filename+'.jpg', extrapartassets[high(extrapartassets)].tex, TEXFLAG_COLOR) then exit;
+    end;
 end;
 
 function InitializeAll:HRESULT;
@@ -3071,6 +3119,9 @@ begin
   if not LTFF(g_pd3dDevice, 'data/textures/kerektex.jpg', kerektex, TEXFLAG_COLOR) then exit;
   if not LTFF(g_pd3dDevice, 'data/textures/airboat.jpg', airboattex, TEXFLAG_COLOR) then exit;
   if not LTFF(g_pd3dDevice, 'data/textures/submarine.jpg', submarinetex, TEXFLAG_COLOR) then exit;
+
+  LoadVehicleExtraPartAssets;
+
   writeln(logfile, 'Loaded vehicles');
 
   result:=D3DXCreateTexture(g_pd3ddevice, SCWidth, SCheight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, effecttexture);
@@ -10996,6 +11047,19 @@ begin
     g_pd3dDevice.SetTransform(D3DTS_WORLD, antigravok[i].matrixfromaxes);
     g_pantigravmesh.DrawSubset(0);
   end;
+
+  if enyem then
+    if not tegla.disabled then
+      for i:=0 to high(extrapartassets) do
+        if extrapartassets[i].vehicletype = tegla.vehicletype then
+          begin
+            g_pd3ddevice.SetTexture(0, extrapartassets[i].tex);
+            for j:=0 to high(tegla.parts[extrapartassets[i].partnum].pos) do
+            begin
+              g_pd3dDevice.SetTransform(D3DTS_WORLD, tegla.extrapartsmatrix(extrapartassets[i].partnum, j));
+              extrapartassets[i].mesh.DrawSubset(0);
+            end;
+          end;
 
   g_pd3ddevice.SetTexture(0, kerektex);
 

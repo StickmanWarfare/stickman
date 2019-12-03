@@ -321,6 +321,13 @@ type
     teams:string;
   end;
 
+  TExtraPartAsset=record
+    vehicletype:byte; //most nem lesz megoldható az alap 2 jármû megkülönböztetése, ha valakinek kéne az csinálja meg névre vagy alakítsa át a 2 jármûvet vehicletypeos cuccra
+    partnum:byte;
+    mesh:ID3DXMesh;
+    tex:IDirect3DTexture9;
+  end;
+
   TScript=record
     name:string;
     instructions:array of string;
