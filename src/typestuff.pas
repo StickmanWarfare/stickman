@@ -567,7 +567,10 @@ var
   hudInfo:string;
   hudInfoFade:word;
   hudInfoColor:integer;
+
   winter:boolean=false;
+  ice:boolean=false;
+
   unfocused:boolean;
   multisampling:integer=0;
   SCwidth:integer=800;

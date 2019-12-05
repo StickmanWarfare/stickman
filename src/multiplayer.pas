@@ -654,7 +654,7 @@ var
   i:integer;
   //FS:TFormatSettings;
 begin
-  fakedeath:=6;
+  multisc.atrak:=true;
   //koordináta?
   b:=frame.ReadChar;
   isCoord:=nthBit(b, 0);

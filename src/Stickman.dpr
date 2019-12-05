@@ -12,7 +12,7 @@
  *                                           *)
 {$R stickman.RES}
 {$DEFINE force16bitindices} //ez hibás, pár helyen, ha nincs kipontozva, meg kell majd nézni
-{$DEFINE undebug} //Remove dot for release, add dot for dev
+{.$DEFINE undebug} //Remove dot for release, add dot for dev
 {.$DEFINE nochecksumcheck}
 {.$DEFINE speedhack}
 {.$DEFINE repkedomod}
@@ -1852,7 +1852,7 @@ begin
   hocol.a:=1; //0
   nhcol:=D3DXColorFromDWord(stuffjson.GetInt(['color_wet_sand']));
   nhcol.a:=1; //0
-  if not winter then wacol:=D3DXColorFromDWord(stuffjson.GetInt(['color_water']))
+  if not ice then wacol:=D3DXColorFromDWord(stuffjson.GetInt(['color_water']))
   else wacol:=D3DXColorFromDWord($FFFFFFFF);
   wacol.a:=1; //1
   //TODO ezekre már van változó
@@ -2673,16 +2673,20 @@ begin
   if col_water = 0 then col_water:=$FF0064FA;
   if col_stone = 0 then col_stone:=$FF6E6E6C;
 
-  if winter then
+  if ice then
   begin
    vizszin:=$FFFFFFFF;
    water1col:=$FFFFFFFF;
    water2col:=$FFFFFFFF;
+   col_water:=$FFFFFFFF;
+  end;
+
+  if winter then
+  begin
    dustcol:=$FFFFFFFF;
    col_dust_grass:=$FFFFFFFF;
    col_dust_mud:=$FFFFFFFF;
    col_grass:=$FFFFFFFF;
-   col_water:=$FFFFFFFF;
   end;
 
   setlength(bubbles, stuffjson.GetNum(['bubbles']));
@@ -2954,7 +2958,7 @@ begin
   menu.DrawLoadScreen(55);
   writeln(logfile, 'Loaded ground textures');flush(logfile);
 
-  if winter then
+  if ice then
   begin
     if not LTFF(g_pd3dDevice, 'data/textures/ice.jpg', viztex) then exit;
     waterbumpmap:=viztex;
@@ -4326,8 +4330,6 @@ begin
   end;
 end;
 
-
-
 procedure iranyit;
 var
   ds, dc:single;
@@ -4372,8 +4374,6 @@ begin
 
   //atlantis
   nemviz:=false;
-
-
   for i:=0 to length(bubbles) - 1 do
     with bubbles[i] do
     begin
@@ -4381,15 +4381,10 @@ begin
         nemviz:=true;
     end;
 
-
-
   //Új irányítás kód
   ds:=sin(szogx);
   dc:=cos(szogx);
   px:=0;py:=0;
-
-  //ICE
-  if (cpy^ <= waterlevel+0.5) and winter then cpy^ := cpy^+0.008;
 
   //SELFIE
   if selfieMaker.isSelfieModeOn then
@@ -4432,6 +4427,7 @@ begin
     if fut then begin px:=px * 0.06 / ph;py:=py * 0.06 / ph; end
     else begin px:=px * 0.02 / ph;py:=py * 0.02 / ph; end;
   if gugg then begin px:=px / 3;py:=py / 3;mstat:=mstat + MSTAT_GUGGOL; end;
+
 {$IFDEF speedhack}
   px:=px * 4;py:=py * 4;
 {$ENDIF}
@@ -4470,6 +4466,9 @@ begin
 {$ENDIF}
     end;
   end;
+
+  //ICE
+  if (cpy^ <= waterlevel+0.01) and not nemviz and ice then cpy^ := waterlevel+0.01;
 
 {$ELSE}
   if repules then begin
@@ -4513,7 +4512,7 @@ begin
 
   if iranyithato then
     if dine.keyd(DIK_W) or dine.keyd(DIK_SPACE) or dine.keyd(DIK_S) or
-      dine.keyd(DIK_A) or dine.keyd(DIK_D) then
+      dine.keyd(DIK_A) or dine.keyd(DIK_D) or ((cpy^ > waterlevel-0.02) and (cpy^ <= waterlevel+0.02) and ice) then
       multisc.killscamping:=multisc.kills;
 
   if dine.keyd(DIK_F) and (not autoban){$IFNDEF speedhack} and (autobaszallhat){$ENDIF} and (halal = 0) and (length(chatmost) = 0) then
@@ -7523,15 +7522,28 @@ begin
     handletimedscripts;
     propsystem.updatedynamic;
 
-    if multisc.state1v1 and multisc.atrak then // atrakas 1v1 uzemmodba
-    begin
-      multisc.warevent:=false;
-      autoban:=false;
-      multisc.atrak:=false;
-      remaketerrain;
-      cpx^:=portalpos.x;cpy^:=portalpos.y + 1;cpz^:=portalpos.z;
-      cpox^:=cpx^;cpoy^:=cpy^;cpoz^:=cpz^;
-    end;
+    if multisc.atrak then
+      if multisc.state1v1 then // atrakas 1v1 uzemmodba
+      begin
+        multisc.warevent:=false;
+        autoban:=false;
+        multisc.atrak:=false;
+        spectate:=0;
+        remaketerrain;
+        cpx^:=portalpos.x;cpy^:=portalpos.y + 1;cpz^:=portalpos.z;
+        cpox^:=cpx^;cpoy^:=cpy^;cpoz^:=cpz^;
+      end
+      else // warevent join/leave
+      begin
+        multisc.atrak:=false;
+        if halal = 0 then
+        begin
+          halal:=1;
+          spectate:=0;
+          setupmymuksmatr;
+          addrongybaba(d3dxvector3(cpx^, cpy^, cpz^), d3dxvector3(cpox^, cpoy^, cpoz^), d3dxvector3(sin(szogx) * 0.3, 0.1, cos(szogx) * 0.3), myfegyv, 10, 0, -1);
+        end;
+      end;
 
     laststate:= 'Ragdoll physics';
     inc(rbido);
@@ -7738,7 +7750,7 @@ end;
 
     if myfegyv < 128 then
       if not voltspeeder then
-        if (autoban and (d3dxvec3lengthsq(tmp) > sqr(0.56))) then
+        if (autoban and (d3dxvec3lengthsq(tmp) > sqr(0.56))) then //FIXME: prevent getting it from spawn falling
         begin
           multisc.Medal('H', 'S');
           voltspeeder:=true;
@@ -9628,7 +9640,7 @@ begin
     //                  cosgtc:=cos((volttim mod round(15000*speed))*D3DX_PI*2/round(15000*speed));
     //                      plsgtc:=(volttim mod round(20000*speed))/round(20000*speed);
 
-    if winter then
+    if ice then
       begin
         singtc:=0;
         cosgtc:=1;
@@ -11719,7 +11731,7 @@ begin
     (if lightIntensity > 0 then lightIntensity:=max(0, lightIntensity - 0.04));
 
   //hát, ez elõre kell. pont.
-  if (opt_water > 0) and not winter then
+  if (opt_water > 0) and not ice then
     Renderreflectiontex;
 
   //###################
@@ -14404,8 +14416,8 @@ var
     if pos(' /bot', mit) = 1 then
       bots_enabled:= not bots_enabled;
 
-    if pos(' /activate portalevent code:12.11.16', mit) = 1 then
-      portalevent.phs:=1;
+    //if pos(' /activate portalevent code:12.11.16', mit) = 1 then
+      //portalevent.phs:=1;
 
     if pos(' /nofegyv', mit) = 1 then
       nofegyv:= not nofegyv;
@@ -15606,6 +15618,9 @@ begin //                 BEGIIIN
 
     //WINTER
     winter:=stuffjson.getBool(['winter']);
+
+    //ICE
+    ice:=stuffjson.getBool(['ice']);
 
     //Bots
     bots_enabled:=stuffjson.getBool(['bots_default_enabled']);
