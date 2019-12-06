@@ -2628,29 +2628,29 @@ begin
     end;
 end;
 
-procedure SpawnVehicle(position:TD3DXVector3;vehicletype:byte);
+procedure SpawnVehicle(position:TD3DXVector3;vehicletype:byte;name:string);
 begin
   freeandnil(tegla);autoban:=true;
   cpox^:=cpx^;cpoz^:=cpz^;cpoy^:=cpy^;
 
-  tegla:=Tauto.create(d3dxvector3(stuffjson.GetFloat(['vehicle', 'gun', 'scale', 'x']), 0, 0),
-    d3dxvector3(0, 0, -stuffjson.GetFloat(['vehicle', 'gun', 'scale', 'z'])),
-    d3dxvector3(0, -stuffjson.GetFloat(['vehicle', 'gun', 'scale', 'y']), 0),
+  tegla:=Tauto.create(d3dxvector3(stuffjson.GetFloat(['vehicle', name, 'scale', 'x']), 0, 0),
+    d3dxvector3(0, 0, -stuffjson.GetFloat(['vehicle', name, 'scale', 'z'])),
+    d3dxvector3(0, -stuffjson.GetFloat(['vehicle', name, 'scale', 'y']), 0),
     position,
     d3dxvector3zero,
-    stuffjson.GetFloat(['vehicle', 'gun', 'friction']),
+    stuffjson.GetFloat(['vehicle', name, 'friction']),
     0.5,
     hummkerekarr,
-    stuffjson.GetFloat(['vehicle', 'gun', 'suspension', 'length']),
-    stuffjson.GetFloat(['vehicle', 'gun', 'suspension', 'strength']),
-    stuffjson.GetFloat(['vehicle', 'gun', 'suspension', 'absorb']),
-    stuffjson.GetFloat(['vehicle', 'gun', 'wheels', 'radius']),
-    stuffjson.GetFloat(['vehicle', 'gun', 'wheels', 'width']),
-    stuffjson.GetFloat(['vehicle', 'gun', 'wheels', 'friction']),
-    stuffjson.GetFloat(['vehicle', 'gun', 'max_speed']),
-    stuffjson.GetFloat(['vehicle', 'gun', 'torque']),
+    stuffjson.GetFloat(['vehicle', name, 'suspension', 'length']),
+    stuffjson.GetFloat(['vehicle', name, 'suspension', 'strength']),
+    stuffjson.GetFloat(['vehicle', name, 'suspension', 'absorb']),
+    stuffjson.GetFloat(['vehicle', name, 'wheels', 'radius']),
+    stuffjson.GetFloat(['vehicle', name, 'wheels', 'width']),
+    stuffjson.GetFloat(['vehicle', name, 'wheels', 'friction']),
+    stuffjson.GetFloat(['vehicle', name, 'max_speed']),
+    stuffjson.GetFloat(['vehicle', name, 'torque']),
     false, vehicletype);
-  tegla.parts:=LoadVehicleExtrasFromJson('gun');
+  tegla.parts:=LoadVehicleExtrasFromJson(name);
 end;
 
 procedure LoadVehicleExtraPartAssets;
@@ -4634,9 +4634,9 @@ begin
 
     if watercraftbaszallhat then
       if myfegyv < 128 then
-        SpawnVehicle(tmp, 1)
+        SpawnVehicle(tmp, 1, 'airboat')
       else
-        SpawnVehicle(tmp, 2)
+        SpawnVehicle(tmp, 2, 'submarine')
     else
       if myfegyv < 128 then
         tegla:=Tauto.create(d3dxvector3(stuffjson.GetFloat(['vehicle', 'gun', 'scale', 'x']), 0, 0),
@@ -8778,11 +8778,14 @@ begin
       agx:=ppl[i].pls.fegyv > 127;
       if ppl[i].auto.watercraft then
         if ppl[i].pls.fegyv > 127 then
-          vehicletype:=2
+        begin
+          vehicletype:=2;
+          parts:=LoadVehicleExtrasFromJson('submarine');
+        end
         else
         begin
           vehicletype:=1;
-          parts:=LoadVehicleExtrasFromJson('gun');
+          parts:=LoadVehicleExtrasFromJson('airboat');
         end
       else
         vehicletype:=0;
@@ -14632,9 +14635,9 @@ var
                           if (args[0] = 'watercraft') and (Length(args) > 3) then
                           begin
                             if myfegyv > 127 then
-                              SpawnVehicle(computevecs(copy(args, 1, argnum - 1)), 2)
+                              SpawnVehicle(computevecs(copy(args, 1, argnum - 1)), 2, 'airboat')
                             else
-                              SpawnVehicle(computevecs(copy(args, 1, argnum - 1)), 1);
+                              SpawnVehicle(computevecs(copy(args, 1, argnum - 1)), 1, 'submarine');
                             exit;
                           end
                           else
@@ -14720,12 +14723,12 @@ var
 
     if pos(' /boat', mit) = 1 then
     begin
-      SpawnVehicle(d3dxvector3(-335, waterlevel, -60),1);
+      SpawnVehicle(d3dxvector3(-335, waterlevel, -60),1,'airboat');
     end;
 
     if pos(' /sub', mit) = 1 then
     begin
-      SpawnVehicle(d3dxvector3(-335, waterlevel, -60),2);
+      SpawnVehicle(d3dxvector3(-335, waterlevel, -60),2,'submarine');
     end;
 
     if pos(' //', mit) = 1 then evalscriptline(copy(mit, 4, length(mit) - 3));
