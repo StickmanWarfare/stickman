@@ -11084,11 +11084,12 @@ begin
   if enyem then
     if myfegyv < 128 then
       if not tegla.disabled then
-        for i:=0 to 3 do
-        begin
-          g_pd3dDevice.SetTransform(D3DTS_WORLD, tegla.kerektransformmatrix(i));
-          g_pkerekmesh.DrawSubset(0);
-        end;
+        if tegla.vehicletype = 0 then
+          for i:=0 to 3 do
+          begin
+            g_pd3dDevice.SetTransform(D3DTS_WORLD, tegla.kerektransformmatrix(i));
+            g_pkerekmesh.DrawSubset(0);
+          end;
 
   if not enyem then
     for j:=0 to high(sautok) do
