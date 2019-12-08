@@ -8824,6 +8824,8 @@ var
   tt, spd:single;
   sorrend:array[0..2] of shortint;
   sortav:array[0..2] of single;
+const
+  vehiclesounds:array[0..3] of integer = (7,8,55,56);
 begin
   laststate:= 'HandleDS';
   hol:=campos;
@@ -9099,7 +9101,11 @@ begin
   else
     StopSound(3, 25);
 
-  if myfegyv < 128 then abuft:=8 else abuft:=7;
+  case tegla.vehicletype of
+    0: if myfegyv < 128 then abuft:=8 else abuft:=7;
+    1: abuft:=55;
+    2: abuft:=56;
+  end;
 
   if not tegla.disabled then
   begin
@@ -9110,8 +9116,9 @@ begin
   else
     StopSound(abuft, 125);
 
-  StopSound(15 - abuft, 125);
-
+  for i:=0 to high(vehiclesounds) do
+    if vehiclesounds[i] <> abuft then
+      StopSound(vehiclesounds[i], 125);
 
   if ((felho.coverage <= 5) and not winter) or ((felho.coverage < 2) and winter) then
   begin
