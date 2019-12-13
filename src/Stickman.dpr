@@ -8821,7 +8821,7 @@ var
   id:cardinal;
   abuft:byte;
   hol, tmp:TD3DXVector3;
-  tt, spd:single;
+  tt:single;
   sorrend:array[0..2] of shortint;
   sortav:array[0..2] of single;
 const
@@ -9037,8 +9037,7 @@ begin
     if (sorrend[i] >= 0) and not gobacktomenu then
     begin
       playsound(8, false, i, false, tobbiekautoi[sorrend[i]].pos);
-      spd:=tavpointpoint(tobbiekautoi[sorrend[i]].pos, tobbiekautoi[sorrend[i]].vpos);
-      SetSoundProperties(8, i, 1, (tobbiekautoi[i].fordulatszam * 0.22 + 0.5) * 0.68, true, D3DXVector3Zero);
+      SetSoundProperties(8, i, 1, (0.3 + min(tavpointpoint(tobbiekautoi[sorrend[i]].pos, tobbiekautoi[sorrend[i]].vpos), 0.25)) * 1.8, true, D3DXVector3Zero);
     end
     else
       StopSound(8, i);
@@ -9077,7 +9076,7 @@ begin
     if (sorrend[i] >= 0) and not gobacktomenu then
     begin
       playsound(7, false, i, false, tobbiekautoi[sorrend[i]].pos);
-      SetSoundProperties(7, i, 0, (0.3 + min(tavpointpoint(tobbiekautoi[sorrend[i]].pos, tobbiekautoi[sorrend[i]].vpos), 0.25)) * 1.36, true, D3DXVector3Zero);
+      SetSoundProperties(7, i, 0, (0.3 + min(tavpointpoint(tobbiekautoi[sorrend[i]].pos, tobbiekautoi[sorrend[i]].vpos), 0.25)) * 1.8, true, D3DXVector3Zero);
     end
     else
       StopSound(7, i);
