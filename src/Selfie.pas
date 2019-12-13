@@ -4,15 +4,18 @@ interface
 
 uses
   Math,
-  D3DX9, 
+  D3DX9,
   Direct3D9,
   Typestuff,
   muksoka;
 
+
 type TSelfie = class
 public
   isSelfieModeOn: boolean;
-  zoomlevel: (CLOSE, NORMAL, WIDE);
+  zoomlevel: single;
+  zoomlevelMax: single;
+  zoomlevelMin: single;
   dab: boolean;
   muks: TMuksoka;
   fejcuccrenderer: TFejcuccrenderer;
@@ -47,7 +50,9 @@ constructor TSelfie.Create(
 begin
   isSelfieModeOn := FALSE;
   dab := FALSE;
-  zoomlevel := CLOSE;
+  zoomlevelMax := 5;
+  zoomlevelMin:= 1.7;
+  zoomlevel := zoomlevelMin;
   muks := _muks;
   fegyv := _fegyv;
   fejcucc := _fejcucc;
@@ -65,7 +70,7 @@ begin
 
   if fegyv < 128 then szin := gunszin else szin := techszin;
   D3DXMatrixRotationY(matWorld2, camrotX); //+PI -PI lel
-  if zoomlevel = CLOSE then begin
+  if zoomlevel = zoomlevelMin then begin
     D3DXMatrixRotationX(matb, -camrotY*0.75);
   end else
     D3DXMatrixRotationX(matb, -camrotY*0.5);
@@ -100,19 +105,19 @@ begin
   end
   else
   begin
-    if zoomlevel = CLOSE then //fogom a kamerat
-    begin
+    //if zoomlevel = zoomlevelMin then //fogom a kamerat
+    //begin
       //arcomba rakom a kezem
-      muks.gmbk[8] := campos;
-      muks.gmbk[8].y := muks.gmbk[8].y + 0.2;
+     // muks.gmbk[8] := campos;
+      //muks.gmbk[8].y := muks.gmbk[8].y + 0.2;
 
       //jobb konyok kicsit kamera fele
-      muks.gmbk[6].x := muks.gmbk[6].x - 0.2;
-      muks.gmbk[6].y := muks.gmbk[6].y + 0.1;
-      muks.gmbk[6].z := muks.gmbk[6].z - 0.2;
-    end
-    else
-    begin
+      //muks.gmbk[6].x := muks.gmbk[6].x - 0.2;
+      //muks.gmbk[6].y := muks.gmbk[6].y + 0.1;
+      //muks.gmbk[6].z := muks.gmbk[6].z - 0.2;
+    //end
+    //else
+    //begin
       //jobb kezfej testem melle es le
       muks.gmbk[8].x := muks.gmbk[8].x - 0.1;
       muks.gmbk[8].y := muks.gmbk[8].y - 0.1;
@@ -121,7 +126,7 @@ begin
       //jobb konyok testem melle
       muks.gmbk[6].x := muks.gmbk[6].x - 0.1;
       muks.gmbk[6].z := muks.gmbk[6].z + 0.2;
-    end;
+    //end;
 
     //bal konyok testem melle es fel
     muks.gmbk[7].x := muks.gmbk[7].x + 0.2;

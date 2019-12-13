@@ -4394,16 +4394,11 @@ begin
   //SELFIE
   if selfieMaker.isSelfieModeOn then
   begin
-    if dine.keyprsd(DIK_X) then
-    begin
-      //evalscriptline('fastinfo X');
-      case selfieMaker.zoomlevel of
-        CLOSE: selfieMaker.zoomlevel := NORMAL;
-        NORMAL: selfieMaker.zoomlevel := WIDE;
-        WIDE: selfieMaker.zoomlevel := CLOSE;
-      end;
-      // y u no work ??? inc(selfieMaker.zoomlevel);
-    end;
+    if dine.MousMovScrl < 0 then
+      selfieMaker.zoomlevel := min(selfieMaker.zoomlevelMax, selfieMaker.zoomlevel + 0.1)
+    else if dine.MousMovScrl > 0 then
+      selfieMaker.zoomlevel := max(selfieMaker.zoomlevelMin, selfieMaker.zoomlevel - 0.1);
+
     if dine.keyprsd(DIK_B) then selfieMaker.dab := not selfieMaker.dab;
   end;
 
@@ -8988,13 +8983,13 @@ begin
   if kulsonezet then
     if selfieMaker.isSelfieModeOn then
     begin
-      case selfieMaker.zoomlevel of
-        CLOSE: vEyePt:=D3DXVector3(acpx - sin(szogx)* cos(szogy) * 1.75, acpy + 1.5 - sin(szogy) * 1.5, acpz - cos(szogx) * cos(szogy) * 1.75);
-        NORMAL: vEyePt:=D3DXVector3(acpx - sin(szogx) * 2, acpy + 1.5 - sin(szogy) * 2, acpz - cos(szogx) * 2);
-        WIDE: vEyePt:=D3DXVector3(acpx - sin(szogx) * 5, acpy + 1.5 - sin(szogy) * 5, acpz - cos(szogx) * 5);
-      end;
-    end else
-    vEyePt:=D3DXVector3(acpx - sin(szogx) * cos(szogy) * 15, acpy + 1.5 - sin(szogy) * 15, acpz - cos(szogx) * cos(szogy) * 15);
+      if selfieMaker.zoomlevel = selfieMaker.zoomlevelMin then
+        vEyePt:=D3DXVector3(acpx - sin(szogx) * cos(szogy) * selfieMaker.zoomlevel, acpy + 1.5 - sin(szogy) * 1.5, acpz - cos(szogx) * cos(szogy) * selfieMaker.zoomlevel)
+      else
+        vEyePt:=D3DXVector3(acpx - sin(szogx) * selfieMaker.zoomlevel, acpy + 1.5 - sin(szogy) * selfieMaker.zoomlevel, acpz - cos(szogx) * selfieMaker.zoomlevel);
+    end
+    else
+      vEyePt:=D3DXVector3(acpx - sin(szogx) * cos(szogy) * 15, acpy + 1.5 - sin(szogy) * 15, acpz - cos(szogx) * cos(szogy) * 15);
 
   vLookatPt:=D3DXVector3(acpx + sin(szogx) * cos(szogy), acpy + 1.5 + sin(szogy), cos(szogx) * cos(szogy) + acpz);
   if halal > 0 then
@@ -13383,6 +13378,7 @@ begin
   halal:=0;
   spectate:=0;
   mapmode:=0;
+  selfieMaker.isSelfieModeOn:=false;
   mapbol:=false;
 
   if volttim = 0 then volttim:=timegettime;
@@ -14439,7 +14435,7 @@ var
       selfieMaker.toggle;
       szogx := szogx + D3DX_PI;
       kulsonezet := selfieMaker.isSelfieModeOn;
-      selfieMaker.zoomlevel := NORMAL;
+      selfieMaker.zoomlevel := 2;
       selfieMaker.dab := FALSE;
     end;
 
