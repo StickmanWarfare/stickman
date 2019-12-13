@@ -9015,6 +9015,7 @@ begin
   begin
     if tobbiekautoi[i].agx then continue;
     if tobbiekautoi[i].disabled then continue;
+    if tobbiekautoi[i].vehicletype <> 0 then continue;
     tt:=tavpointpointsq(tobbiekautoi[i].pos, hol);
     for j:=0 to 2 do
     begin
@@ -9054,6 +9055,7 @@ begin
   begin
     if not tobbiekautoi[i].agx then continue;
     if tobbiekautoi[i].disabled then continue;
+    if tobbiekautoi[i].vehicletype <> 0 then continue;
     tt:=tavpointpointsq(tobbiekautoi[i].pos, hol);
     for j:=0 to 2 do
     begin
@@ -9081,6 +9083,84 @@ begin
     else
       StopSound(7, i);
   end;
+
+  //Watercraft/Airboat
+  for i:=0 to 2 do
+  begin
+    sorrend[i]:= -1;
+    sortav[i]:=100000;
+  end;
+
+  for i:=0 to min(high(tobbiekautoi), high(ppl)) do
+  begin
+    if tobbiekautoi[i].vehicletype <> 1 then continue;
+    if tobbiekautoi[i].disabled then continue;
+    tt:=tavpointpointsq(tobbiekautoi[i].pos, hol);
+    for j:=0 to 2 do
+    begin
+      if tt < sortav[j] then
+      begin
+        for k:=2 downto j + 1 do
+        begin
+          sortav[k]:=sortav[k - 1];
+          sorrend[k]:=sorrend[k - 1];
+        end;
+        sortav[j]:=tt;
+        sorrend[j]:=i;
+        break;
+      end;
+    end;
+  end;
+
+  for i:=0 to 2 do
+  begin
+    if (sorrend[i] >= 0) and not gobacktomenu then
+    begin
+      playsound(55, false, i, false, tobbiekautoi[sorrend[i]].pos);
+      SetSoundProperties(55, i, 1, (0.3 + min(tavpointpoint(tobbiekautoi[sorrend[i]].pos, tobbiekautoi[sorrend[i]].vpos), 0.25)) * 1.8, true, D3DXVector3Zero);
+    end
+    else
+      StopSound(55, i);
+  end;
+
+  //Watercraft/Submarine
+  for i:=0 to 2 do
+  begin
+    sorrend[i]:= -1;
+    sortav[i]:=100000;
+  end;
+
+  for i:=0 to min(high(tobbiekautoi), high(ppl)) do
+  begin
+    if tobbiekautoi[i].vehicletype <> 2 then continue;
+    if tobbiekautoi[i].disabled then continue;
+    tt:=tavpointpointsq(tobbiekautoi[i].pos, hol);
+    for j:=0 to 2 do
+    begin
+      if tt < sortav[j] then
+      begin
+        for k:=2 downto j + 1 do
+        begin
+          sortav[k]:=sortav[k - 1];
+          sorrend[k]:=sorrend[k - 1];
+        end;
+        sortav[j]:=tt;
+        sorrend[j]:=i;
+        break;
+      end;
+    end;
+  end;
+
+  for i:=0 to 2 do
+  begin
+    if (sorrend[i] >= 0) and not gobacktomenu then
+    begin
+      playsound(56, false, i, false, tobbiekautoi[sorrend[i]].pos);
+      SetSoundProperties(56, i, 1, (0.3 + min(tavpointpoint(tobbiekautoi[sorrend[i]].pos, tobbiekautoi[sorrend[i]].vpos), 0.25)) * 1.8, true, D3DXVector3Zero);
+    end
+    else
+      StopSound(56, i);
+  end; //probably át kéne írni ezt négyet egy for loopba
 
   //Player mozgás
 
