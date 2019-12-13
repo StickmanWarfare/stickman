@@ -4,15 +4,18 @@ interface
 
 uses
   Math,
-  D3DX9, 
+  D3DX9,
   Direct3D9,
   Typestuff,
   muksoka;
 
+
 type TSelfie = class
 public
   isSelfieModeOn: boolean;
-  zoomlevel: (CLOSE, NORMAL, WIDE);
+  zoomlevel: single;
+  zoomlevelMax: single;
+  zoomlevelMin: single;
   dab: boolean;
   muks: TMuksoka;
   fejcuccrenderer: TFejcuccrenderer;
@@ -47,7 +50,9 @@ constructor TSelfie.Create(
 begin
   isSelfieModeOn := FALSE;
   dab := FALSE;
-  zoomlevel := CLOSE;
+  zoomlevelMax := 5;
+  zoomlevelMin:= 1.7;
+  zoomlevel := zoomlevelMin;
   muks := _muks;
   fegyv := _fegyv;
   fejcucc := _fejcucc;
@@ -60,34 +65,19 @@ procedure TSelfie.render;
 var
   szin: Cardinal;
   matWorld, matWorld2, matb: TD3DMatrix;
-  pos: TD3DXVector3;
-  cameraDistance: 1..5;
 begin
   if not isSelfieModeOn then exit;
 
-  cameraDistance := 2;
-  case zoomlevel of
-    CLOSE: cameraDistance := 1;
-    NORMAL: cameraDistance := 2;
-    WIDE: cameraDistance := 5;
-  end;
-
   if fegyv < 128 then szin := gunszin else szin := techszin;
-  D3DXVec3Add(
-    pos,
-    campos,
-    D3DXVector3(
-      sin(camrotX) * cameraDistance,
-      0,
-      cos(camrotX) * cameraDistance
-    )
-  );
   D3DXMatrixRotationY(matWorld2, camrotX); //+PI -PI lel
-  D3DXMatrixRotationX(matb, clipszogybajusz(camrotY));
+  if zoomlevel = zoomlevelMin then begin
+    D3DXMatrixRotationX(matb, -camrotY*0.75);
+  end else
+    D3DXMatrixRotationX(matb, -camrotY*0.5);
   D3DXMatrixMultiply(matb, matb, matWorld2);
-  D3DXMatrixTranslation(matWorld, pos.x, pos.y, pos.z);
+  D3DXMatrixTranslation(matWorld, campos.x, campos.y, campos.z);
   D3DXMatrixMultiply(matWorld2, matWorld2, matWorld);
-  D3DXMatrixTranslation(matWorld, pos.x, pos.y, pos.z);
+  D3DXMatrixTranslation(matWorld, campos.x, campos.y, campos.z);
   D3DXMatrixMultiply(matb, matb, matWorld);
 
   if dab then
@@ -115,19 +105,19 @@ begin
   end
   else
   begin
-    if zoomlevel = CLOSE then //fogom a kamerat
-    begin
+    //if zoomlevel = zoomlevelMin then //fogom a kamerat
+    //begin
       //arcomba rakom a kezem
-      muks.gmbk[8] := campos;
-      muks.gmbk[8].y := muks.gmbk[8].y + 0.2;
+     // muks.gmbk[8] := campos;
+      //muks.gmbk[8].y := muks.gmbk[8].y + 0.2;
 
       //jobb konyok kicsit kamera fele
-      muks.gmbk[6].x := muks.gmbk[6].x - 0.2;
-      muks.gmbk[6].y := muks.gmbk[6].y + 0.1;
-      muks.gmbk[6].z := muks.gmbk[6].z - 0.2;
-    end
-    else
-    begin
+      //muks.gmbk[6].x := muks.gmbk[6].x - 0.2;
+      //muks.gmbk[6].y := muks.gmbk[6].y + 0.1;
+      //muks.gmbk[6].z := muks.gmbk[6].z - 0.2;
+    //end
+    //else
+    //begin
       //jobb kezfej testem melle es le
       muks.gmbk[8].x := muks.gmbk[8].x - 0.1;
       muks.gmbk[8].y := muks.gmbk[8].y - 0.1;
@@ -136,7 +126,7 @@ begin
       //jobb konyok testem melle
       muks.gmbk[6].x := muks.gmbk[6].x - 0.1;
       muks.gmbk[6].z := muks.gmbk[6].z + 0.2;
-    end;
+    //end;
 
     //bal konyok testem melle es fel
     muks.gmbk[7].x := muks.gmbk[7].x + 0.2;
@@ -156,7 +146,7 @@ begin
   matb._41 := matb._41 + muks.gmbk[10].x;
   matb._42 := matb._42 + muks.gmbk[10].y;
   matb._43 := matb._43 + muks.gmbk[10].z;
-  fejcuccrenderer.render(fejcucc, matb, false, pos);
+  fejcuccrenderer.render(fejcucc, matb, false, campos);
 end;
 
 

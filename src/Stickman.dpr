@@ -4389,16 +4389,11 @@ begin
   //SELFIE
   if selfieMaker.isSelfieModeOn then
   begin
-    if dine.keyprsd(DIK_X) then
-    begin
-      //evalscriptline('fastinfo X');
-      case selfieMaker.zoomlevel of
-        CLOSE: selfieMaker.zoomlevel := NORMAL;
-        NORMAL: selfieMaker.zoomlevel := WIDE;
-        WIDE: selfieMaker.zoomlevel := CLOSE;
-      end;
-      // y u no work ??? inc(selfieMaker.zoomlevel);
-    end;
+    if dine.MousMovScrl < 0 then
+      selfieMaker.zoomlevel := min(selfieMaker.zoomlevelMax, selfieMaker.zoomlevel + 0.1)
+    else if dine.MousMovScrl > 0 then
+      selfieMaker.zoomlevel := max(selfieMaker.zoomlevelMin, selfieMaker.zoomlevel - 0.1);
+
     if dine.keyprsd(DIK_B) then selfieMaker.dab := not selfieMaker.dab;
   end;
 
@@ -4515,7 +4510,7 @@ begin
       dine.keyd(DIK_A) or dine.keyd(DIK_D) or ((cpy^ > waterlevel-0.02) and (cpy^ <= waterlevel+0.02) and ice) then
       multisc.killscamping:=multisc.kills;
 
-  if dine.keyd(DIK_F) and (not autoban){$IFNDEF speedhack} and (autobaszallhat){$ENDIF} and (halal = 0) and (length(chatmost) = 0) then
+  if dine.keyd(DIK_F) and (not autoban){$IFNDEF speedhack} and (autobaszallhat){$ENDIF} and (halal = 0) and (length(chatmost) = 0) and (not selfieMaker.isSelfieModeOn) then
   begin
     freeandnil(tegla);autoban:=true;
     cpox^:=cpx^;cpoz^:=cpz^;cpoy^:=cpy^;
@@ -7623,7 +7618,8 @@ begin
     end
     else
     begin
-      kulsonezet:=false;
+      if not selfieMaker.isSelfieModeOn then
+        kulsonezet:=false;
       if vanishcar > 0 then
         inc(vanishcar);
     end;
@@ -8997,11 +8993,20 @@ begin
   // origin, and define "up" to be in the y-direction.    //campos camvec camcamcam
   vEyePt:=D3DXVector3(acpx + halal, acpy + 1.5 + halal / 3, acpz + halal);
   if kulsonezet then
-    vEyePt:=D3DXVector3(acpx - sin(szogx) * cos(szogy) * 15, acpy + 1.5 - sin(szogy) * 15, acpz - cos(szogx) * cos(szogy) * 15);
+    if selfieMaker.isSelfieModeOn then
+    begin
+      if selfieMaker.zoomlevel = selfieMaker.zoomlevelMin then
+        vEyePt:=D3DXVector3(acpx - sin(szogx) * cos(szogy) * selfieMaker.zoomlevel, acpy + 1.5 - sin(szogy) * 1.5, acpz - cos(szogx) * cos(szogy) * selfieMaker.zoomlevel)
+      else
+        vEyePt:=D3DXVector3(acpx - sin(szogx) * selfieMaker.zoomlevel, acpy + 1.5 - sin(szogy) * selfieMaker.zoomlevel, acpz - cos(szogx) * selfieMaker.zoomlevel);
+    end
+    else
+      vEyePt:=D3DXVector3(acpx - sin(szogx) * cos(szogy) * 15, acpy + 1.5 - sin(szogy) * 15, acpz - cos(szogx) * cos(szogy) * 15);
 
   vLookatPt:=D3DXVector3(acpx + sin(szogx) * cos(szogy), acpy + 1.5 + sin(szogy), cos(szogx) * cos(szogy) + acpz);
   if halal > 0 then
   begin
+    selfieMaker.isSelfieModeOn := false;
     rbid:=getrongybababyID(0);
     if rbid >= 0 then
     begin
@@ -13385,6 +13390,7 @@ begin
   halal:=0;
   spectate:=0;
   mapmode:=0;
+  selfieMaker.isSelfieModeOn:=false;
   mapbol:=false;
 
   if volttim = 0 then volttim:=timegettime;
@@ -14440,8 +14446,8 @@ var
 
       selfieMaker.toggle;
       szogx := szogx + D3DX_PI;
-      nofegyv := selfieMaker.isSelfieModeOn;
-      selfieMaker.zoomlevel := NORMAL;
+      kulsonezet := selfieMaker.isSelfieModeOn;
+      selfieMaker.zoomlevel := 2;
       selfieMaker.dab := FALSE;
     end;
 
