@@ -12513,7 +12513,7 @@ begin
       if (menu.lap = -1) then //MENÜBÕL nem kéne...
       begin
         setupmyfegyvprojmat;
-        if (myfegyv = FEGYV_NOOB) and not nofegyv and (not autoban) and (halal = 0) then
+        if (myfegyv = FEGYV_NOOB) and not nofegyv and not kulsonezet and (not autoban) and (halal = 0) then
         begin
 
           g_pd3dDevice.SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
