@@ -12158,21 +12158,24 @@ begin
       noobmesh.DrawSubset(0);
     end;
 
-
-    g_pd3dDevice.SetRenderState(D3DRS_TEXTUREFACTOR, $FFFF5050);
-    for i:=0 to high(noobproj) do
+     if (menu.lap = -1) then //MENÜBÕL nem kéne...
     begin
-      setupnoobmat(i);
-      noobmesh.DrawSubset(0);
-    end;
+      g_pd3dDevice.SetRenderState(D3DRS_TEXTUREFACTOR, $FFFF5050);
+      for i:=0 to high(noobproj) do
+      begin
+        setupnoobmat(i);
+        noobmesh.DrawSubset(0);
+      end;
 
-    if (myfegyv = FEGYV_NOOB) and (lovok > 0) then
-    begin
-      setupnoobtoltmat;
-      setupmyfegyvprojmat;
-      noobmesh.DrawSubset(0);
-      setupprojmat;
+   
+      if (myfegyv = FEGYV_NOOB) and (lovok > 0) then
+      begin
+        setupnoobtoltmat;
+        setupmyfegyvprojmat;
+        noobmesh.DrawSubset(0);
+        setupprojmat;
     end;
+     end;
 
 
     g_pd3dDevice.SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
