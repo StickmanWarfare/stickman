@@ -2,8 +2,10 @@ unit fegyverek;
 
 interface
 uses
-  windows, typestuff, math, Direct3d9, d3dx9,
-  AbstractFegyv, FegyvBuilder, m4a1, m82a1, law, mp5a3, bm3;
+  windows, typestuff, math, Direct3d9, d3dx9, AbstractFegyv, FegyvBuilder,
+  m4a1, m82a1, law, mp5a3, bm3,
+  mpg, quadro, noob, x72, hpl,
+  h31;
 //const
 
 //M4_Golyoido=0.3;
@@ -15,164 +17,11 @@ type
 
   Tprojectilearray = array of Tprojectile;
 
-  TF_MPG = class(Tobject)
-  private
-    g_pMesh:ID3DXMesh;
-    g_pD3Ddevice:IDirect3ddevice9;
-    mpgtex:IDirect3DTexture9;
-    mpgemap:IDirect3DTexture9;
-    muzz:array[0..5] of TCustomVertex;
-    procedure makemuzzle(alpha:single);
-  public
-    betoltve:boolean;
-    fc:single;
-    muzzez:array of TCustomvertex;
-    constructor Create(a_D3Ddevice:IDirect3ddevice9;fnev:string;ftex:string = 'default');
-    procedure draw;
-    procedure pluszmuzzmatr(siz:single;szog:single);
-    procedure drawmuzzle(siz:single;szog:single);
-    destructor Destroy; reintroduce;
-  end;
-
-  TF_QUADRO = class(Tobject)
-  private
-    g_pMesh:ID3DXMesh;
-    g_pD3Ddevice:IDirect3ddevice9;
-    quadrotex:IDirect3DTexture9;
-    quadroemap:IDirect3DTexture9;
-    muzz:array[0..5] of TCustomVertex;
-    procedure makemuzzle(alpha:single);
-
-  public
-    betoltve:boolean;
-    fc:single;
-    muzzez:array of TCustomvertex;
-    constructor Create(a_D3Ddevice:IDirect3ddevice9;fnev:string;ftex:string = 'default');
-    procedure draw;
-    procedure pluszmuzzmatr(siz:single;szog:single);
-    procedure drawmuzzle(siz:single;szog:single);
-    destructor Destroy; reintroduce;
-  end;
-
-  TF_NOOB = class(Tobject)
-  private
-    g_pMesh:ID3DXMesh;
-    g_pD3Ddevice:IDirect3ddevice9;
-    tex:IDirect3DTexture9;
-    emap:IDirect3DTexture9;
-    //  muzz:array [0..3] of TCustomVertex;
-   //   procedure makemuzzle(alpha:single);
-  public
-    betoltve:boolean;
-    fc:single;
-    muzzez:array of TCustomvertex;
-    constructor Create(a_D3Ddevice:IDirect3ddevice9;fnev:string;ftex:string = 'default');
-    procedure draw;
-    procedure pluszmuzzmatr(siz:single);
-    procedure drawmuzzle(siz:single);
-    destructor Destroy; reintroduce;
-  end;
-
-  TF_X72 = class(Tobject)
-  private
-    g_pMesh:ID3DXMesh;
-    g_pD3Ddevice:IDirect3ddevice9;
-    x72tex:IDirect3DTexture9;
-    x72emap:IDirect3DTexture9;
-    muzz:array[0..17] of TCustomVertex;
-    procedure makemuzzle;
-    procedure makemuzzlequad(hol:integer;v1, v2, v3, v4:TCustomVertex);
-  public
-    betoltve:boolean;
-    fc:single;
-    muzzez:array of TCustomvertex;
-    constructor Create(a_D3Ddevice:IDirect3ddevice9;fnev:string;ftex:string = 'default');
-    procedure draw;
-    procedure pluszmuzzmatr(siz:single);
-    procedure drawmuzzle(siz:single);
-    destructor Destroy; reintroduce;
-  end;
-
-  TF_HPL = class(Tobject)
-  private
-    g_pMesh:ID3DXMesh;
-    g_pD3Ddevice:IDirect3ddevice9;
-    m4tex, mpgemap, scaltex:IDirect3DTexture9;
-    muzz:array[0..17] of TCustomVertex;
-    scal:array[0..11] of Tskyvertex;
-    procedure makemuzzle;
-    procedure makemuzzlequad(hol:integer;v1, v2, v3, v4:TCustomVertex);
-    procedure makescalequad(hol:integer;m1, m2, m3, m4:TD3DXVector3);
-  public
-    betoltve:boolean;
-    fc:single;
-    muzzez:array of TCustomvertex;
-    constructor Create(a_D3Ddevice:IDirect3ddevice9;fnev:string;ftex:string = 'default');
-    procedure draw;
-    procedure drawscope;
-    procedure pluszmuzzmatr(siz:single);
-    procedure drawmuzzle(siz:single);
-    destructor Destroy; reintroduce;
-  end;
-
-  TF_H31 = class(Tobject)
-  private
-    g_pMesh:ID3DXMesh;
-    g_pD3Ddevice:IDirect3ddevice9;
-    tex:IDirect3DTexture9;
-  public
-    betoltve:boolean;
-    fc:single;
-    muzzez:array of TCustomvertex;
-    constructor Create(a_D3Ddevice:IDirect3ddevice9;fnev:string;ftex:string = 'default');
-    procedure draw;
-    procedure pluszmuzzmatr(siz:single);
-    destructor Destroy; reintroduce;
-  end;
-
-  TF_GUNSUPP = class(Tobject)
-  private
-    g_pMesh:ID3DXMesh;
-    g_pD3Ddevice:IDirect3ddevice9;
-    tex:IDirect3DTexture9;
-    muzz:array[0..5] of TCustomVertex;
-    procedure makemuzzle(alpha:single);
-  public
-    betoltve:boolean;
-    fc:single;
-    muzzez:array of TCustomvertex;
-    constructor Create(a_D3Ddevice:IDirect3ddevice9;fnev:string;ftex:string = 'default');
-    procedure draw;
-    procedure pluszmuzzmatr(siz:single;szog:single);
-    procedure drawmuzzle(siz:single;szog:single);
-    destructor Destroy; reintroduce;
-  end;
-
-  TF_TECHSUPP = class(Tobject)
-  private
-    g_pMesh:ID3DXMesh;
-    g_pD3Ddevice:IDirect3ddevice9;
-    tex:IDirect3DTexture9; 
-    emap:IDirect3DTexture9;
-    muzz:array[0..17] of TCustomVertex;
-    procedure makemuzzle;
-    procedure makemuzzlequad(hol:integer;v1, v2, v3, v4:TCustomVertex);
-  public
-    betoltve:boolean;
-    fc:single;
-    muzzez:array of TCustomvertex;
-    constructor Create(a_D3Ddevice:IDirect3ddevice9;fnev:string;ftex:string = 'default');
-    procedure draw;
-    procedure pluszmuzzmatr(siz:single);
-    procedure drawmuzzle(siz:single);
-    destructor Destroy; reintroduce;
-  end;
-
   TFegyv = class(TObject)
   private
     g_pD3Ddevice:IDirect3ddevice9;
     M4proj, mpgproj:Tprojectilearray;
-
+           
     B_M4A1, G_M4A1, M4A1:TF_M4A1;
     B_M82A1, G_M82A1, M82A1:TF_M82A1;
     B_MPG,  G_MPG, MPG:TF_MPG;
@@ -183,8 +32,8 @@ type
     B_X72,  G_X72, X72:TF_X72;
     B_BM3,  G_BM3, BM3:TF_BM3;
     B_HPL,  G_HPL, HPL:TF_HPL;
-    GUNSUPP: TF_GUNSUPP;
-    TECHSUPP: TF_TECHSUPP;
+    //GUNSUPP: TF_GUNSUPP;
+    //TECHSUPP: TF_TECHSUPP;
 
     H31:TF_H31;
 
@@ -203,1031 +52,19 @@ type
     function jkez(afegyv:word;astate:byte;szogy:single = 0):TD3DXVector3;
     destructor Destroy; reintroduce;
   end;
-
+     
 implementation
-
-//TODO REMOVE FROM EVERY WEAPON: model addfiletochecksum - skinek miatt többször kerül checksumba
-
-
-/////////////////////////////////////
-//               MPG
-////////////////////////////////////
-
-
-constructor TF_MPG.Create(a_D3Ddevice:IDirect3ddevice9;fnev:string;ftex:string = 'default');
-var
-  tempmesh:ID3DXMesh;
-  pVert:PCustomvertexarray;
-  vmi, vma, tmp:TD3DVector;
-  scl:single;
-  i:integer;
-  adj:Pdword;
-begin
-  inherited Create;
-  betoltve:=false;
-  g_pD3Ddevice:=a_D3Ddevice;
-  addfiletochecksum('data/models/weapons/' + fnev + '.x');
-  if not LTFF(g_pd3dDevice,'data/textures/weapons/skins/' + ftex + '/' + fnev + '.jpg', mpgtex) then
-    Exit;
-  if not LTFF(g_pd3dDevice,'data/textures/weapons/skins/' + ftex + '/' + fnev + 'em.jpg', mpgemap) then
-    Exit;
-  // makemuzzle(255);
-
-  if FAILED(D3DXLoadMeshFromX(PChar('data/models/weapons/' + fnev + '.x'), 0, g_pd3ddevice, nil, nil, nil, nil, tempmesh)) then exit;
-  if FAILED(tempmesh.CloneMeshFVF(0, D3DFVF_CUSTOMVERTEX, g_pd3ddevice, g_pMesh)) then exit;
-  if tempmesh <> nil then tempmesh:=nil;
-  g_pMesh.LockVertexBuffer(0, pointer(pvert));
-  D3DXComputeboundingbox(pointer(pvert), g_pMesh.GetNumVertices, g_pMesh.GetNumBytesPerVertex, vmi, vma);
-  scl:=max(vma.x - vmi.x, max(vma.y - vmi.y, vma.z - vmi.z));
-  scl:=scl / 0.7;
-  fc:=(vma.z - vmi.z) * 0.5 / scl;
-  for i:=0 to g_pMesh.GetNumVertices - 1 do
-  begin
-    tmp.z:= -(pvert[i].position.x - vmi.x) * 0.9 / scl;
-    tmp.y:=(pvert[i].position.y - vma.y) / scl;
-    tmp.x:=(pvert[i].position.z - vma.z) / scl + fc;
-    pvert[i].color:=ARGB(0, 200, 200, 200);
-    pvert[i].position:=tmp;
-    pvert[i].u2:=pvert[i].u;
-    pvert[i].v2:=pvert[i].v;
-  end;
-  g_pMesh.UnlockVertexBuffer;
-
-  getmem(adj, g_pmesh.getnumfaces * 12);
-  g_pMesh.generateadjacency(0.001, adj);
-  D3DXComputenormals(g_pMesh, nil);
-  g_pMesh.OptimizeInplace(D3DXMESHOPT_COMPACT + D3DXMESHOPT_ATTRSORT + D3DXMESHOPT_VERTEXCACHE, adj, nil, nil, nil);
-  freemem(adj);
-  betoltve:=true;
-end;
-
-procedure TF_MPG.makemuzzle(alpha:single);
-var
-  c:TD3DXColor;
-  col:cardinal;
-begin
-  c:=D3DXColorFromDWord(weapons[1].col[4]);
-  c.a:=c.a * alpha;
-  col:=D3DXColorToDWord(c);
-  muzz[0]:=CustomVertex(-0.5, -0.5, 0, 0, 0, 0, col, 0, 0, 0, 0);
-  muzz[1]:=CustomVertex(0.5, -0.5, 0, 0, 0, 0, col, 1, 0, 0, 0);
-  muzz[2]:=CustomVertex(-0.5, 0.5, 0, 0, 0, 0, col, 0, 1, 0, 0);
-  muzz[3]:=CustomVertex(0.5, 0.5, 0, 0, 0, 0, col, 1, 1, 0, 0);
-  muzz[4]:=CustomVertex(0.5, -0.5, 0, 0, 0, 0, col, 1, 0, 0, 0);
-  muzz[5]:=CustomVertex(-0.5, 0.5, 0, 0, 0, 0, col, 0, 1, 0, 0);
-end;
-
-procedure TF_MPG.draw;
-begin
-
-  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
-  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_ADD);
-  g_pd3dDevice.Settexture(0, mpgtex);
-  g_pd3dDevice.Settexture(1, mpgemap);
-  g_pMesh.DrawSubset(0);
-
-  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_DISABLE);
-end;
-
-procedure TF_MPG.pluszmuzzmatr(siz:single;szog:single);
-var
-  matWorld, matWorld2:TD3DMatrix;
-begin
-
-  D3DXMatrixTranslation(matWorld, -0.00, -0.08, -0.7);
-  D3DXMatrixRotationZ(matWorld2, szog);
-  D3DXmatrixMultiply(matWorld, matWorld2, MatWorld);
-  D3DXMatrixScaling(matWorld2, siz, siz, siz);
-  D3DXmatrixMultiply(matWorld, matWorld2, MatWorld);
-  g_pd3dDevice.MultiplyTransform(D3DTS_WORLD, matWorld);
-
-end;
-
-
-procedure TF_MPG.drawmuzzle(siz:single;szog:single);
-var
-  mat:TD3DMatrix;
-  lngt, i:integer;
-begin
-  if siz >= 1 then exit;
-
-  makemuzzle(1 - siz);
-  pluszmuzzmatr(siz / 2, szog);
-
-  g_pd3ddevice.GetTransform(D3DTS_WORLD, mat);
-  lngt:=length(muzzez);
-  setlength(muzzez, lngt + length(muzz));
-  for i:=0 to high(muzz) do
-  begin
-    muzzez[i + lngt]:=muzz[i];
-    D3DXVec3TransformCoord(muzzez[i + lngt].position, muzz[i].position, mat);
-  end;
-end;
-
-destructor TF_MPG.Destroy;
-begin
-  if mpgtex <> nil then
-    mpgtex:=nil;
-  if g_pmesh <> nil then
-    g_pmesh:=nil;
-  if g_pd3ddevice <> nil then
-    g_pd3ddevice:=nil;
-end;
-
-
-
-/////////////////////////////////////
-//               QUADRO
-////////////////////////////////////
-
-
-constructor TF_QUADRO.Create(a_D3Ddevice:IDirect3ddevice9;fnev:string;ftex:string = 'default');
-var
-  tempmesh:ID3DXMesh;
-  pVert:PCustomvertexarray;
-  vmi, vma, tmp:TD3DVector;
-  scl:single;
-  i:integer;
-  adj:Pdword;
-begin
-  inherited Create;
-  betoltve:=false;
-  g_pD3Ddevice:=a_D3Ddevice;
-  addfiletochecksum('data/models/weapons/' + fnev + '.x');
-
-  if not LTFF(g_pd3dDevice,'data/textures/weapons/skins/' + ftex + '/' + fnev + '.jpg', quadrotex) then
-    Exit;
-
-  if not LTFF(g_pd3dDevice,'data/textures/weapons/skins/' + ftex + '/' + fnev + 'em.jpg', quadroemap) then
-    Exit;
-  // makemuzzle(255);
-
-  if FAILED(D3DXLoadMeshFromX(PChar('data/models/weapons/' + fnev + '.x'), 0, g_pd3ddevice, nil, nil, nil, nil, tempmesh)) then exit;
-  if FAILED(tempmesh.CloneMeshFVF(0, D3DFVF_CUSTOMVERTEX, g_pd3ddevice, g_pMesh)) then exit;
-  if tempmesh <> nil then tempmesh:=nil;
-  g_pMesh.LockVertexBuffer(0, pointer(pvert));
-  D3DXComputeboundingbox(pointer(pvert), g_pMesh.GetNumVertices, g_pMesh.GetNumBytesPerVertex, vmi, vma);
-  scl:=max(vma.x - vmi.x, max(vma.y - vmi.y, vma.z - vmi.z));
-  scl:=scl / 0.8;
-  fc:=(vma.z - vmi.z) * 0.5 / scl;
-  for i:=0 to g_pMesh.GetNumVertices - 1 do
-  begin
-    tmp.z:=(pvert[i].position.x - vma.x) * 0.9 / scl;
-    tmp.y:=(pvert[i].position.y - vma.y) / scl + 0.06;
-    tmp.x:= -(pvert[i].position.z - vma.z) / scl - fc;
-    pvert[i].color:=RGB(200, 200, 200);
-    pvert[i].position:=tmp;
-    pvert[i].u2:=pvert[i].u;
-    pvert[i].v2:=pvert[i].v;
-  end;
-  g_pMesh.UnlockVertexBuffer;
-
-  getmem(adj, g_pmesh.getnumfaces * 12);
-  g_pMesh.generateadjacency(0.001, adj);
-  D3DXComputenormals(g_pMesh, nil);
-  g_pMesh.OptimizeInplace(D3DXMESHOPT_COMPACT + D3DXMESHOPT_ATTRSORT + D3DXMESHOPT_VERTEXCACHE, adj, nil, nil, nil);
-  freemem(adj);
-  betoltve:=true;
-end;
-
-procedure TF_QUADRO.makemuzzle(alpha:single);
-var
-  c:TD3DXColor;
-  col:cardinal;
-begin
-  c:=D3DXColorFromDWord(weapons[2].col[7]);
-  c.a:=c.a * alpha;
-  col:=D3DXColorToDWord(c);
-
-  muzz[0]:=CustomVertex(-0.5, -0.5, 0, 0, 0, 0, col, 0, 0, 0, 0);
-  muzz[1]:=CustomVertex(0.5, -0.5, 0, 0, 0, 0, col, 1, 0, 0, 0);
-  muzz[2]:=CustomVertex(-0.5, 0.5, 0, 0, 0, 0, col, 0, 1, 0, 0);
-  muzz[3]:=CustomVertex(0.5, 0.5, 0, 0, 0, 0, col, 1, 1, 0, 0);
-  muzz[4]:=CustomVertex(0.5, -0.5, 0, 0, 0, 0, col, 1, 0, 0, 0);
-  muzz[5]:=CustomVertex(-0.5, 0.5, 0, 0, 0, 0, col, 0, 1, 0, 0);
-
-end;
-
-procedure TF_QUADRO.draw;
-begin
-  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
-  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_ADD);
-  g_pd3dDevice.Settexture(0, quadrotex);
-  g_pd3dDevice.Settexture(1, quadroemap);
-  g_pMesh.DrawSubset(0);
-
-  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_DISABLE);
-end;
-
-procedure TF_QUADRO.pluszmuzzmatr(siz:single;szog:single);
-var
-  matWorld, matWorld2:TD3DMatrix;
-begin
-
-  D3DXMatrixTranslation(matWorld, -0.00, -0.0, -0.7);
-  D3DXMatrixRotationZ(matWorld2, szog);
-  D3DXmatrixMultiply(matWorld, matWorld2, MatWorld);
-  D3DXMatrixScaling(matWorld2, siz, siz, siz);
-  D3DXmatrixMultiply(matWorld, matWorld2, MatWorld);
-  g_pd3dDevice.MultiplyTransform(D3DTS_WORLD, matWorld);
-
-end;
-
-procedure TF_QUADRO.drawmuzzle(siz:single;szog:single);
-var
-  mat:TD3DMatrix;
-  lngt, i:integer;
-begin
-  if siz >= 1 then exit;
-
-  makemuzzle(1 - siz);
-  pluszmuzzmatr(siz, szog);
-
-  g_pd3ddevice.GetTransform(D3DTS_WORLD, mat);
-  lngt:=length(muzzez);
-  setlength(muzzez, lngt + length(muzz));
-  for i:=0 to high(muzz) do
-  begin
-    muzzez[i + lngt]:=muzz[i];
-    D3DXVec3TransformCoord(muzzez[i + lngt].position, muzz[i].position, mat);
-  end;
-end;
-
-destructor TF_QUADRO.Destroy;
-begin
-  if quadrotex <> nil then
-    quadrotex:=nil;
-  if g_pmesh <> nil then
-    g_pmesh:=nil;
-  if g_pd3ddevice <> nil then
-    g_pd3ddevice:=nil;
-end;
-
-
-/////////////////////////////////////
-//               NOOB
-////////////////////////////////////
-
-
-constructor TF_NOOB.Create(a_D3Ddevice:IDirect3ddevice9;fnev:string;ftex:string = 'default');
-var
-  tempmesh:ID3DXMesh;
-  pVert:PCustomvertexarray;
-  vmi, vma, tmp:TD3DVector;
-  scl:single;
-  i:integer;
-  adj:Pdword;
-begin
-  inherited Create;
-  betoltve:=false;
-  g_pD3Ddevice:=a_D3Ddevice;
-  addfiletochecksum('data/models/weapons/' + fnev + '.x');
-
-  if not LTFF(g_pd3dDevice,'data/textures/weapons/skins/' + ftex + '/' + fnev + '.jpg', tex) then
-    Exit;
-
-  if not LTFF(g_pd3dDevice,'data/textures/weapons/skins/' + ftex + '/' + fnev + 'em.jpg', emap) then
-    Exit;
-  // makemuzzle(255);
-
-  if FAILED(D3DXLoadMeshFromX(PChar('data/models/weapons/' + fnev + '.x'), 0, g_pd3ddevice, nil, nil, nil, nil, tempmesh)) then exit;
-  if FAILED(tempmesh.CloneMeshFVF(0, D3DFVF_CUSTOMVERTEX, g_pd3ddevice, g_pMesh)) then exit;
-  if tempmesh <> nil then tempmesh:=nil;
-  g_pMesh.LockVertexBuffer(0, pointer(pvert));
-  D3DXComputeboundingbox(pointer(pvert), g_pMesh.GetNumVertices, g_pMesh.GetNumBytesPerVertex, vmi, vma);
-  scl:=max(vma.x - vmi.x, max(vma.y - vmi.y, vma.z - vmi.z));
-  scl:=scl / 0.4;
-  fc:=(vma.z - vmi.z) * 0.5 / scl;
-  for i:=0 to g_pMesh.GetNumVertices - 1 do
-  begin
-    tmp.z:=(pvert[i].position.z + vmi.z) * 1 / scl - 0.05;
-    tmp.y:=(pvert[i].position.y - vma.y) / scl;
-    tmp.x:=(pvert[i].position.x - vma.x) / scl + fc + 0.0465;
-    pvert[i].color:=RGB(200, 200, 200);
-    pvert[i].position:=tmp;
-    pvert[i].u2:=pvert[i].u;
-    pvert[i].v2:=pvert[i].v;
-  end;
-  g_pMesh.UnlockVertexBuffer;
-
-  getmem(adj, g_pmesh.getnumfaces * 12);
-  g_pMesh.generateadjacency(0.001, adj);
-  D3DXComputenormals(g_pMesh, nil);
-  g_pMesh.OptimizeInplace(D3DXMESHOPT_COMPACT + D3DXMESHOPT_ATTRSORT + D3DXMESHOPT_VERTEXCACHE, adj, nil, nil, nil);
-  freemem(adj);
-  betoltve:=true;
-end;
-
-{procedure TF_NOOB.makemuzzle(alpha:single);
-begin
- muzz[0]:=CustomVertex(-0.5,-0.5,   0,0,0,0,ARGB(alpha,255,255,255),0,0,0,0);
- muzz[1]:=CustomVertex( 0.5,-0.5,   0,0,0,0,ARGB(alpha,255,255,255),1,0,0,0);
- muzz[2]:=CustomVertex(-0.5, 0.5,   0,0,0,0,ARGB(alpha,255,255,255),0,1,0,0);
- muzz[3]:=CustomVertex( 0.5, 0.5,   0,0,0,0,ARGB(alpha,255,255,255),1,1,0,0);
-end; }
-
-procedure TF_NOOB.draw;
-begin
-  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
-  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_ADD);
-  g_pd3dDevice.Settexture(0, tex);
-  g_pd3dDevice.Settexture(1, emap);
-  g_pMesh.DrawSubset(0);
-
-  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_DISABLE);
-end;
-
-procedure TF_NOOB.pluszmuzzmatr(siz:single);
-var
-  matWorld, matWorld2:TD3DMatrix;
-begin
-
-  D3DXMatrixTranslation(matWorld, -0.00, -0.08, -0.7);
-  D3DXMatrixScaling(matWorld2, siz, siz, siz);
-  D3DXmatrixMultiply(matWorld, matWorld2, MatWorld);
-  g_pd3dDevice.MultiplyTransform(D3DTS_WORLD, matWorld);
-
-end;
-
-procedure TF_NOOB.drawmuzzle(siz:single);
-begin
-  //roflmao
-end;
-
-destructor TF_NOOB.Destroy;
-begin
-  if tex <> nil then
-    tex:=nil;
-  if g_pmesh <> nil then
-    g_pmesh:=nil;
-  if g_pd3ddevice <> nil then
-    g_pd3ddevice:=nil;
-end;
-
-////////////////////////////////
-//            X72
-///////////////////////////////
-
-constructor TF_X72.Create(a_D3Ddevice:IDirect3ddevice9;fnev:string;ftex:string = 'default');
-var
-  tempmesh:ID3DXMesh;
-  pVert:PCustomvertexarray;
-  vmi, vma, tmp:TD3DVector;
-  scl:single;
-  i:integer;
-  adj:PDword;
-begin
-  inherited Create;
-  betoltve:=false;
-  g_pD3Ddevice:=a_D3Ddevice;
-  addfiletochecksum('data/models/weapons/' + fnev + '.x');
-
-
-  if not LTFF(g_pd3dDevice,'data/textures/weapons/skins/' + ftex + '/' + fnev + '.jpg', x72tex) then
-    Exit;
-
-  if not LTFF(g_pd3dDevice,'data/textures/weapons/skins/' + ftex + '/' + fnev + 'em.jpg', x72emap) then
-    Exit;
-
-  makemuzzle;
-
-  if FAILED(D3DXLoadMeshFromX(PChar('data/models/weapons/' + fnev + '.x'), 0, g_pd3ddevice, nil, nil, nil, nil, tempmesh)) then exit;
-  if FAILED(tempmesh.CloneMeshFVF(0, D3DFVF_CUSTOMVERTEX, g_pd3ddevice, g_pMesh)) then exit;
-  if tempmesh <> nil then tempmesh:=nil;
-  g_pMesh.LockVertexBuffer(0, pointer(pvert));
-  D3DXComputeboundingbox(pointer(pvert), g_pMesh.GetNumVertices, g_pMesh.GetNumBytesPerVertex, vmi, vma);
-  scl:=max(vma.x - vmi.x, max(vma.y - vmi.y, vma.z - vmi.z));
-  scl:=scl / 0.7;
-  fc:=(vma.z - vmi.z) * 0.5;
-  for i:=0 to g_pMesh.GetNumVertices - 1 do
-  begin
-    tmp.x:=(pvert[i].position.x) / scl;
-    tmp.y:=(pvert[i].position.y - vma.y) / scl;
-    tmp.z:=(pvert[i].position.z - vma.z) / scl; //+0.001;
-    if abs(tmp.x) < 0.005 then tmp.x:=0;
-    pvert[i].color:=RGB(200, 200, 200);
-    pvert[i].position:=tmp;
-  end;
-
-  g_pMesh.UnlockVertexBuffer;
-  getmem(adj, g_pmesh.getnumfaces * 12);
-  g_pMesh.generateadjacency(0.001, adj);
-  D3DXComputenormals(g_pMesh, nil);
-  g_pMesh.OptimizeInplace(D3DXMESHOPT_COMPACT + D3DXMESHOPT_ATTRSORT + D3DXMESHOPT_VERTEXCACHE, adj, nil, nil, nil);
-  freemem(adj);
-  betoltve:=true;
-end;
-
-procedure TF_X72.makemuzzlequad(hol:integer;v1, v2, v3, v4:TCustomVertex);
-begin
-  muzz[hol + 0]:=v1;
-  muzz[hol + 1]:=v2;
-  muzz[hol + 2]:=v3;
-  muzz[hol + 3]:=v4;
-  muzz[hol + 4]:=v2;
-  muzz[hol + 5]:=v3;
-end;
-
-procedure TF_X72.makemuzzle;
-begin
-  makemuzzlequad(0, CustomVertex(-0.5, -0.5, 0, 0, 0, 0, weapons[4].col[8], 0, 0, 0, 0),
-    CustomVertex(0.5, -0.5, 0, 0, 0, 0, weapons[4].col[8], 0, 2, 0, 0),
-    CustomVertex(-0.5, 0.5, 0, 0, 0, 0, weapons[4].col[8], 1, 0, 0, 0),
-    CustomVertex(0.5, 0.5, 0, 0, 0, 0, weapons[4].col[8], 1, 2, 0, 0));
-  makemuzzlequad(6, CustomVertex(0, 0.5, 0, 0, 0, 0, weapons[4].col[8], 0, 1, 0, 0),
-    CustomVertex(0, -0.5, 0, 0, 0, 0, weapons[4].col[8], 1, 1, 0, 0),
-    CustomVertex(0, 0.5, -1, 0, 0, 0, weapons[4].col[8], 0, 0, 0, 0),
-    CustomVertex(0, -0.5, -1, 0, 0, 0, weapons[4].col[8], 1, 0, 0, 0));
-  makemuzzlequad(12, CustomVertex(0.5, 0, 0, 0, 0, 0, weapons[4].col[8], 0, 1, 0, 0),
-    CustomVertex(-0.5, 0, 0, 0, 0, 0, weapons[4].col[8], 1, 1, 0, 0),
-    CustomVertex(0.5, 0, -1, 0, 0, 0, weapons[4].col[8], 0, 0, 0, 0),
-    CustomVertex(-0.5, 0, -1, 0, 0, 0, weapons[4].col[8], 1, 0, 0, 0));
-end;
-
-procedure TF_X72.draw;
-begin
-  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
-  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_ADD);
-  g_pd3dDevice.Settexture(0, x72tex);
-  g_pd3dDevice.Settexture(1, x72emap);
-  g_pMesh.DrawSubset(0);
-
-  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_DISABLE);
-end;
-
-procedure TF_X72.pluszmuzzmatr(siz:single);
-var
-  matWorld, matWorld2:TD3DMatrix;
-begin
-
-  D3DXMatrixTranslation(matWorld, -0.00, -0.08, -0.7);
-  D3DXMatrixScaling(matWorld2, (1 - siz), siz, siz * 2);
-  D3DXmatrixMultiply(matWorld, matWorld2, MatWorld);
-  g_pd3dDevice.MultiplyTransform(D3DTS_WORLD, matWorld);
-
-end;
-
-procedure TF_X72.drawmuzzle(siz:single);
-var
-  mat:TD3DMatrix;
-  lngt, i:integer;
-begin
-  if siz = 0 then exit;
-
-  pluszmuzzmatr(siz);
-
-  g_pd3ddevice.GetTransform(D3DTS_WORLD, mat);
-  lngt:=length(muzzez);
-  setlength(muzzez, lngt + length(muzz));
-  for i:=0 to high(muzz) do
-  begin
-    muzzez[i + lngt]:=muzz[i];
-    D3DXVec3TransformCoord(muzzez[i + lngt].position, muzz[i].position, mat);
-  end;
-  //   g_pd3ddevice.drawprimitiveUP(D3DPT_TRIANGLELIST,6,muzz,sizeof(TCustomvertex));
-end;
-
-destructor TF_X72.Destroy;
-begin
-  if x72tex <> nil then
-    x72tex:=nil;
-  if g_pmesh <> nil then
-    g_pmesh:=nil;
-  if g_pd3ddevice <> nil then
-    g_pd3ddevice:=nil;
-end;
-
-////////////////////////////////
-//            HPL
-///////////////////////////////
-
-constructor TF_HPL.Create(a_D3Ddevice:IDirect3ddevice9;fnev:string;ftex:string = 'default');
-var
-  tempmesh:ID3DXMesh;
-  pVert:PCustomvertexarray;
-  vmi, vma, tmp:TD3DVector;
-  scl:single;
-  i:integer;
-  adj:PDword;
-begin
-  inherited Create;
-  betoltve:=false;
-  g_pD3Ddevice:=a_D3Ddevice;
-  addfiletochecksum('data/models/weapons/' + fnev + '.x');
-
-  if not LTFF(g_pd3dDevice,'data/textures/weapons/skins/' + ftex + '/' + fnev + '.jpg', m4tex) then
-    Exit;
-
-  if not LTFF(g_pd3dDevice,'data/textures/weapons/skins/' + ftex + '/' + fnev + 'em.jpg', mpgemap) then
-    Exit;
-
-  if not LTFF(g_pd3dDevice, 'data/textures/weapons/scale.png', scaltex, TEXFLAG_FIXRES) then
-    Exit;
-
-  makemuzzle;
-
-  if FAILED(D3DXLoadMeshFromX(PChar('data/models/weapons/' + fnev + '.x'), 0, g_pd3ddevice, nil, nil, nil, nil, tempmesh)) then exit;
-  if FAILED(tempmesh.CloneMeshFVF(0, D3DFVF_CUSTOMVERTEX, g_pd3ddevice, g_pMesh)) then exit;
-  if tempmesh <> nil then tempmesh:=nil;
-  g_pMesh.LockVertexBuffer(0, pointer(pvert));
-  D3DXComputeboundingbox(pointer(pvert), g_pMesh.GetNumVertices, g_pMesh.GetNumBytesPerVertex, vmi, vma);
-  scl:=max(vma.x - vmi.x, max(vma.y - vmi.y, vma.z - vmi.z));
-  scl:=1.2 * 0.9 / scl;
-  //  scl:=0.08675; //1200 mm a modell és 1041 kéne legyen
-  fc:=(vma.x - vmi.x) * 0.5;
-  for i:=0 to g_pMesh.GetNumVertices - 1 do
-  begin
-    tmp.z:=(pvert[i].position.z - vmi.z) * scl - 1.0; //Z=hátra
-    tmp.y:=(pvert[i].position.y - vma.y) * scl + 0.03;
-    tmp.x:=(pvert[i].position.x - vma.x + fc) * scl;
-    //if abs(tmp.x)<0.005 then tmp.x:=0;
-    pvert[i].color:=RGB(200, 200, 200);
-    pvert[i].position:=tmp;
-  end;
-  g_pMesh.UnlockVertexBuffer;
-  getmem(adj, g_pmesh.getnumfaces * 12);
-  g_pMesh.generateadjacency(0.001, adj);
-  D3DXComputenormals(g_pMesh, nil); //ez itt adj vót
-  g_pMesh.OptimizeInplace(D3DXMESHOPT_COMPACT + D3DXMESHOPT_ATTRSORT + D3DXMESHOPT_VERTEXCACHE, adj, nil, nil, nil);
-  freemem(adj);
-  betoltve:=true;
-end;
-
-procedure TF_HPL.makemuzzlequad(hol:integer;v1, v2, v3, v4:TCustomVertex);
-begin
-  muzz[hol + 0]:=v1;
-  muzz[hol + 1]:=v2;
-  muzz[hol + 2]:=v3;
-  muzz[hol + 3]:=v4;
-  muzz[hol + 4]:=v2;
-  muzz[hol + 5]:=v3;
-end;
-
-procedure TF_HPL.makemuzzle;
-begin
-  makemuzzlequad(0, CustomVertex(-0.5, -0.5, 0, 0, 0, 0, ARGB(255, 255, 255, 255), 0, 0, 0, 0),
-    CustomVertex(0.5, -0.5, 0, 0, 0, 0, ARGB(255, 255, 255, 255), 2, 0, 0, 0),
-    CustomVertex(-0.5, 0.5, 0, 0, 0, 0, ARGB(255, 255, 255, 255), 0, 2, 0, 0),
-    CustomVertex(0.5, 0.5, 0, 0, 0, 0, ARGB(255, 255, 255, 255), 2, 2, 0, 0));
-  makemuzzlequad(6, CustomVertex(0, 0, 0, 0, 0, 0, ARGB(255, 255, 255, 255), 0, 0, 0, 0),
-    CustomVertex(0, 0.5, -0.5, 0, 0, 0, ARGB(255, 255, 255, 255), 1, 0, 0, 0),
-    CustomVertex(0, -0.5, -0.5, 0, 0, 0, ARGB(255, 255, 255, 255), 0, 1, 0, 0),
-    CustomVertex(0, 0, -1, 0, 0, 0, ARGB(255, 255, 255, 255), 1, 1, 0, 0));
-  makemuzzlequad(12, CustomVertex(0, 0, 0, 0, 0, 0, ARGB(255, 255, 255, 255), 0, 0, 0, 0),
-    CustomVertex(0.5, 0, -0.5, 0, 0, 0, ARGB(255, 255, 255, 255), 1, 0, 0, 0),
-    CustomVertex(-0.5, 0, -0.5, 0, 0, 0, ARGB(255, 255, 255, 255), 0, 1, 0, 0),
-    CustomVertex(0, 0, -1, 0, 0, 0, ARGB(255, 255, 255, 255), 1, 1, 0, 0));
-
-
-  makescalequad(0, D3DXVector3(-0.02, 0.00003, -0.2), D3DXVector3(-0.02, -0.000025, -0.2),
-    D3DXVector3(0.02, 0.00003, -0.2), D3DXVector3(0.02, -0.000025, -0.2));
-  makescalequad(6, D3DXVector3(-0.00003, 0.02, -0.2), D3DXVector3(-0.000025, -0.02, -0.2),
-    D3DXVector3(0.00003, 0.02, -0.2), D3DXVector3(0.000025, -0.02, -0.2));
-end;
-
-procedure TF_HPL.drawscope;
-begin
-  g_pd3dDevice.SetFVF(D3DFVF_SKYVERTEX);
-  g_pd3ddevice.settexture(0, scaltex);
-  g_pd3ddevice.settexture(1, scaltex);
-  g_pd3ddevice.settexture(2, scaltex);
-  //  g_pd3dDevice.SetRenderState(D3DRS_SRCBLEND,D3DBLEND_ONE);
-  g_pd3ddevice.drawprimitiveUP(D3DPT_TRIANGLELIST, 4, scal, sizeof(Tskyvertex));
-end;
-
-procedure TF_HPL.makescalequad(hol:integer;m1, m2, m3, m4:TD3DXVector3);
-var
-  v1, v2, v3, v4:TSkyVertex;
-const
-  uvszorzo = 5;
-begin
-  v1.position:=m1;v2.position:=m2;v3.position:=m3;v4.position:=m4;
-  v1.u:=v1.position.x * uvszorzo;v1.v:=v1.position.y * uvszorzo;
-  v2.u:=v2.position.x * uvszorzo;v2.v:=v2.position.y * uvszorzo;
-  v3.u:=v3.position.x * uvszorzo;v3.v:=v3.position.y * uvszorzo;
-  v4.u:=v4.position.x * uvszorzo;v4.v:=v4.position.y * uvszorzo;
-  //v5.u:=v5.position.x*uvszorzo; v5.v:=v5.position.y*uvszorzo;
-  scal[hol + 0]:=v1;
-  scal[hol + 1]:=v2;
-  scal[hol + 2]:=v3;
-  scal[hol + 3]:=v3;
-  scal[hol + 4]:=v2;
-  scal[hol + 5]:=v4;
-end;
-
-procedure TF_HPL.draw;
-begin
-
-  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
-  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_ADD);
-  g_pd3dDevice.Settexture(0, m4tex);
-  g_pd3dDevice.Settexture(1, mpgemap);
-  g_pMesh.DrawSubset(0);
-
-  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_DISABLE);
-end;
-
-procedure TF_HPL.pluszmuzzmatr(siz:single);
-var
-  matWorld, matWorld2:TD3DMatrix;
-begin
-
-  D3DXMatrixTranslation(matWorld, -0.00, -0.015, -0.89);
-  D3DXMatrixScaling(matWorld2, siz / 2, siz / 2, siz);
-  D3DXmatrixMultiply(matWorld, matWorld2, MatWorld);
-  g_pd3dDevice.MultiplyTransform(D3DTS_WORLD, matWorld);
-
-end;
-
-procedure TF_HPL.drawmuzzle(siz:single);
-var
-  mat:TD3DMatrix;
-  lngt, i:integer;
-begin
-  if siz = 0 then exit;
-
-  pluszmuzzmatr(siz);
-
-  g_pd3ddevice.GetTransform(D3DTS_WORLD, mat);
-  lngt:=length(muzzez);
-  setlength(muzzez, lngt + length(muzz));
-  for i:=0 to high(muzz) do
-  begin
-    muzzez[i + lngt]:=muzz[i];
-    D3DXVec3TransformCoord(muzzez[i + lngt].position, muzz[i].position, mat);
-  end;
-  // g_pd3ddevice.drawprimitiveUP(D3DPT_TRIANGLELIST,6,muzz,sizeof(TCustomvertex));
-end;
-
-destructor TF_HPL.Destroy;
-begin
-  if m4tex <> nil then
-    m4tex:=nil;
-  if g_pmesh <> nil then
-    g_pmesh:=nil;
-  if g_pd3ddevice <> nil then
-    g_pd3ddevice:=nil;
-end;
-
-
-
-/////////////////////////////////////
-//               H31
-////////////////////////////////////
-
-
-constructor TF_H31.Create(a_D3Ddevice:IDirect3ddevice9;fnev:string;ftex:string = 'default');
-var
-  tempmesh:ID3DXMesh;
-  pVert:PCustomvertexarray;
-  vmi, vma, tmp:TD3DVector;
-  scl:single;
-  i:integer;
-  adj:Pdword;
-begin
-  inherited Create;
-  betoltve:=false;
-  g_pD3Ddevice:=a_D3Ddevice;
-  addfiletochecksum('data/models/weapons/' + fnev + '.x');
-
-  if not LTFF(g_pd3dDevice,'data/textures/weapons/skins/' + ftex + '/' + fnev + '.jpg', tex) then
-    Exit;
-
-  // makemuzzle(255);
-
-
-  if FAILED(D3DXLoadMeshFromX(PChar('data/models/weapons/' + fnev + '.x'), 0, g_pd3ddevice, nil, nil, nil, nil, tempmesh)) then exit;
-  if FAILED(tempmesh.CloneMeshFVF(0, D3DFVF_CUSTOMVERTEX, g_pd3ddevice, g_pMesh)) then exit;
-  if tempmesh <> nil then tempmesh:=nil;
-  g_pMesh.LockVertexBuffer(0, pointer(pvert));
-  D3DXComputeboundingbox(pointer(pvert), g_pMesh.GetNumVertices, g_pMesh.GetNumBytesPerVertex, vmi, vma);
-  scl:=max(vma.x - vmi.x, max(vma.y - vmi.y, vma.z - vmi.z));
-  scl:=scl / 0.7;
-  fc:=(vma.z - vmi.z) * 0.5;
-  for i:=0 to g_pMesh.GetNumVertices - 1 do
-  begin
-    tmp.z:= -(pvert[i].position.x - vmi.x) * 1.5 / scl + 0.2;
-    tmp.y:=(pvert[i].position.y - vma.y) / scl + 0.03;
-    tmp.x:=(pvert[i].position.z - vma.z + fc) / scl - 0.084;
-    //  if abs(tmp.x)<0.005 then tmp.x:=0;
-    pvert[i].color:=RGB(200, 200, 200);
-    pvert[i].position:=tmp;
-  end;
-  g_pMesh.UnlockVertexBuffer;
-  getmem(adj, g_pmesh.getnumfaces * 12);
-  g_pMesh.generateadjacency(0.001, adj);
-  D3DXComputenormals(g_pMesh, nil);
-  g_pMesh.OptimizeInplace(D3DXMESHOPT_COMPACT + D3DXMESHOPT_ATTRSORT + D3DXMESHOPT_VERTEXCACHE, adj, nil, nil, nil);
-  freemem(adj);
-  betoltve:=true;
-end;
-
-procedure TF_H31.draw;
-begin
-  g_pd3dDevice.Settexture(0, tex);
-  g_pMesh.DrawSubset(0);
-end;
-
-procedure TF_H31.pluszmuzzmatr(siz:single);
-var
-  matWorld, matWorld2:TD3DMatrix;
-begin
-
-  D3DXMatrixTranslation(matWorld, -0.00, -0.08, -0.7);
-  D3DXMatrixScaling(matWorld2, siz, siz, siz);
-  D3DXmatrixMultiply(matWorld, matWorld2, MatWorld);
-  g_pd3dDevice.MultiplyTransform(D3DTS_WORLD, matWorld);
-
-end;
-
-
-destructor TF_H31.Destroy;
-begin
-  if tex <> nil then
-    tex:=nil;
-  if g_pmesh <> nil then
-    g_pmesh:=nil;
-  if g_pd3ddevice <> nil then
-    g_pd3ddevice:=nil;
-end;
-
-
-////////////////////////////////
-//         TECHSUPP           //
-////////////////////////////////
-
-constructor TF_TECHSUPP.Create(a_D3Ddevice:IDirect3ddevice9;fnev:string;ftex:string = 'default');
-var
-  tempmesh:ID3DXMesh;
-  pVert:PCustomvertexarray;
-  vmi, vma, tmp:TD3DVector;
-  scl:single;
-  i:integer;
-  adj:PDword;
-begin
-  inherited Create;
-  betoltve:=false;
-  g_pD3Ddevice:=a_D3Ddevice;
-  addfiletochecksum('data/models/weapons/' + fnev + '.x');
-
-  if not LTFF(g_pd3dDevice,'data/textures/weapons/skins/' + ftex + '/' + fnev + '.jpg', tex) then
-    Exit;
-  if not LTFF(g_pd3dDevice,'data/textures/weapons/skins/' + ftex + '/' + fnev + 'em.jpg', emap) then
-    Exit;
-
-  makemuzzle;
-
-  if FAILED(D3DXLoadMeshFromX(PChar('data/models/weapons/' + fnev + '.x'), 0, g_pd3ddevice, nil, nil, nil, nil, tempmesh)) then exit;
-  if FAILED(tempmesh.CloneMeshFVF(0, D3DFVF_CUSTOMVERTEX, g_pd3ddevice, g_pMesh)) then exit;
-  if tempmesh <> nil then tempmesh:=nil;
-  g_pMesh.LockVertexBuffer(0, pointer(pvert));
-  D3DXComputeboundingbox(pointer(pvert), g_pMesh.GetNumVertices, g_pMesh.GetNumBytesPerVertex, vmi, vma);
-  scl:=max(vma.x - vmi.x, max(vma.y - vmi.y, vma.z - vmi.z));
-  scl:=scl / 0.7;
-  fc:=(vma.z - vmi.z) * 0.5;
-  for i:=0 to g_pMesh.GetNumVertices - 1 do
-  begin
-    tmp.z:= -(pvert[i].position.x - vmi.x) / scl - 0.04;
-    tmp.y:=(pvert[i].position.y - vma.y) / scl + 0.001;
-    tmp.x:=(pvert[i].position.z - vma.z + fc) / scl;
-    //if abs(tmp.x)<0.005 then tmp.x:=0;
-    pvert[i].color:=RGB(200, 200, 200);
-    pvert[i].position:=tmp;
-  end;
-  g_pMesh.UnlockVertexBuffer;
-  getmem(adj, g_pmesh.getnumfaces * 12);
-  g_pMesh.generateadjacency(0.001, adj);
-  D3DXComputenormals(g_pMesh, nil);
-  g_pMesh.OptimizeInplace(D3DXMESHOPT_COMPACT + D3DXMESHOPT_ATTRSORT + D3DXMESHOPT_VERTEXCACHE, adj, nil, nil, nil);
-  freemem(adj);
-  betoltve:=true;
-end;
-
-procedure TF_TECHSUPP.makemuzzlequad(hol:integer;v1, v2, v3, v4:TCustomVertex);
-begin
-  muzz[hol + 0]:=v1;
-  muzz[hol + 1]:=v2;
-  muzz[hol + 2]:=v3;
-  muzz[hol + 3]:=v4;
-  muzz[hol + 4]:=v2;
-  muzz[hol + 5]:=v3;
-end;
-
-procedure TF_TECHSUPP.makemuzzle;
-begin
-  makemuzzlequad(0, CustomVertex(-0.5, -0.5, 0, 0, 0, 0, ARGB(255, 255, 255, 255), 0, 0, 0, 0),
-    CustomVertex(0.5, -0.5, 0, 0, 0, 0, ARGB(255, 255, 255, 255), 2, 0, 0, 0),
-    CustomVertex(-0.5, 0.5, 0, 0, 0, 0, ARGB(255, 255, 255, 255), 0, 2, 0, 0),
-    CustomVertex(0.5, 0.5, 0, 0, 0, 0, ARGB(255, 255, 255, 255), 2, 2, 0, 0));
-  makemuzzlequad(6, CustomVertex(0, 0, 0, 0, 0, 0, ARGB(255, 255, 255, 255), 0, 0, 0, 0),
-    CustomVertex(0, 0.5, -0.5, 0, 0, 0, ARGB(255, 255, 255, 255), 1, 0, 0, 0),
-    CustomVertex(0, -0.5, -0.5, 0, 0, 0, ARGB(255, 255, 255, 255), 0, 1, 0, 0),
-    CustomVertex(0, 0, -1, 0, 0, 0, ARGB(255, 255, 255, 255), 1, 1, 0, 0));
-  makemuzzlequad(12, CustomVertex(0, 0, 0, 0, 0, 0, ARGB(255, 255, 255, 255), 0, 0, 0, 0),
-    CustomVertex(0.5, 0, -0.5, 0, 0, 0, ARGB(255, 255, 255, 255), 1, 0, 0, 0),
-    CustomVertex(-0.5, 0, -0.5, 0, 0, 0, ARGB(255, 255, 255, 255), 0, 1, 0, 0),
-    CustomVertex(0, 0, -1, 0, 0, 0, ARGB(255, 255, 255, 255), 1, 1, 0, 0));
-
-end;
-
-procedure TF_TECHSUPP.draw;
-begin
-  g_pd3dDevice.Settexture(0, tex);
-  g_pd3dDevice.Settexture(1, emap);
-  g_pMesh.DrawSubset(0);
-end;
-
-procedure TF_TECHSUPP.pluszmuzzmatr(siz:single);
-var
-  matWorld, matWorld2:TD3DMatrix;
-begin
-
-  D3DXMatrixTranslation(matWorld, -0.00, -0.06, -0.72);
-  D3DXMatrixScaling(matWorld2, siz / 2, siz / 2, siz);
-  D3DXmatrixMultiply(matWorld, matWorld2, MatWorld);
-  g_pd3dDevice.MultiplyTransform(D3DTS_WORLD, matWorld);
-
-end;
-
-procedure TF_TECHSUPP.drawmuzzle(siz:single);
-var
-  mat:TD3DMatrix;
-  lngt, i:integer;
-begin
-  if siz = 0 then exit;
-
-  pluszmuzzmatr(siz);
-
-  g_pd3ddevice.GetTransform(D3DTS_WORLD, mat);
-  lngt:=length(muzzez);
-  setlength(muzzez, lngt + length(muzz));
-  for i:=0 to high(muzz) do
-  begin
-    muzzez[i + lngt]:=muzz[i];
-    D3DXVec3TransformCoord(muzzez[i + lngt].position, muzz[i].position, mat);
-  end;
-  // g_pd3ddevice.drawprimitiveUP(D3DPT_TRIANGLELIST,6,muzz,sizeof(TCustomvertex));
-end;
-
-destructor TF_TECHSUPP.Destroy;
-begin
-  if tex <> nil then
-    tex:=nil;
-  if g_pmesh <> nil then
-    g_pmesh:=nil;
-  if g_pd3ddevice <> nil then
-    g_pd3ddevice:=nil;
-end;
-
-
-/////////////////////////////////////
-//           GUNSUPP               //
-/////////////////////////////////////
-
-
-constructor TF_GUNSUPP.Create(a_D3Ddevice:IDirect3ddevice9;fnev:string;ftex:string = 'default');
-var
-  tempmesh:ID3DXMesh;
-  pVert:PCustomvertexarray;
-  vmi, vma, tmp:TD3DVector;
-  scl:single;
-  i:integer;
-  adj:Pdword;
-begin
-  inherited Create;
-  betoltve:=false;
-  g_pD3Ddevice:=a_D3Ddevice;
-  addfiletochecksum('data/models/weapons/' + fnev + '.x');
-  if not LTFF(g_pd3dDevice,'data/textures/weapons/skins/' + ftex + '/' + fnev + '.jpg', tex) then
-    Exit;
-  // makemuzzle(255);
-
-  if FAILED(D3DXLoadMeshFromX(PChar('data/models/weapons/' + fnev + '.x'), 0, g_pd3ddevice, nil, nil, nil, nil, tempmesh)) then exit;
-  if FAILED(tempmesh.CloneMeshFVF(0, D3DFVF_CUSTOMVERTEX, g_pd3ddevice, g_pMesh)) then exit;
-  if tempmesh <> nil then tempmesh:=nil;
-  g_pMesh.LockVertexBuffer(0, pointer(pvert));
-  D3DXComputeboundingbox(pointer(pvert), g_pMesh.GetNumVertices, g_pMesh.GetNumBytesPerVertex, vmi, vma);
-  scl:=max(vma.x - vmi.x, max(vma.y - vmi.y, vma.z - vmi.z));
-  scl:=scl / 0.7;
-  fc:=(vma.z - vmi.z) * 0.5 / scl;
-  for i:=0 to g_pMesh.GetNumVertices - 1 do
-  begin
-    tmp.z:= -(pvert[i].position.x - vmi.x) * 0.9 / scl;
-    tmp.y:=(pvert[i].position.y - vma.y) / scl;
-    tmp.x:=(pvert[i].position.z - vma.z) / scl + fc;
-    pvert[i].color:=ARGB(0, 200, 200, 200);
-    pvert[i].position:=tmp;
-    pvert[i].u2:=pvert[i].u;
-    pvert[i].v2:=pvert[i].v;
-  end;
-  g_pMesh.UnlockVertexBuffer;
-
-  getmem(adj, g_pmesh.getnumfaces * 12);
-  g_pMesh.generateadjacency(0.001, adj);
-  D3DXComputenormals(g_pMesh, nil);
-  g_pMesh.OptimizeInplace(D3DXMESHOPT_COMPACT + D3DXMESHOPT_ATTRSORT + D3DXMESHOPT_VERTEXCACHE, adj, nil, nil, nil);
-  freemem(adj);
-  betoltve:=true;
-end;
-
-procedure TF_GUNSUPP.makemuzzle(alpha:single);
-var
-  c:TD3DXColor;
-  col:cardinal;
-begin
-  c:=D3DXColorFromDWord(weapons[1].col[4]);
-  c.a:=c.a * alpha;
-  col:=D3DXColorToDWord(c);
-  muzz[0]:=CustomVertex(-0.5, -0.5, 0, 0, 0, 0, col, 0, 0, 0, 0);
-  muzz[1]:=CustomVertex(0.5, -0.5, 0, 0, 0, 0, col, 1, 0, 0, 0);
-  muzz[2]:=CustomVertex(-0.5, 0.5, 0, 0, 0, 0, col, 0, 1, 0, 0);
-  muzz[3]:=CustomVertex(0.5, 0.5, 0, 0, 0, 0, col, 1, 1, 0, 0);
-  muzz[4]:=CustomVertex(0.5, -0.5, 0, 0, 0, 0, col, 1, 0, 0, 0);
-  muzz[5]:=CustomVertex(-0.5, 0.5, 0, 0, 0, 0, col, 0, 1, 0, 0);
-end;
-
-procedure TF_GUNSUPP.draw;
-begin
-  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
-  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_ADD);
-  g_pd3dDevice.Settexture(0, tex);
-  g_pMesh.DrawSubset(0);
-
-  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_DISABLE);
-end;
-
-procedure TF_GUNSUPP.pluszmuzzmatr(siz:single;szog:single);
-var
-  matWorld, matWorld2:TD3DMatrix;
-begin
-
-  D3DXMatrixTranslation(matWorld, -0.00, -0.08, -0.7);
-  D3DXMatrixRotationZ(matWorld2, szog);
-  D3DXmatrixMultiply(matWorld, matWorld2, MatWorld);
-  D3DXMatrixScaling(matWorld2, siz, siz, siz);
-  D3DXmatrixMultiply(matWorld, matWorld2, MatWorld);
-  g_pd3dDevice.MultiplyTransform(D3DTS_WORLD, matWorld);
-
-end;
-
-
-procedure TF_GUNSUPP.drawmuzzle(siz:single;szog:single);
-var
-  mat:TD3DMatrix;
-  lngt, i:integer;
-begin
-  if siz >= 1 then exit;
-
-  makemuzzle(1 - siz);
-  pluszmuzzmatr(siz / 2, szog);
-
-  g_pd3ddevice.GetTransform(D3DTS_WORLD, mat);
-  lngt:=length(muzzez);
-  setlength(muzzez, lngt + length(muzz));
-  for i:=0 to high(muzz) do
-  begin
-    muzzez[i + lngt]:=muzz[i];
-    D3DXVec3TransformCoord(muzzez[i + lngt].position, muzz[i].position, mat);
-  end;
-end;
-
-destructor TF_GUNSUPP.Destroy;
-begin
-  if tex <> nil then
-    tex:=nil;
-  if g_pmesh <> nil then
-    g_pmesh:=nil;
-  if g_pd3ddevice <> nil then
-    g_pd3ddevice:=nil;
-end;
-
-//***************************************
-//***************************************
-//*******TOVÁBBI FEGYVEREK HELYE!!!******
-//***************************************
-//***************************************
 
 constructor TFegyv.Create(a_D3Ddevice:IDirect3ddevice9);
 var
-  skin:string; //data/textures/weapons/skins/-skin-/..
   factory: TFegyvFactory;
 begin
   inherited Create;
   betoltve:=false;
   g_pD3Ddevice:=a_D3Ddevice;
   factory := TFegyvFactory.Create(g_pD3Ddevice);
-  skin:='default';
   if winter then
-  begin
-    skin:='xmas';
     factory.setSkin(SKIN_NAME_XMAS);
-  end;
 
   factory.make;
   
@@ -1236,28 +73,17 @@ begin
   MP5A3 := factory.MP5A3;
   LAW := factory.LAW;
   BM3 := factory.BM3;
-  
-  MPG:=TF_MPG.create(a_D3Ddevice, 'mpg', skin);
-  if not MPG.betoltve then exit;
-  QUADRO:=TF_QUADRO.create(a_D3Ddevice, 'quad', skin);
-  if not QUADRO.betoltve then exit;
-  NOOB:=TF_NOOB.create(a_D3Ddevice, 'noob', skin);
-  if not NOOB.betoltve then exit;
-  X72:=TF_X72.create(a_D3Ddevice, 'x72', skin);
-  if not X72.betoltve then exit;
-  //GUNSUPP:=TF_GUNSUPP.Create(a_D3Ddevice, 'gunsupp', skin);
-  //if not GUNSUPP.betoltve then exit;
-  //TECHSUPP:=TF_TECHSUPP.Create(a_D3Ddevice, 'techsupp', skin);
-  //if not TECHSUPP.betoltve then exit;
-  HPL:=TF_HPL.create(a_D3Ddevice, 'hpl', skin);
-  if not HPL.betoltve then exit;
+
+  MPG := factory.MPG;
+  QUADRO := factory.QUADRO;
+  NOOB := factory.NOOB;
+  X72 := factory.X72;
+  HPL := factory.HPL;
 
   if winter then
-  begin
-    H31:=TF_H31.create(a_D3Ddevice,'h31', 'xmas');//NO Default skin
-    if not H31.betoltve then exit;
-  end;
+    H31 := factory.H31;
 
+   {
   //SKINEK
   G_M4A1:=TF_M4A1.create(a_D3Ddevice, 'm4a1', 'golden');
   if not G_M4A1.betoltve then exit;
@@ -1280,7 +106,7 @@ begin
   G_HPL:=TF_HPL.create(a_D3Ddevice, 'hpl', 'golden');
   if not G_HPL.betoltve then exit;
 
-  
+
   B_M4A1:=TF_M4A1.create(a_D3Ddevice, 'm4a1', 'blue');
   if not B_M4A1.betoltve then exit;
   B_M82A1:=TF_M82A1.create(a_D3Ddevice, 'm82', 'blue');
@@ -1302,6 +128,7 @@ begin
   B_HPL:=TF_HPL.create(a_D3Ddevice, 'hpl', 'blue');
   if not B_HPL.betoltve then exit;
   //SKINEK END
+       }
 
   if not LTFF(g_pd3dDevice, 'data/textures/weapons/muzzle/m4a1muzz.png', gunmuztex) then
     Exit;
@@ -1366,19 +193,19 @@ begin
 		  FEGYV_M4A1:tex:=@M4A1.skin;
 		  FEGYV_M82A1:tex:=@M82A1.skin;
 		  FEGYV_LAW:tex:=@LAW.skin;
-		  FEGYV_MPG:tex:=@MPG.mpgtex;
-		  FEGYV_QUAD:tex:=@QUADRO.quadrotex;
-		  FEGYV_NOOB:tex:=@NOOB.tex;
+		  FEGYV_MPG:tex:=@MPG.skin;
+		  FEGYV_QUAD:tex:=@QUADRO.skin;
+		  FEGYV_NOOB:tex:=@NOOB.skin;
 		  FEGYV_MP5A3:tex:=@MP5A3.skin;
-		  FEGYV_X72:tex:=@X72.x72tex;
+		  FEGYV_X72:tex:=@X72.skin;
 		  FEGYV_BM3:tex:=@BM3.skin;
-		  FEGYV_HPL:tex:=@HPL.m4tex;
-      FEGYV_GUNSUPP:tex:=@GUNSUPP.tex;
-      FEGYV_TECHSUPP:tex:=@TECHSUPP.tex;
+		  FEGYV_HPL:tex:=@HPL.skin;
+      //FEGYV_GUNSUPP:tex:=@GUNSUPP.tex;
+      //FEGYV_TECHSUPP:tex:=@TECHSUPP.tex;
           
-		  FEGYV_H31_G:tex:=@H31.tex;
-		  FEGYV_H31_T:tex:=@H31.tex;
-          
+		  FEGYV_H31_G:tex:=@H31.skin;
+		  FEGYV_H31_T:tex:=@H31.skin;
+            {
 		  FEGYV_G_M4A1:tex:=@G_M4A1.skin;
 		  FEGYV_G_M82A1:tex:=@G_M82A1.skin;
 		  FEGYV_G_LAW:tex:=@g_LAW.skin;
@@ -1399,30 +226,30 @@ begin
 		  FEGYV_B_MP5A3:tex:=@B_MP5A3.skin;
 		  FEGYV_B_X72:tex:=@B_X72.x72tex;
 		  FEGYV_B_BM3:tex:=@B_BM3.skin;
-		  FEGYV_B_HPL:tex:=@B_HPL.m4tex;
+		  FEGYV_B_HPL:tex:=@B_HPL.m4tex;    }
     end;
 
-    //    em:=@MPG.mpgemap;
+
 
     case mit of
-	    FEGYV_MPG:em:=@MPG.mpgemap;
-      FEGYV_QUAD:em:=@QUADRO.quadroemap;
+	    FEGYV_MPG:em:=@MPG.emap;
+      FEGYV_QUAD:em:=@QUADRO.emap;
       FEGYV_NOOB:em:=@NOOB.emap;
-      FEGYV_X72:em:=@X72.x72emap;
-      FEGYV_HPL:em:=@HPL.mpgemap;
-      FEGYV_TECHSUPP:em:=@TECHSUPP.emap;
+      FEGYV_X72:em:=@X72.emap;
+      FEGYV_HPL:em:=@HPL.emap;
+      //FEGYV_TECHSUPP:em:=@TECHSUPP.emap;
 
-      FEGYV_G_MPG:em:=@G_MPG.mpgemap;
-      FEGYV_G_QUAD:em:=@G_QUADRO.quadroemap;
+      FEGYV_G_MPG:em:=@G_MPG.emap;
+      FEGYV_G_QUAD:em:=@G_QUADRO.emap;
       FEGYV_G_NOOB:em:=@G_NOOB.emap;
-      FEGYV_G_X72:em:=@G_X72.x72emap;
-      FEGYV_G_HPL:em:=@G_HPL.mpgemap;
+      FEGYV_G_X72:em:=@G_X72.emap;
+      FEGYV_G_HPL:em:=@G_HPL.emap;
 	  
-	    FEGYV_B_MPG:em:=@B_MPG.mpgemap;
-      FEGYV_B_QUAD:em:=@B_QUADRO.quadroemap;
+	    FEGYV_B_MPG:em:=@B_MPG.emap;
+      FEGYV_B_QUAD:em:=@B_QUADRO.emap;
       FEGYV_B_NOOB:em:=@B_NOOB.emap;
-      FEGYV_B_X72:em:=@B_X72.x72emap;
-      FEGYV_B_HPL:em:=@B_HPL.mpgemap;
+      FEGYV_B_X72:em:=@B_X72.emap;
+      FEGYV_B_HPL:em:=@B_HPL.emap;
     end;
 
     if em <> nil then vanem:=true;
@@ -1525,8 +352,8 @@ begin
 		FEGYV_X72:X72.draw;
 		FEGYV_BM3:BM3.draw;
 		FEGYV_HPL:HPL.draw;
-    FEGYV_GUNSUPP:GUNSUPP.draw;
-    FEGYV_TECHSUPP:TECHSUPP.draw;
+    //FEGYV_GUNSUPP:GUNSUPP.draw;
+    //FEGYV_TECHSUPP:TECHSUPP.draw;
 
 		FEGYV_H31_G:H31.draw;
 		FEGYV_H31_T:H31.draw;
@@ -1878,6 +705,7 @@ destructor TFegyv.Destroy;
 begin
   M4A1.destroy;
   MPG.destroy;
+  //TODO ALL THE WEPS SHOULD BE HERE!
   if g_pd3ddevice <> nil then
     g_pd3ddevice:=nil;
   setlength(M4proj, 0);

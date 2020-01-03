@@ -68,25 +68,19 @@ type
     g_pMesh: ID3DXMesh;
     g_pD3Ddevice: IDirect3ddevice9;
     muzz: array[muzzRange] of TCustomVertex;
-    procedure makemuzzle; virtual; abstract;
+    procedure makemuzzle; virtual;
     procedure setupMesh; virtual; abstract;
     procedure makemuzzlequad(hol:integer;v1, v2, v3, v4:TCustomVertex);
-  public           
+  public
     skin: IDirect3DTexture9;
     betoltve:boolean;
     fc:single;
     muzzez:array of TCustomvertex;
     procedure draw;
     procedure pluszmuzzmatr(siz:single); virtual; abstract;
-    procedure drawmuzzle(siz:single); virtual; abstract;
+    procedure drawmuzzle(siz:single); virtual;
     constructor Create(a_D3Ddevice:IDirect3ddevice9;fnev:string;ftex:string);
     destructor Destroy; reintroduce;
-  end;
-
-  //KISMUZZ
-  TAbstractSmallMuzzFegyv = class(TAbstractFegyv)
-  protected
-    muzz: array[smallMuzzRange] of TCustomVertex;
   end;
 
   //SCOPED
@@ -96,16 +90,40 @@ type
     scal: array[scalRange] of TSkyVertex;
     procedure makescalequad(hol:integer;m1, m2, m3, m4:TD3DXVector3); virtual; abstract;
   public
+    constructor Create(a_D3Ddevice:IDirect3ddevice9;fnev:string;ftex:string); reintroduce;
     procedure drawscope; virtual; abstract;
   end;
 
   //LIGHMAPPED
   TAbsctractEmittingFegyv = class(TAbstractFegyv)
   protected
-    emap: IDirect3DTexture9;
+
   public
+    emap: IDirect3DTexture9;
     procedure draw; reintroduce;
   end;
+
+  TAbsctractScopeEmittingFegyv = class(TAbstractScopeFegyv)
+  protected
+
+  public
+    emap: IDirect3DTexture9;
+    constructor Create(a_D3Ddevice:IDirect3ddevice9;fnev:string;ftex:string); reintroduce;
+    procedure draw; reintroduce;
+  end;
+
+  //LIGHMAPPED + KISMUZZ
+  TAbsctractEmittingSmallMuzzFegyv = class(TAbsctractEmittingFegyv)
+  protected
+    muzz: array[smallMuzzRange] of TCustomVertex;
+    procedure makemuzzle(alpha:single); reintroduce; virtual; abstract;
+  public
+    constructor Create(a_D3Ddevice:IDirect3ddevice9;fnev:string;ftex:string); reintroduce;
+    procedure pluszmuzzmatr(siz:single;szog:single); reintroduce; virtual; abstract;
+    procedure drawmuzzle(siz:single;szog:single); reintroduce; virtual; abstract;
+  end;
+
+
 
 implementation
 ////////////////////////////////
@@ -141,6 +159,102 @@ begin
   betoltve:=true;
 end;
 
+constructor TAbsctractEmittingSmallMuzzFegyv.Create(a_D3Ddevice:IDirect3ddevice9;fnev:string;ftex:string);
+var
+  tempmesh:ID3DXMesh;
+  adj:PDword;
+begin
+  betoltve:=false;
+  g_pD3Ddevice:=a_D3Ddevice;
+  addfiletochecksum(FEGYV_PATH + '/' + fnev + MESH_EXT);
+
+  if not LTFF(g_pd3dDevice, SKINS_PATH + '/' + ftex + '/' + fnev + TEXTURE_EXT, skin) then
+    Exit;
+  if not LTFF(g_pd3dDevice,SKINS_PATH + '/' + ftex + '/' + fnev + 'em' + TEXTURE_EXT, emap) then
+    Exit;
+  //makemuzzle(255);
+
+  if FAILED(D3DXLoadMeshFromX(PChar(FEGYV_PATH + '/' + fnev + MESH_EXT), 0, g_pd3ddevice, nil, nil, nil, nil, tempmesh)) then exit;
+
+  if FAILED(tempmesh.CloneMeshFVF(0, D3DFVF_CUSTOMVERTEX, g_pd3ddevice, g_pMesh)) then exit;
+  if tempmesh <> nil then tempmesh:=nil;
+
+  setupMesh;
+
+  getmem(adj, g_pmesh.getnumfaces * 12);
+  g_pMesh.generateadjacency(0.001, adj);
+  D3DXComputenormals(g_pMesh, nil);
+  g_pMesh.OptimizeInplace(D3DXMESHOPT_COMPACT + D3DXMESHOPT_ATTRSORT + D3DXMESHOPT_VERTEXCACHE, adj, nil, nil, nil);
+  freemem(adj);
+  betoltve:=true;
+end;
+
+constructor TAbsctractScopeEmittingFegyv.Create(a_D3Ddevice:IDirect3ddevice9;fnev:string;ftex:string);
+var
+  tempmesh:ID3DXMesh;
+  adj:PDword;
+begin
+  betoltve:=false;
+  g_pD3Ddevice:=a_D3Ddevice;
+  addfiletochecksum(FEGYV_PATH + '/' + fnev + MESH_EXT);
+
+  if not LTFF(g_pd3dDevice, SKINS_PATH + '/' + ftex + '/' + fnev + TEXTURE_EXT, skin) then
+    Exit;
+  if not LTFF(g_pd3dDevice,SKINS_PATH + '/' + ftex + '/' + fnev + 'em' + TEXTURE_EXT, emap) then
+    Exit;
+
+  if not LTFF(g_pd3dDevice, 'data/textures/weapons/scale.png', scaltex, TEXFLAG_FIXRES) then
+    Exit;
+
+  makemuzzle;
+
+  if FAILED(D3DXLoadMeshFromX(PChar(FEGYV_PATH + '/' + fnev + MESH_EXT), 0, g_pd3ddevice, nil, nil, nil, nil, tempmesh)) then exit;
+
+  if FAILED(tempmesh.CloneMeshFVF(0, D3DFVF_CUSTOMVERTEX, g_pd3ddevice, g_pMesh)) then exit;
+  if tempmesh <> nil then tempmesh:=nil;
+
+  setupMesh;
+
+  getmem(adj, g_pmesh.getnumfaces * 12);
+  g_pMesh.generateadjacency(0.001, adj);
+  D3DXComputenormals(g_pMesh, nil);
+  g_pMesh.OptimizeInplace(D3DXMESHOPT_COMPACT + D3DXMESHOPT_ATTRSORT + D3DXMESHOPT_VERTEXCACHE, adj, nil, nil, nil);
+  freemem(adj);
+  betoltve:=true;
+end;
+
+constructor TAbstractScopeFegyv.Create(a_D3Ddevice:IDirect3ddevice9;fnev:string;ftex:string);
+var
+  tempmesh:ID3DXMesh;
+  adj:PDword;
+begin
+  betoltve:=false;
+  g_pD3Ddevice:=a_D3Ddevice;
+  addfiletochecksum(FEGYV_PATH + '/' + fnev + MESH_EXT);
+
+  if not LTFF(g_pd3dDevice, SKINS_PATH + '/' + ftex + '/' + fnev + TEXTURE_EXT, skin) then
+    Exit;
+
+  if not LTFF(g_pd3dDevice, 'data/textures/weapons/scale.png', scaltex, TEXFLAG_FIXRES) then
+    Exit;
+
+  makemuzzle;
+
+  if FAILED(D3DXLoadMeshFromX(PChar(FEGYV_PATH + '/' + fnev + MESH_EXT), 0, g_pd3ddevice, nil, nil, nil, nil, tempmesh)) then exit;
+
+  if FAILED(tempmesh.CloneMeshFVF(0, D3DFVF_CUSTOMVERTEX, g_pd3ddevice, g_pMesh)) then exit;
+  if tempmesh <> nil then tempmesh:=nil;
+
+  setupMesh;
+
+  getmem(adj, g_pmesh.getnumfaces * 12);
+  g_pMesh.generateadjacency(0.001, adj);
+  D3DXComputenormals(g_pMesh, nil);
+  g_pMesh.OptimizeInplace(D3DXMESHOPT_COMPACT + D3DXMESHOPT_ATTRSORT + D3DXMESHOPT_VERTEXCACHE, adj, nil, nil, nil);
+  freemem(adj);
+  betoltve:=true;
+end;
+
 procedure TAbstractFegyv.makemuzzlequad(hol:integer;v1, v2, v3, v4:TCustomVertex);
 begin
   muzz[hol + 0]:=v1;
@@ -155,6 +269,28 @@ procedure TAbstractFegyv.draw;
 begin
   g_pd3dDevice.Settexture(0, skin);
   g_pMesh.DrawSubset(0);
+end;
+
+procedure TAbstractFegyv.makemuzzle;
+begin
+//NOOP
+end;
+
+procedure TAbstractFegyv.drawmuzzle(siz:single);
+begin
+//NOOP
+end;
+
+procedure TAbsctractScopeEmittingFegyv.draw;
+begin
+  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
+  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_ADD);
+  g_pd3dDevice.Settexture(0, skin);
+  g_pd3dDevice.Settexture(1, emap);
+  g_pMesh.DrawSubset(0);
+
+  g_pd3dDevice.SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_DISABLE);
 end;
 
 procedure TAbsctractEmittingFegyv.draw;
@@ -173,6 +309,7 @@ destructor TAbstractFegyv.Destroy;
 begin
   if skin <> nil then
     skin:=nil;
+    //TODO unlock em, scope, muzz
   if g_pmesh <> nil then
     g_pmesh:=nil;
   if g_pd3ddevice <> nil then
