@@ -1,11 +1,12 @@
 unit m82a1;
 
 interface
-  uses AbstractFegyv, typestuff, Direct3d9, d3dx9;
+  uses AbstractFegyv, typestuff, Direct3d9, d3dx9, Math, windows;
 
 type TF_M82A1 = class(TAbstractScopeFegyv)
   protected
     procedure makemuzzle; override;
+    procedure setupMesh; override;
     procedure makescalequad(hol:integer;m1, m2, m3, m4:TD3DXVector3); override;
   public
     procedure drawscope; override;
@@ -13,9 +14,31 @@ type TF_M82A1 = class(TAbstractScopeFegyv)
     procedure drawmuzzle(siz:single); override;
   end;
 
-
-
 implementation
+
+procedure TF_M82A1.setupMesh;
+var
+  pVert:PCustomvertexarray;
+  vmi, vma, tmp:TD3DVector;
+  scl:single;
+  i:integer;
+begin
+  g_pMesh.LockVertexBuffer(0, pointer(pvert)); 
+  D3DXComputeboundingbox(pointer(pvert), g_pMesh.GetNumVertices, g_pMesh.GetNumBytesPerVertex, vmi, vma); 
+  scl:=max(vma.x - vmi.x, max(vma.y - vmi.y, vma.z - vmi.z)); 
+  scl:=1.3 / scl; 
+  fc:=(vma.z - vmi.z); 
+  for i:=0 to g_pMesh.GetNumVertices - 1 do 
+  begin 
+    tmp.x:= -(pvert[i].position.x - vmi.x) * scl + 0.05; 
+    tmp.y:=(pvert[i].position.y - vma.y) * scl + 0.05; 
+    tmp.z:= -(pvert[i].position.z - vma.z + fc) * scl + 0.001; 
+    //if abs(tmp.x)<0.005 then tmp.x:=0; 
+    pvert[i].color:=RGB(200, 200, 200); 
+    pvert[i].position:=tmp; 
+  end; 
+  g_pMesh.UnlockVertexBuffer;
+end;
 
 procedure TF_M82A1.makescalequad(hol:integer;m1, m2, m3, m4:TD3DXVector3);
 var

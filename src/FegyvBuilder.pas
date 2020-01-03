@@ -10,13 +10,14 @@ type TFegyvFactory = class(TObject)
   public
     M4A1: TF_M4A1;
     M82A1: TF_M82A1;
+    MP5A3: TF_MP5A3;
+    LAW: TF_LAW;
+    BM3: TF_BM3;
     //
     constructor Create(_d3ddevice: IDirect3ddevice9);
     procedure setSkin(_skin: TSkinName);
     procedure make;
   end;
-
-
 
 implementation
 
@@ -81,6 +82,18 @@ begin
   M82A1 := TF_M82A1.Create(d3ddevice, F_M82A1, ftex);
   if not M82A1.betoltve then
     raise Exception.Create(FEGYV_LOAD_FAIL_MSG + F_M82A1 + ' with ' + ftex);
+
+    MP5A3 := TF_MP5A3.Create(d3ddevice, F_MP5A3, ftex);
+  if not MP5A3.betoltve then
+    raise Exception.Create(FEGYV_LOAD_FAIL_MSG + F_MP5A3 + ' with ' + ftex);
+
+    LAW := TF_LAW.Create(d3ddevice, F_LAW, ftex);
+  if not LAW.betoltve then
+    raise Exception.Create(FEGYV_LOAD_FAIL_MSG + F_LAW + ' with ' + ftex);
+
+    BM3 := TF_BM3.Create(d3ddevice, F_BM3, ftex);
+  if not BM3.betoltve then
+    raise Exception.Create(FEGYV_LOAD_FAIL_MSG + F_BM3 + ' with ' + ftex);
     
   //TODO: rest of the weapons...
 

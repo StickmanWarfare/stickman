@@ -1,21 +1,45 @@
-unit law;
+unit mp5a3;
 
-interface      
-  uses AbstractFegyv, typestuff, Direct3d9, d3dx9;
+interface   
+  uses AbstractFegyv, typestuff, Direct3d9, d3dx9, Math, windows;
 
-type TF_LAW = class(TAbstractFegyv)
+type TF_MP5A3 = class(TAbstractFegyv)
   protected
     procedure makemuzzle; override;
+    procedure setupMesh; override;
   public
     procedure pluszmuzzmatr(siz:single); override;
     procedure drawmuzzle(siz:single); override;
   end;
 
-
-  
 implementation
 
-procedure TF_LAW.makemuzzle;
+procedure TF_MP5A3.setupMesh;
+var
+  pVert:PCustomvertexarray;
+  vmi, vma, tmp:TD3DVector;
+  scl:single;
+  i:integer;
+begin
+  g_pMesh.LockVertexBuffer(0, pointer(pvert)); 
+  D3DXComputeboundingbox(pointer(pvert), g_pMesh.GetNumVertices, g_pMesh.GetNumBytesPerVertex, vmi, vma); 
+  scl:=max(vma.x - vmi.x, max(vma.y - vmi.y, vma.z - vmi.z)); 
+  scl:=scl / 0.6; 
+  fc:=(vma.x - vmi.x) * 0.5; 
+  for i:=0 to g_pMesh.GetNumVertices - 1 do 
+  begin 
+    tmp.z:= -0.6 + (pvert[i].position.z - vmi.z) / scl; 
+    tmp.y:=(pvert[i].position.y - vma.y) / scl + 0.006; 
+    tmp.x:=(pvert[i].position.x - vma.x + fc) / scl; 
+    //if abs(tmp.x)<0.005 then tmp.x:=0; 
+    pvert[i].color:=RGB(200, 200, 200); 
+    pvert[i].position:=tmp; 
+  end; 
+  g_pMesh.UnlockVertexBuffer; 
+end;
+
+
+procedure TF_MP5A3.makemuzzle;
 begin
   makemuzzlequad(0, CustomVertex(-0.5, -0.5, 0, 0, 0, 0, ARGB(255, 255, 255, 255), 0, 0, 0, 0),
     CustomVertex(0.5, -0.5, 0, 0, 0, 0, ARGB(255, 255, 255, 255), 2, 0, 0, 0),
@@ -32,19 +56,19 @@ begin
 
 end;
 
-procedure TF_LAW.pluszmuzzmatr(siz:single);
+procedure TF_MP5A3.pluszmuzzmatr(siz:single);
 var
   matWorld, matWorld2:TD3DMatrix;
 begin
 
-  D3DXMatrixTranslation(matWorld, -0.00, -0.08, -0.7);
+  D3DXMatrixTranslation(matWorld, -0.00, -0.06, -0.6);
   D3DXMatrixScaling(matWorld2, siz / 2, siz / 2, siz);
   D3DXmatrixMultiply(matWorld, matWorld2, MatWorld);
   g_pd3dDevice.MultiplyTransform(D3DTS_WORLD, matWorld);
 
 end;
 
-procedure TF_LAW.drawmuzzle(siz:single);
+procedure TF_MP5A3.drawmuzzle(siz:single);
 var
   mat:TD3DMatrix;
   lngt, i:integer;

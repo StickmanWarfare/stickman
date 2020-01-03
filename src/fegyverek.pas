@@ -1233,21 +1233,18 @@ begin
   
   M4A1 := factory.M4A1;
   M82A1 := factory.M82A1;
+  MP5A3 := factory.MP5A3;
+  LAW := factory.LAW;
+  BM3 := factory.BM3;
   
   MPG:=TF_MPG.create(a_D3Ddevice, 'mpg', skin);
   if not MPG.betoltve then exit;
   QUADRO:=TF_QUADRO.create(a_D3Ddevice, 'quad', skin);
   if not QUADRO.betoltve then exit;
-  LAW:=TF_LAW.create(a_D3Ddevice, 'law', skin);
-  if not LAW.betoltve then exit;
   NOOB:=TF_NOOB.create(a_D3Ddevice, 'noob', skin);
   if not NOOB.betoltve then exit;
-  MP5A3:=TF_MP5A3.create(a_D3Ddevice, 'mp5', skin);
-  if not MP5A3.betoltve then exit;
   X72:=TF_X72.create(a_D3Ddevice, 'x72', skin);
   if not X72.betoltve then exit;
-  BM3:=TF_BM3.create(a_D3Ddevice, 'bm3', skin);
-  if not BM3.betoltve then exit;
   //GUNSUPP:=TF_GUNSUPP.Create(a_D3Ddevice, 'gunsupp', skin);
   //if not GUNSUPP.betoltve then exit;
   //TECHSUPP:=TF_TECHSUPP.Create(a_D3Ddevice, 'techsupp', skin);

@@ -69,6 +69,7 @@ type
     g_pD3Ddevice: IDirect3ddevice9;
     muzz: array[muzzRange] of TCustomVertex;
     procedure makemuzzle; virtual; abstract;
+    procedure setupMesh; virtual; abstract;
     procedure makemuzzlequad(hol:integer;v1, v2, v3, v4:TCustomVertex);
   public           
     skin: IDirect3DTexture9;
@@ -113,10 +114,6 @@ implementation
 constructor TAbstractFegyv.Create(a_D3Ddevice:IDirect3ddevice9;fnev:string;ftex:string);
 var
   tempmesh:ID3DXMesh;
-  pVert:PCustomvertexarray;
-  vmi, vma, tmp:TD3DVector;
-  scl:single;
-  i:integer;
   adj:PDword;
 begin
   inherited Create;
@@ -130,23 +127,12 @@ begin
   makemuzzle;
 
   if FAILED(D3DXLoadMeshFromX(PChar(FEGYV_PATH + '/' + fnev + MESH_EXT), 0, g_pd3ddevice, nil, nil, nil, nil, tempmesh)) then exit;
+
   if FAILED(tempmesh.CloneMeshFVF(0, D3DFVF_CUSTOMVERTEX, g_pd3ddevice, g_pMesh)) then exit;
   if tempmesh <> nil then tempmesh:=nil;
-  g_pMesh.LockVertexBuffer(0, pointer(pvert));
-  D3DXComputeboundingbox(pointer(pvert), g_pMesh.GetNumVertices, g_pMesh.GetNumBytesPerVertex, vmi, vma);
-  scl:=max(vma.x - vmi.x, max(vma.y - vmi.y, vma.z - vmi.z));
-  scl:=scl / 0.7;
-  fc:=(vma.z - vmi.z) * 0.5;
-  for i:=0 to g_pMesh.GetNumVertices - 1 do
-  begin
-    tmp.z:= -(pvert[i].position.x - vmi.x) / scl - 0.04;
-    tmp.y:=(pvert[i].position.y - vma.y) / scl + 0.001;
-    tmp.x:=(pvert[i].position.z - vma.z + fc) / scl;
-    //if abs(tmp.x)<0.005 then tmp.x:=0;
-    pvert[i].color:=RGB(200, 200, 200);
-    pvert[i].position:=tmp;
-  end;
-  g_pMesh.UnlockVertexBuffer;
+
+  setupMesh;
+
   getmem(adj, g_pmesh.getnumfaces * 12);
   g_pMesh.generateadjacency(0.001, adj);
   D3DXComputenormals(g_pMesh, nil);
