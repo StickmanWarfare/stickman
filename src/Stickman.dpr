@@ -4627,6 +4627,7 @@ begin
     cpox^:=cpx^;cpoz^:=cpz^;cpoy^:=cpy^;
 {$IFNDEF speedhack}
     tmp:=autobaszallhatpos;
+    if not watercraftbaszallhat then
     tmp.y:=advwove(tmp.x, tmp.z) + 2;
 {$ELSE}
     d3dxvec3add(tmp, d3dxvector3(cpx^, cpy^, cpz^), d3dxvector3(0, 4, 0));
