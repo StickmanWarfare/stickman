@@ -815,7 +815,7 @@ end;
 
 function Tauto.extrapartsmatrix(mit:integer;posindex:integer;fakerotate:bool = false):TD3DMatrix;
 var
-tmp,tmp2,tmp3:TD3DXVector3;
+tmp,tmp2:TD3DXVector3;
 a1,a2:TD3DXVector3;
 rotmat:TD3DMatrix;
 i, tmp4:integer;

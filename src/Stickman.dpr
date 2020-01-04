@@ -2655,7 +2655,7 @@ end;
 
 procedure LoadVehicleExtraPartAssets;
 var
-  i, j, k:integer;
+  i, j:integer;
   filename:string;
   tempmesh:ID3DXMesh;
 begin
@@ -6891,38 +6891,19 @@ end;
 procedure handleleavetriggers;
 var
   i:integer;
-label
-  vege;
 begin
-  if autoban then
-    for i:=0 to Length(leavetriggers) - 1 do
-      with leavetriggers[i] do
-      begin
-        if ((tegla.vehicletype = 0) and vehicle) or ((not (tegla.vehicletype = 0)) and watercraft) then
+  for i:=0 to Length(leavetriggers) - 1 do
+    with leavetriggers[i] do
+      if autoban then
+        if ((tegla.vehicletype = 0) and vehicle) or ((tegla.vehicletype <> 0) and watercraft) then
           if (teams = 'both') or ((teams = 'gun') and (myfegyv < 128)) or ((teams = 'tech') and (myfegyv > 127)) then
             if tavpointpointsq(pos, tegla.pos) < sqr(rad) then
             begin
-              if not touched then
-              begin
-                addHudMessage(lang[111], betuszin);
-                nearleavetrigger:= true;
-                leavetrigger_exitpos:= exitpos;
-                touched:= true;
-              end;
-            end
-            else
-            begin
-              nearleavetrigger:= false;
-              touched:= false;
+              nearleavetrigger:=true;
+              leavetrigger_exitpos:= exitpos;
+              exit;
             end;
-      end
-  else
-  begin
-    nearleavetrigger:= false;
-    for i:=0 to Length(leavetriggers) - 1 do
-      with leavetriggers[i] do
-        touched:= false;
-  end;
+  nearleavetrigger:= false;
 end;
 
 procedure handleteleports;
@@ -10598,6 +10579,11 @@ begin
         Drawmessage(lang[46], $FF000000 + betuszin);
         if tavpointpointsq(tegla.pos, tegla.vpos) > sqr(0.1) then
           Drawmessage(lang[47], $FFFF0000);
+      end;
+
+      if nearleavetrigger then
+      begin
+        drawmessage(lang[111], $FF000000 + betuszin);
       end
     end;
     if recovercar > 0 then
