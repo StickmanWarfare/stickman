@@ -8734,6 +8734,28 @@ begin
   end;
 end;
 
+procedure changeMMOCarScaling(mi:integer, vtypename:string);
+var
+axe1,axe2,axe3:TD3DXVector3;
+begin
+  axe1:=d3dxvector3(stuffjson.GetFloat(['vehicle', vtypename, 'scale', 'x']), 0, 0);
+  axe2:=d3dxvector3(0, 0, -stuffjson.GetFloat(['vehicle', vtypename, 'scale', 'z']));
+  axe3:=d3dxvector3(0, -stuffjson.GetFloat(['vehicle', vtypename, 'scale', 'y']), 0);
+
+  with tobbiekautoi[mi] do
+    d3dxvec3scale(axes[0],axe1,-1);
+    d3dxvec3scale(axes[1],axe2,-1);
+    d3dxvec3scale(axes[2],axe3,-1);
+
+    for i:=0 to 2 do
+      axehossz[i]:=d3dxvec3length(axes[i]);
+
+    axearany[0]:=tavpointpoint(axes[0],axes[1])*8;
+    axearany[1]:=tavpointpoint(axes[1],axes[2])*8;
+    axearany[2]:=tavpointpoint(axes[2],axes[0])*8;
+  end;
+end;
+
 procedure handleMMOcars;
 var
   i:integer;
@@ -8763,6 +8785,30 @@ begin
   for i:=0 to high(ppl) do
     with tobbiekautoi[i] do
     begin
+      if ppl[i].auto.changed then
+      begin
+        if ppl[i].auto.watercraft then
+          if ppl[i].pls.fegyv > 127 then
+          begin
+            changeMMOCarScaling(i, 'submarine');
+            vehicletype:=2;
+            parts:=LoadVehicleExtrasFromJson('submarine');
+          end else
+          begin
+            changeMMOCarScaling(i, 'airboat');
+            vehicletype:=1;
+            parts:=LoadVehicleExtrasFromJson('airboat');
+          end;
+        else
+        begin
+          vehicletype:=0;
+          if ppl[i].pls.fegyv > 127 then
+            changeMMOCarScaling(i, 'tech')
+          else
+            changeMMOCarScaling(i, 'gun');
+        end;
+        ppl[i].auto.changed:=false;
+      end;
 
       if ppl[i].net.avtim = 0 then ppl[i].net.avtim:=10;
       disabled:= not ppl[i].auto.enabled;
@@ -8783,19 +8829,6 @@ begin
       d3dxvec3subtract(vpos, pos, ppl[i].auto.seb);
 
       agx:=ppl[i].pls.fegyv > 127;
-      if ppl[i].auto.watercraft then
-        if ppl[i].pls.fegyv > 127 then
-        begin
-          vehicletype:=2;
-          parts:=LoadVehicleExtrasFromJson('submarine');
-        end
-        else
-        begin
-          vehicletype:=1;
-          parts:=LoadVehicleExtrasFromJson('airboat');
-        end
-      else
-        vehicletype:=0;
       initkerekek;
     end;
 end;
