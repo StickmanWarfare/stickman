@@ -11164,18 +11164,22 @@ begin
           end;
 
   if not enyem then
-    for i:=0 to high(tobbiekautoi) do
-      if not tobbiekautoi[i].disabled then
-        for j:=0 to high(extrapartassets) do
-          if extrapartassets[j].vehicletype = tobbiekautoi[i].vehicletype then
+    for i:=0 to high(ppl) do
+    begin
+      if high(tobbiekautoi) < i then continue;
+      if tobbiekautoi[i] = nil then continue;
+      if tobbiekautoi[i].disabled then continue;
+      for j:=0 to high(extrapartassets) do
+        if extrapartassets[j].vehicletype = tobbiekautoi[i].vehicletype then
+        begin
+          g_pd3ddevice.SetTexture(0, extrapartassets[j].tex);
+          for k:=0 to high(tobbiekautoi[i].parts[extrapartassets[j].partnum].pos) do
           begin
-            g_pd3ddevice.SetTexture(0, extrapartassets[j].tex);
-            for k:=0 to high(tobbiekautoi[i].parts[extrapartassets[j].partnum].pos) do
-            begin
-              g_pd3dDevice.SetTransform(D3DTS_WORLD, tobbiekautoi[i].extrapartsmatrix(extrapartassets[j].partnum, k, true));
-              extrapartassets[j].mesh.DrawSubset(0);
-            end;
+            g_pd3dDevice.SetTransform(D3DTS_WORLD, tobbiekautoi[i].extrapartsmatrix(extrapartassets[j].partnum, k, true));
+            extrapartassets[j].mesh.DrawSubset(0);
           end;
+        end;
+    end;
 
   g_pd3ddevice.SetTexture(0, kerektex);
 
