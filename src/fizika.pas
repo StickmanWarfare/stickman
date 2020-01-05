@@ -369,7 +369,7 @@ begin
    2:
    begin
      pontok[i].x:=pontok[i].x+(pontok[i].x-vpontok[i].x)*0.99;
-     pontok[i].y:=pontok[i].y+(pontok[i].y-vpontok[i].y)*0.95+Min(0.02,Max(0, (waterlevel-2-pontok[i].y)))- GRAVITACIO;
+     pontok[i].y:=pontok[i].y+(pontok[i].y-vpontok[i].y)*0.95+Min(0.02,Max(0, (waterlevel-4-pontok[i].y)))- GRAVITACIO;
      pontok[i].z:=pontok[i].z+(pontok[i].z-vpontok[i].z)*0.99;
    end;
   end;

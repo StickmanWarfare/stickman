@@ -12355,7 +12355,7 @@ begin
     (if lightIntensity > 0 then lightIntensity:=max(0, lightIntensity - 0.04));
 
   //hát, ez elõre kell. pont.
-  if (opt_water > 0) and not ice then
+  if (opt_water > 0) and (not ice) and (waterlevel < 20) then
     Renderreflectiontex;
 
   //###################
