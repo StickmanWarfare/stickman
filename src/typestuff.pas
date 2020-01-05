@@ -15,8 +15,8 @@ uses
   qjson;
 
 const
-  PROG_VER=209090;
-  datachecksum=$D6DF43C8;
+  PROG_VER=300000;
+  datachecksum=$CF484AA7;
 type
 
   array4ofbyte=array[0..3] of byte;
