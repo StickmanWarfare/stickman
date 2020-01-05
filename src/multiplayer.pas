@@ -149,7 +149,7 @@ type
     procedure Update(posx, posy, posz, oposx, oposy, oposz, iranyx, iranyy:single;state:integer;
       campos:TD3DXvector3; //a prioritásokhoz
       autoban:boolean;vanauto:boolean;
-      autopos:TD3DXVector3;autoopos:TD3DXVector3;autoaxes:array {0..2} of TD3DXVector3;fordulat:single);
+      autopos:TD3DXVector3;autoopos:TD3DXVector3;autoaxes:array {0..2} of TD3DXVector3;fordulat:single;watercraft:boolean);
     procedure Killed(apos, vpos:TD3DXVector3;irany:single;state:byte;animstate:single;
       mlgmb:byte;gmbvec:TD3DXVector3;
       kimiatt:integer);
@@ -1061,6 +1061,10 @@ begin
 
       autobyte:=frame.ReadChar;
       pls.autoban:=(autobyte and 1) <> 0;
+
+      auto.changed:=(auto.watercraft <> ((autobyte and 2) <> 0));
+      auto.watercraft:=(autobyte and 2) <> 0;
+
       auto.pos:=frame.ReadPackedPos;
       auto.seb:=frame.ReadPackedVector(1);
       for i:=0 to 2 do
@@ -1212,7 +1216,8 @@ end;
 procedure TMMOPeerToPeer.Update(posx, posy, posz, oposx, oposy, oposz, iranyx, iranyy:single;
   state:integer;campos:TD3DXvector3; //a prioritásokhoz
   autoban:boolean;vanauto:boolean;
-  autopos:TD3DXVector3;autoopos:TD3DXVector3;autoaxes:array {0..2} of TD3DXVector3;fordulat:single);
+  autopos:TD3DXVector3;autoopos:TD3DXVector3;autoaxes:array {0..2} of TD3DXVector3;fordulat:single;
+  watercraft:boolean);
 var
   i, j:integer;
   leszkikuldjon:boolean;
@@ -1343,7 +1348,9 @@ begin
       begin
         autobyte:=0;
         if autoban then
-          autobyte:=autobyte or 1;
+          autobyte:=autobyte or 1; 
+        if watercraft then
+          autobyte:=autobyte or 2;
         frame.WriteChar(autobyte);
         frame.WritePackedPos(autopos);
         frame.WritePackedVector(autoopos, 1);

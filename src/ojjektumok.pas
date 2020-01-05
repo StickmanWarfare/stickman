@@ -146,6 +146,8 @@ const
   OF_SPAWNTECH = 1 shl 3;
   OF_VEHICLEGUN = 1 shl 4;
   OF_VEHICLETECH = 1 shl 5;
+  OF_WATERCRAFTGUN = 1 shl 6;
+  OF_WATERCRAFTTECH = 1 shl 7;
 var
 
   ojjektumarr:array of T3dojjektum;
@@ -1361,6 +1363,10 @@ begin
         ojjektumflags[i]:=ojjektumflags[i] or OF_VEHICLEGUN;
       if special = 'vehicletech' then
         ojjektumflags[i]:=ojjektumflags[i] or OF_VEHICLETECH;
+      if special = 'watercraftgun' then
+        ojjektumflags[i]:=ojjektumflags[i] or OF_WATERCRAFTGUN;
+      if special = 'watercrafttech' then
+        ojjektumflags[i]:=ojjektumflags[i] or OF_WATERCRAFTTECH;
     end;
 
     n:=stuffjson.GetNum(['buildings', i, 'position']);
