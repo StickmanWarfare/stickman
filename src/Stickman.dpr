@@ -12324,7 +12324,15 @@ begin
           if not nofegyv then
             rendermykez;
       laststate:= 'rendermykez';
+      //if (myfegyv < 128) and autoban and (tegla.vehicletype = 1) then // airboat musk render
+      //begin
+        //setupmymuksmatr;
+        //g_pd3dDevice.SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+        //g_pd3dDevice.SetTransform(D3DTS_WORLD, tegla.matrixfromaxes);
+        //muks.Render(gunszin, mat_world, pos);
+      //end;
       pos:=D3DXVector3(cpx^, cpy^, cpz^);
+      
       for i:=0 to rbszam do
         if abs(rongybabak[i].gmbk[10].y - cpy^) < 100 then
         begin
@@ -12343,7 +12351,7 @@ begin
       for i:=0 to high(ppl) do
       begin
         if ppl[i].pls.autoban then ppl[i].pls.visible:=false;
-        if ppl[i].pls.visible then
+        if ppl[i].pls.visible then//or (ppl[i].pls.autoban and ppl[i].auto.watercraft and (ppl[i].pls.fegyv < 128)) then// airboat musk render
           if tavpointpointsq(ppl[i].pos.pos, campos) < sqr(500) then
           begin
             Rendermuks(i, ppl[i].pos.state, ppl[i].pls.fegyv); //nem skin mert ez a babu szine
@@ -14681,7 +14689,7 @@ var
                             exit;
                           end
                           else
-
+                                   {
                           //submit api communication
                           if (args[0] = 'submit') then
                           begin
@@ -14715,7 +14723,7 @@ var
                             exit;
                           end
                           else
-
+                                  }
                             //hang
                             if (args[0] = 'sound') and (Length(args) > 4) then
                             begin
@@ -14756,10 +14764,10 @@ var
     j, k:integer;
   {$ENDIF}
   begin
-
+            {
     if pos(' /practice', mit) = 1 then
       mit:= ' /join Practice-' + inttohex(random(35536), 4);
-
+         }
     if pos(' /nohud', mit) = 1 then
       nohud:= not nohud;
 
@@ -14794,7 +14802,7 @@ var
       selfieMaker.zoomlevel := 2;
       selfieMaker.dab := FALSE;
     end;
-
+    {
     if pos(' /boat', mit) = 1 then
     begin
       SpawnVehicle(d3dxvector3(-335, waterlevel, -60),1,'airboat');
@@ -14804,9 +14812,9 @@ var
     begin
       SpawnVehicle(d3dxvector3(-335, waterlevel, -60),2,'submarine');
     end;
-
+     
     if pos(' //', mit) = 1 then evalscriptline(copy(mit, 4, length(mit) - 3));
-
+      }
 {$IFDEF propeditor}
     if pos(' /p', mit) = 1 then
     begin
