@@ -41,10 +41,8 @@ uses
   Directinput,
   eventscripts,
   fegyverek,
-  //filectrl,
   fizika,
   foliage,
-  //generated,
   Math,
   Messages,
   MMSystem,
@@ -63,13 +61,12 @@ uses
   Utils,
   StrUtils,
   SysUtils,
-  //SyncObjs,
-  //ShellApi,
   Typestuff,
   Windows,
   Winsock2,
   BotGroups,
-  Selfie;
+  Selfie,
+  stickApi;
 
 //StopWatch //TODO: kivenni
 
@@ -112,7 +109,7 @@ const
   CMAP_SIZE = 1024;
   CMAP_PATH = 'data/textures/map/';
 
-
+  NL = AnsiString(#13#10);
 
   //-----------------------------------------------------------------------------
   // Global variables
@@ -456,6 +453,233 @@ procedure evalscriptline(line:string);forward;
 procedure evalScript(name:string);forward;
 procedure writeChat(s:string);forward;
 procedure fillupmenu;forward;
+
+
+//-----------------------------------------------------------------------------
+// THREADS
+//-----------------------------------------------------------------------------
+
+//TODO: move api related threads to stickApi unit
+//      (requires separate script handler unit at least)
+
+{
+//EXAMPLE
+type TPrintServerTimeThread = class(TAsync)
+private
+  _api: TApi;
+  _response: TApiResponse;
+protected
+ procedure Execute; override;
+end;
+
+procedure TPrintServerTimeThread.Execute;
+var
+  output: string;
+begin
+  try
+    _api := TApi.Create;
+    _response := _api.GET(baseUrl + 'servertime');
+
+    if _response.success then
+    begin
+       output := _response.data.getString(['data','time']);
+
+       evalscriptline('display ' + output);
+    end;
+  finally
+    Terminate;
+  end;  
+end;
+}
+
+type TToplist = (TOP_MONTHLY, TOP_WEEKLY, TOP_DAILY, TOP_ALL);
+
+type TPrintTopThread = class(TAsync)
+private
+  _api: TApi;
+  _response: TApiResponse;
+  _endpoint: string;
+protected
+  procedure Execute; override;
+public
+  constructor Create(startSuspended: boolean; mode: TToplist = TOP_ALL);
+end;
+
+constructor TPrintTopThread.Create(startSuspended: boolean; mode: TToplist = TOP_ALL);
+begin
+  inherited Create(startSuspended);
+
+  case mode of
+    TOP_MONTHLY: _endpoint := 'havitop';
+    TOP_WEEKLY: _endpoint := 'hetitop';
+    TOP_DAILY: _endpoint := 'napitop';
+    TOP_ALL: _endpoint := 'top';
+  end;
+end;
+
+procedure TPrintTopThread.Execute;
+var
+  output: string;
+  nev: string;
+  pont: string;
+  line: string;
+  i: Cardinal;
+begin
+  try
+    _api := TApi.Create;
+    _response := _api.GET(baseUrl + _endpoint);
+
+    if _response.success then
+    begin
+      for i := 0 to 9 do
+      begin
+        nev := _response.data.getString(['data', i, 'nev']);
+        if length(nev) = 0 then nev := '-';
+
+        pont := _response.data.getString(['data', i, 'pont']);
+        if length(pont) = 0 then pont := '';
+
+        line := inttostr(i + 1) + '. ' + nev + ' ' + pont;
+        output := output + NL + line;
+       end;
+       evalscriptline('display ' + output);
+    end;
+  finally
+    Terminate;
+  end;
+end;
+
+
+type TPrintRank = class(TAsync)
+private
+  _api: TApi;
+  _response: TApiResponse;
+  _uname: string;
+  _mode: string;
+protected
+  procedure Execute; override;
+public
+  constructor Create(startSuspended: boolean; uname: string; mode: TToplist = TOP_ALL);
+end;
+
+constructor TPrintRank.Create(startSuspended: boolean; uname: string; mode: TToplist = TOP_ALL);
+begin
+  inherited Create(startSuspended);
+
+  _uname := uname;
+  case mode of
+    TOP_MONTHLY: _mode := 'havi';
+    TOP_WEEKLY: _mode := 'heti';
+    TOP_DAILY: _mode := 'napi';
+    TOP_ALL: _mode := 'ossz';
+  end;
+end;
+
+procedure TPrintRank.Execute;
+var
+  output: string;
+begin
+  try
+    _api := TApi.Create;
+    _response := _api.GET(baseUrl + 'rank&nev=' + _uname + '&type=' + _mode);
+
+    if _response.success then
+    begin
+      output := _response.data.getString(['data', 'rank']);
+
+      evalscriptline('display ' + output);
+    end;
+
+  finally
+    Terminate;
+  end;
+end;
+
+
+type TPrintKoTH = class(TAsync)
+private
+  _api: TApi;
+  _response: TApiResponse;
+protected
+  procedure Execute; override;
+end;
+
+procedure TPrintKoTH.Execute;
+var
+  output: string;
+  nev: string;
+  pont: string;
+  line: string;
+  i: Cardinal;
+begin
+  try
+    _api := TApi.Create;
+    _response := _api.GET(baseUrl + 'koth');
+
+    if _response.success then
+    begin
+      for i := 0 to 9 do
+      begin
+        nev := _response.data.getString(['data', i, 'nev']);
+        if length(nev) = 0 then nev := '-';
+
+        pont := _response.data.getString(['data', i, 'pont']);
+        if length(pont) = 0 then pont := '';
+
+        line := inttostr(i + 1) + '. ' + nev + ' ' + pont;
+        output := output + NL + line;
+       end;
+       evalscriptline('display ' + output);
+    end;
+  finally
+    Terminate;
+  end;
+end;
+
+
+type TPrintToTH = class(TAsync)
+private
+  _api: TApi;
+  _response: TApiResponse;
+protected
+  procedure Execute; override;
+end;
+
+procedure TPrintToTH.Execute;
+var
+  output: string;
+  nev: string;
+  pont: string;
+  line: string;
+  i: Cardinal;
+begin
+  try
+    _api := TApi.Create;
+    _response := _api.GET(baseUrl + 'toth');
+
+    if _response.success then
+    begin
+      for i := 0 to 9 do
+      begin
+        nev := _response.data.getString(['data', i, 'nev']);
+        if length(nev) = 0 then nev := '-';
+
+        pont := _response.data.getString(['data', i, 'pont']);
+        if length(pont) = 0 then pont := '';
+
+        line := inttostr(i + 1) + '. ' + nev + ' ' + pont;
+        output := output + NL + line;
+       end;
+       evalscriptline('display ' + output);
+    end;
+  finally
+    Terminate;
+  end;
+end;
+
+//-----------------------------------------------------------------------------
+// FUNCTIONS
+//-----------------------------------------------------------------------------
 
 function collerp(c1, c2:cardinal):cardinal;
 var
@@ -2279,7 +2503,7 @@ end;
 procedure SetupMyCarMuksmatr;
 var
   matWorld, matWorld2:TD3DMatrix;
-  pos:TD3DVector;
+  //pos:TD3DVector;
 begin
   muks.jkez:=fegyv.jkez(myfegyv, mstat);
   muks.bkez:=fegyv.bkez(myfegyv, mstat);
@@ -14127,6 +14351,7 @@ var
     varname:string;
   begin
     result:=input;
+    if length(input) < 2 then exit;
     if input[1] = '%' then
     begin
       varname:=copy(input, 2, length(input) - 1);
@@ -14822,12 +15047,14 @@ var
 
   end;
 
-  procedure handleparancsok(var mit:String);
-  var
-    i:integer;
+procedure handleparancsok(var mit:String);
+var
+   tmp: string;
+   i:integer;
   {$IFDEF propeditor}
     j, k:integer;
   {$ENDIF}
+
   begin
             {
     if pos(' /practice', mit) = 1 then
@@ -14873,13 +15100,86 @@ var
       SpawnVehicle(d3dxvector3(-335, waterlevel, -60),1,'airboat');
     end;
 
+
     if pos(' /sub', mit) = 1 then
     begin
       SpawnVehicle(d3dxvector3(-335, waterlevel, -60),2,'submarine');
     end;
-     
-    if pos(' //', mit) = 1 then evalscriptline(copy(mit, 4, length(mit) - 3));
-      }
+        }
+
+    {
+    //EXAMPLE
+    if pos(' /servertime', mit) = 1 then
+    begin
+      TPrintServerTimeThread.Create(FALSE);
+    end;
+    }
+
+    if pos(' /havitop', mit) = 1 then
+    begin
+      TPrintTopThread.Create(FALSE, TOP_MONTHLY);
+    end; 
+
+    if pos(' /hetitop', mit) = 1 then
+    begin
+      TPrintTopThread.Create(FALSE, TOP_WEEKLY);
+    end;
+
+    if pos(' /napitop', mit) = 1 then
+    begin
+      TPrintTopThread.Create(FALSE, TOP_DAILY);
+    end;
+
+    if pos(' /top', mit) = 1 then
+    begin
+      TPrintTopThread.Create(FALSE);
+    end;
+
+    if pos(' /rank', mit) = 1 then
+    begin
+      tmp := '';
+      for i:=0 to high(ppl) do
+        if (ppl[i].net.UID = 0) then tmp := ppl[i].pls.nev;
+      TPrintRank.Create(FALSE, tmp);
+    end;
+
+    if pos(' /rank napi', mit) = 1 then
+    begin
+      tmp := '';
+      for i:=0 to high(ppl) do
+        if (ppl[i].net.UID = 0) then tmp := ppl[i].pls.nev;
+      TPrintRank.Create(FALSE, tmp, TOP_DAILY);
+    end;
+
+    if pos(' /rank heti', mit) = 1 then
+    begin
+      tmp := '';
+      for i:=0 to high(ppl) do
+        if (ppl[i].net.UID = 0) then tmp := ppl[i].pls.nev;
+      TPrintRank.Create(FALSE, tmp, TOP_WEEKLY);
+    end;
+
+    if pos(' /rank havi', mit) = 1 then
+    begin
+      tmp := '';
+      for i:=0 to high(ppl) do
+        if (ppl[i].net.UID = 0) then tmp := ppl[i].pls.nev;
+      TPrintRank.Create(FALSE, tmp, TOP_MONTHLY);
+    end; 
+
+    if pos(' /koth', mit) = 1 then
+    begin
+      TPrintKoTH.Create(FALSE);
+    end;
+
+    if pos(' /toth', mit) = 1 then
+    begin
+      TPrintToTH.Create(FALSE);
+    end;
+
+
+  //  if pos(' //', mit) = 1 then evalscriptline(copy(mit, 4, length(mit) - 3));
+
 {$IFDEF propeditor}
     if pos(' /p', mit) = 1 then
     begin
