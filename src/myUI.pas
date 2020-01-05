@@ -762,7 +762,7 @@ begin
     g_pSprite.SetTransform(identmatr);
 
     Drawtext(lowermenutext, 0.005, 0.98, 1, 1, 0, color_menu_info);
-    Drawtext('v2.' + inttostr((PROG_VER div 1000) mod 100) + '.' + inttostr((PROG_VER div 10) mod 100) + '.', 0.8, 0.85, 1, 0.9, 1, color_menu_info);
+    Drawtext('v3.' + inttostr((PROG_VER div 1000) mod 100) + '.' + inttostr((PROG_VER div 10) mod 100) + '.', 0.8, 0.85, 1, 0.9, 1, color_menu_info);
 
 
     apos:=D3DXVector3(0.5 * SCwidth + 0.32 * SCheight - vertScale * 32, SCheight * 0.62 - vertScale * 32, 0);
