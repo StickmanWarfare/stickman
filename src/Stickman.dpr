@@ -7507,7 +7507,7 @@ begin
               else
                 d3dxvec3lerp(tmp, aauto.kerekorig[2], aauto.kerekorig[3], 0.1 + 0.8 * random(1000) / 1000);
 
-              if techautoeffekt then
+              if techautoeffekt and (tegla.vehicletype = 0) then
               begin
                 tmp:=aauto.kerekorig[0];randomplus(tmp, gtc, 1);
                 tmps:=aauto.kerekorig[1];randomplus(tmps, gtc + 5, 1);
@@ -8734,15 +8734,17 @@ begin
   end;
 end;
 
-procedure changeMMOCarScaling(mi:integer, vtypename:string);
+procedure changeMMOCarScaling(mi:integer; vtypename:string);
 var
 axe1,axe2,axe3:TD3DXVector3;
+i: Integer;
 begin
   axe1:=d3dxvector3(stuffjson.GetFloat(['vehicle', vtypename, 'scale', 'x']), 0, 0);
   axe2:=d3dxvector3(0, 0, -stuffjson.GetFloat(['vehicle', vtypename, 'scale', 'z']));
   axe3:=d3dxvector3(0, -stuffjson.GetFloat(['vehicle', vtypename, 'scale', 'y']), 0);
 
   with tobbiekautoi[mi] do
+  begin
     d3dxvec3scale(axes[0],axe1,-1);
     d3dxvec3scale(axes[1],axe2,-1);
     d3dxvec3scale(axes[2],axe3,-1);
@@ -8788,6 +8790,7 @@ begin
       if ppl[i].auto.changed then
       begin
         if ppl[i].auto.watercraft then
+        begin
           if ppl[i].pls.fegyv > 127 then
           begin
             changeMMOCarScaling(i, 'submarine');
@@ -8799,7 +8802,7 @@ begin
             vehicletype:=1;
             parts:=LoadVehicleExtrasFromJson('airboat');
           end;
-        else
+        end else
         begin
           vehicletype:=0;
           if ppl[i].pls.fegyv > 127 then
