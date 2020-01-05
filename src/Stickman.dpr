@@ -453,6 +453,8 @@ procedure fillupmenu;forward;
 //TODO: move api related threads to stickApi unit
 //      (requires separate script handler unit at least)
 
+{
+//EXAMPLE
 type TPrintServerTimeThread = class(TAsync)
 private
   _api: TApi;
@@ -479,6 +481,7 @@ begin
     Terminate;
   end;  
 end;
+}
 
 type TToplist = (TOP_MONTHLY, TOP_WEEKLY, TOP_DAILY, TOP_ALL);
 
@@ -14656,10 +14659,13 @@ begin
       selfieMaker.dab := FALSE;
     end;
 
+    {
+    //EXAMPLE
     if pos(' /servertime', mit) = 1 then
     begin
       TPrintServerTimeThread.Create(FALSE);
     end;
+    }
 
     if pos(' /havitop', mit) = 1 then
     begin
