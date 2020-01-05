@@ -2276,6 +2276,31 @@ begin
   //g_pd3dDevice.SetTransform(D3DTS_WORLD, matWorld);
 end;
 
+procedure SetupMyCarMuksmatr;
+var
+  matWorld, matWorld2:TD3DMatrix;
+  pos:TD3DVector;
+begin
+  muks.jkez:=fegyv.jkez(myfegyv, mstat);
+  muks.bkez:=fegyv.bkez(myfegyv, mstat);
+  muks.stand(true);
+
+
+  D3DXMatrixTranslation(matWorld, ccpx, ccpy, ccpz);
+  with tegla do
+  begin
+    with matworld do
+    begin
+    _31:=axes[1].x/axehossz[1]; _32:=axes[1].y/axehossz[1]; _33:=axes[1].z/axehossz[1]; _34:=0;
+    _11:=axes[0].x/axehossz[0]; _12:=axes[0].y/axehossz[0]; _13:=axes[0].z/axehossz[0]; _14:=0;
+    _21:=axes[2].x/axehossz[2]; _22:=axes[2].y/axehossz[2]; _23:=axes[2].z/axehossz[2]; _24:=0;
+    end;
+  end;
+  D3DXMatrixRotationY(matWorld2, -d3dx_pi / 2);
+  D3DXMatrixMultiply(matWorld, matWorld2, matWorld);
+  mat_World:=matworld;
+end;
+
 procedure bubbleeffect;
 var
   vec1, vec2:TD3DXVector3;
@@ -12326,7 +12351,7 @@ begin
       laststate:= 'rendermykez';
       //if (myfegyv < 128) and autoban and (tegla.vehicletype = 1) then // airboat musk render
       //begin
-        //setupmymuksmatr;
+        //SetupMyCarMuksmatr;
         //g_pd3dDevice.SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
         //g_pd3dDevice.SetTransform(D3DTS_WORLD, tegla.matrixfromaxes);
         //muks.Render(gunszin, mat_world, pos);
