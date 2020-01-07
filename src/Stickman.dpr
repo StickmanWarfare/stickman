@@ -7066,6 +7066,7 @@ begin
     iranyithato := FALSE;
     nemlohet := TRUE;
     selfieMaker.muks := muks;
+    selfieMaker.fegyv := myfegyv;
     selfieMaker.fejcuccrenderer := fejcuccrenderer;
     selfieMaker.fejcucc := myfejcucc;
     selfieMaker.campos := D3DXVector3(cpx^, cpy^, cpz^);
