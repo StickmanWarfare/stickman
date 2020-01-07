@@ -20,9 +20,9 @@
 	"spawn_height": 10,
 	"spawn_radius": 5,
 	"terrain": {
-		"grass_level": 15.75,
-		"wetsand_level": 10.75,
-		"water_baselevel": 10.15
+		"grass_level": 45.75,
+		"wetsand_level": 42.75,
+		"water_baselevel": 42.15
 	},
 	"cloud": {
 		"color": "0xFFFFFF",
@@ -182,10 +182,138 @@
 					}
 				]
 			}
+		},
+		"airboat": {
+			"effect": true,
+			"scale": {
+				"x": 2.3,
+				"y": 1,
+				"z": 1.3
+			},
+			"friction": 0.1,
+			"max_speed": 0.7,
+			"torque": 0.025,
+			"suspension": {
+				"length": 0.7,
+				"strength": 0.1,
+				"absorb": 0.03
+			},
+			"wheels": {
+				"friction": 0.2,
+				"radius": 0.5,
+				"width": 0.2,
+				"position": [
+					{
+						"x": -1,
+						"y": -1,
+						"z": 0.8
+					},
+					{
+						"x": -1,
+						"y": -1,
+						"z": -0.7
+					},
+					{
+						"x": 1,
+						"y": -1,
+						"z": 0.8
+					},
+					{
+						"x": 1,
+						"y": -1,
+						"z": -0.7
+					}
+				]
+			},
+			"extra_parts": [
+				{
+					"name": "lapat",
+					"pos": [
+						{
+							"x": 3.2,
+							"y": 0.6,
+							"z": 2
+						},
+						{
+							"x": 3.2,
+							"y": 0.6,
+							"z": -2
+						}
+					],
+					"scale": {
+						"x": 0.2,
+						"y": 0.6,
+						"z": 0.02
+					},
+					"steering_rotate": true,
+					"steering_flip": true
+				},
+				{
+					"name": "propeller",
+					"pos": [
+						{
+							"x": 2.5,
+							"y": 0.4,
+							"z": 0
+						}
+					],
+					"scale": {
+						"x": 0.1,
+						"y": 0.7,
+						"z": 0.7
+					},
+					"speed_rotate": true,
+					"rotate_axis": "x",
+					"rotate_scale": 3
+				}
+			]
+		},
+		"submarine": {
+			"effect": true,
+			"scale": {
+				"x": 2.3,
+				"y": 0.7,
+				"z": 1.3
+			},
+			"friction": 0.1,
+			"max_speed": 0.7,
+			"torque": 0.025,
+			"suspension": {
+				"length": 0.7,
+				"strength": 0.1,
+				"absorb": 0.03
+			},
+			"wheels": {
+				"friction": 0.2,
+				"radius": 0.5,
+				"width": 0.2,
+				"position": [
+					{
+						"x": -1,
+						"y": -1,
+						"z": 0.8
+					},
+					{
+						"x": -1,
+						"y": -1,
+						"z": -0.7
+					},
+					{
+						"x": 1,
+						"y": -1,
+						"z": 0.8
+					},
+					{
+						"x": 1,
+						"y": -1,
+						"z": -0.7
+					}
+				]
+			}
 		}
 	},
 	"buildings": {
-		"bunker4": {
+        "bunker4": {
 			"special": [
 				"spawngun",
 				"spawntech",
@@ -197,24 +325,9 @@
 			"zone": "Bunker",
 			"position": [
 				{
-					"x": -200.75,
-					"y": 27.11,
-					"z": -119.56
-				},
-				{
-					"x": -355.06,
-					"y": 12.64,
-					"z": -23.18
-				},
-				{
 					"x": -215.75,
 					"y": 46.12,
 					"z": 35.33
-				},
-				{
-					"x": -349.62,
-					"y": 14.62,
-					"z": -114.77
 				},
 				{
 					"x": -117.48,
@@ -222,127 +335,122 @@
 					"z": -133.85
 				},
 				{
-					"x": -384.21,
-					"y": 25.3,
-					"z": 34.12
-				},
-				{
-					"x": -271.07,
-					"y": 30.29,
-					"z": -207.6
-				},
-				{
-					"x": -219.41,
-					"y": 23.88,
-					"z": -73.96
-				},
-				{
 					"x": -118.94,
-					"y": 41,
-					"z": -45.65
-				},
-				{
-					"x": -258.41,
-					"y": 14.62,
-					"z": -113.2
-				},
-				{
-					"x": -325.3,
-					"y": 20.71,
-					"z": -179.45
-				},
-				{
-					"x": -322.18,
-					"y": 14.62,
-					"z": -130.45
-				},
-				{
-					"x": -405.45,
-					"y": 14.11,
-					"z": -140.9
-				},
-				{
-					"x": -431.1,
-					"y": 25.28,
-					"z": 44.56
-				},
-				{
-					"x": -383.77,
-					"y": 16.25,
-					"z": 102.42
-				},
-				{
-					"x": -256.08,
-					"y": 16.2,
-					"z": 71.9
-				},
-				{
-					"x": -319.61,
-					"y": 16.2,
-					"z": 57.14
-				},
-				{
-					"x": -248.3,
-					"y": 22.04,
-					"z": 164.67
-				},
-				{
-					"x": -293,
-					"y": 22.04,
-					"z": 131.09
-				},
-				{
-					"x": -471.81,
-					"y": 25.25,
-					"z": 78.58
-				},
-				{
-					"x": -434.12,
-					"y": 25.24,
-					"z": 122.27
-				},
-				{
-					"x": -306.52,
-					"y": 22,
-					"z": 179.44
-				},
-				{
-					"x": -364.06,
-					"y": 16.2,
-					"z": 142.91
-				},
-				{
-					"x": -358.56,
-					"y": 16.2,
-					"z": 195.04
-				},
-				{
-					"x": -136.41,
-					"y": 25.07,
-					"z": 152.33
-				},
-				{
-					"x": -150.64,
-					"y": 19,
-					"z": 195.79
-				},
-				{
-					"x": -185,
-					"y": 20,
-					"z": 137.4
-				},
-				{
-					"x": -431.401,
-					"y": 23.5,
-					"z": -30.398
-				},
-				{
-					"x": -489.28,
-					"y": 22.01,
-					"z": -55.98
+					"y": 42,
+					"z": -48.65
 				}
 			]
 		},
+        "floatbunker": {
+			"special": [
+                "spawngun",
+                "spawntech",
+				"watercraftgun",
+				"watercrafttech",
+                "dontflattenterrain"
+            ],
+			"scalex": 1,
+			"scaley": 1,
+			"zone": "Bunker",
+			"position": [
+                {
+					"x": -205,
+					"y": 41.5,
+					"z": -112,
+                    "name": "mayan_ruins"
+				},
+                {
+					"x": -233,
+					"y": 41.5,
+					"z": -70,
+                    "name": "lighthouse"
+				},
+                {
+					"x": -262,
+					"y": 41.5,
+					"z": -10,
+                    "name": "military"
+				},
+                {
+					"x": -340,
+					"y": 41.5,
+					"z": 0,
+                    "name": "delta"
+				},
+                {
+					"x": -287,
+					"y": 41.5,
+					"z": -86,
+                    "name": "colors"
+				},
+                {
+					"x": -351.5,
+					"y": 41.5,
+					"z": -35,
+                    "name": "bridge"
+				}
+            ]
+		},
+        "gunship": {
+            "special": [
+                "dontflattenterrain"
+            ],
+            "scalex": 3,
+            "scaley": 3,
+            "zone": "",
+            "position": [
+                {
+                    "x": -380,
+					"y": 50,
+					"z": 100
+                }
+            ]
+        },
+        "lhtop_colors": {
+            "special": [
+                "dontflattenterrain"
+            ],
+            "scalex": 2,
+            "scaley": 2,
+            "zone": "",
+            "position": [
+                {
+                    "x": -220,
+					"y": 42,
+					"z": -10
+                }
+            ]
+        },
+        "flaot_bighid": {
+            "special": [
+                "dontflattenterrain"
+            ],
+            "scalex": 2,
+            "scaley": 2,
+            "zone": "",
+            "position": [
+                {
+                    "x": -314,
+					"y": 42,
+					"z": -77
+                }
+            ]
+        },
+        "flaot_military": {
+            "special": [
+                "dontflattenterrain"
+            ],
+            "scalex": 2,
+            "scaley": 2,
+            "zone": "",
+            "position": [
+                {
+                    "x": -236.5,
+					"y": 42,
+					"z": -38
+                }
+            ]
+        },
 		"kikoto": {
 			"scalex": 1,
 			"scaley": 1,
@@ -1196,6 +1304,12 @@
 			"special": [
 				"emitting"
 			]
+		},
+		"net2.png": {
+			"special": [
+				"alphatest",
+                "notbulletproof"
+			]
 		}
 	},
 	"particle_systems": [
@@ -1375,18 +1489,6 @@
 			"y": 51.5,
 			"z": 179.65,
 			"type": "kemenyfust"
-		},
-		"kiskemeny1": {
-			"x": -336.55,
-			"y": 41.81,
-			"z": 161,
-			"type": "kiskemenyfust"
-		},
-		"kiskemeny2": {
-			"x": -340.07,
-			"y": 41.81,
-			"z": 161.05,
-			"type": "kiskemenyfust"
 		},
 		"szikra": {
 			"x": -417.28,
@@ -1857,7 +1959,19 @@
 			"y": -120,
 			"z": 746.667,
 			"radius": 75
-		}
+		},
+        {
+            "x": -800,
+            "y": 17,
+            "z": -800,
+            "radius": 50
+        },
+        {
+            "x": -86.667,
+            "y": 2,
+            "z": -306.667,
+            "radius": 50
+        }
 	],
 	"menubackgrounds": [
 		{
@@ -2590,133 +2704,188 @@
 			"freq": false,
 			"effects": true,
 			"mindistance": 2
+		},
+		{
+			"filename": "airboat",
+			"haromd": true,
+			"freq": true,
+			"effects": true,
+			"mindistance": 10
+		},
+		{
+			"filename": "submarine",
+			"haromd": true,
+			"freq": true,
+			"effects": true,
+			"mindistance": 10
 		}
 	],
 	"scripts": {},
 	"triggers": {},
-	"bots_default_enabled": true,
-	"botgroups": [
-		{
-			"count": 5,
-			"team": "GUN",
-			"mode": "NORMAL",
-			"weapons": [
-				"M4A1",
-				"M82A1",
-				"BM3"
-			],
-			"spawnpos": {
-				"x": -372,
-				"z": -179
+	"leave_triggers": {
+		"military": {
+			"pos": {
+				"x": -261.8,
+				"y": 42,
+				"z": -14.8
 			},
-			"spawnrad": 50
+			"exit_pos": {
+				"x": -261.8,
+				"y": 43,
+				"z": -14.8
+			},
+			"radius": 10,
+			"vehicle": false,
+			"watercraft": true,
+			"teams": "both"
 		},
-		{
-			"count": 5,
-			"team": "TECH",
-			"mode": "NORMAL",
-			"weapons": [
-				"MPG",
-				"QUADRO",
-				"HPL"
-			],
-			"spawnpos": {
-				"x": -372,
-				"z": -179
+        "lighthouse": {
+			"pos": {
+				"x": -233,
+				"y": 43,
+				"z": -74.8
 			},
-			"spawnrad": 50
+			"exit_pos": {
+				"x": -233,
+				"y": 43,
+				"z": -74.8
+			},
+			"radius": 10,
+			"vehicle": false,
+			"watercraft": true,
+			"teams": "both"
 		},
-		{
-			"count": 5,
-			"team": "GUN",
-			"mode": "NORMAL",
-			"weapons": [
-				"M4A1",
-				"M82A1",
-				"BM3"
-			],
-			"spawnpos": {
-				"x": -258,
-				"z": -157
+		"mayan_ruins": {
+			"pos": {
+				"x": -204.9,
+				"y": 43,
+				"z": -111.61
 			},
-			"spawnrad": 70
+			"exit_pos": {
+				"x": -204.9,
+				"y": 43,
+				"z": -111.61
+			},
+			"radius": 10,
+			"vehicle": false,
+			"watercraft": true,
+			"teams": "both"
 		},
-		{
-			"count": 5,
-			"team": "TECH",
-			"mode": "NORMAL",
-			"weapons": [
-				"MPG",
-				"QUADRO",
-				"HPL"
-			],
-			"spawnpos": {
-				"x": -258,
-				"z": -157
+		"military_end": {
+			"pos": {
+				"x": -339.9,
+				"y": 43,
+				"z": -5.1
 			},
-			"spawnrad": 70
+			"exit_pos": {
+				"x": -339.9,
+				"y": 43,
+				"z": -5.1
+			},
+			"radius": 10,
+			"vehicle": false,
+			"watercraft": true,
+			"teams": "both"
 		},
-		{
-			"count": 5,
-			"team": "GUN",
-			"mode": "NORMAL",
-			"weapons": [
-				"M4A1",
-				"M82A1",
-				"BM3"
-			],
-			"spawnpos": {
-				"x": -244,
-				"z": -53
+		"colors": {
+			"pos": {
+				"x": -286.9,
+				"y": 43,
+				"z": -90.8
 			},
-			"spawnrad": 50
+			"exit_pos": {
+				"x": -286.9,
+				"y": 43,
+				"z": -90.8
+			},
+			"radius": 10,
+			"vehicle": false,
+			"watercraft": true,
+			"teams": "both"
 		},
-		{
-			"count": 5,
-			"team": "TECH",
-			"mode": "NORMAL",
-			"weapons": [
-				"MPG",
-				"QUADRO",
-				"HPL"
-			],
-			"spawnpos": {
-				"x": -244,
-				"z": -53
+		"bridge": {
+			"pos": {
+				"x": -351.37,
+				"y": 43,
+				"z": -39.9
 			},
-			"spawnrad": 50
+			"exit_pos": {
+				"x": -351.37,
+				"y": 43,
+				"z": -39.9
+			},
+			"radius": 10,
+			"vehicle": false,
+			"watercraft": true,
+			"teams": "both"
 		},
-		{
-			"count": 5,
-			"team": "GUN",
-			"mode": "NORMAL",
-			"weapons": [
-				"M4A1",
-				"M82A1",
-				"BM3"
-			],
-			"spawnpos": {
-				"x": -396,
-				"z": 5
+		"romhaz": {
+			"pos": {
+				"x": -249,
+				"y": 43,
+				"z": -194.5
 			},
-			"spawnrad": 50
+			"exit_pos": {
+				"x": -249,
+				"y": 43,
+				"z": -194.5
+			},
+			"radius": 10,
+			"vehicle": false,
+			"watercraft": true,
+			"teams": "both"
 		},
-		{
-			"count": 5,
-			"team": "TECH",
-			"mode": "NORMAL",
-			"weapons": [
-				"MPG",
-				"QUADRO",
-				"HPL"
-			],
-			"spawnpos": {
-				"x": -396,
-				"z": 5
+		"delta": {
+			"pos": {
+				"x": -405,
+				"y": 43,
+				"z": 53
 			},
-			"spawnrad": 50
+			"exit_pos": {
+				"x": -405,
+				"y": 43,
+				"z": 53
+			},
+			"radius": 10,
+			"vehicle": false,
+			"watercraft": true,
+			"teams": "both"
+		},
+		"gunship_front": {
+			"pos": {
+				"x": -418.25,
+				"y": 42,
+				"z": 100
+			},
+			"exit_pos": {
+				"x": -405,
+				"y": 55,
+				"z": 100
+			},
+			"radius": 10,
+			"vehicle": false,
+			"watercraft": true,
+			"teams": "both"
+		},
+		"gunship_back": {
+			"pos": {
+				"x": -340.25,
+				"y": 42,
+				"z": 100
+			},
+			"exit_pos": {
+				"x": -340.25,
+				"y": 55,
+				"z": 100
+			},
+			"radius": 10,
+			"vehicle": false,
+			"watercraft": true,
+			"teams": "both"
 		}
-	],
+	},
+	"bots_default_enabled": true,
+	"botgroups": [],
 	"foliages": [
 		{
 			"texture": "bush256.png",
