@@ -7507,7 +7507,7 @@ begin
               else
                 d3dxvec3lerp(tmp, aauto.kerekorig[2], aauto.kerekorig[3], 0.1 + 0.8 * random(1000) / 1000);
 
-              if techautoeffekt and (tegla.vehicletype = 0) then
+              if techautoeffekt and (aauto.vehicletype = 0) then
               begin
                 tmp:=aauto.kerekorig[0];randomplus(tmp, gtc, 1);
                 tmps:=aauto.kerekorig[1];randomplus(tmps, gtc + 5, 1);
