@@ -264,7 +264,8 @@ type
     axes,vaxes:array[0..2] of TD3DXVector3;
     fordszam:single;
     watercraft:bool;
-    changed:bool;
+    watercraftLoaded:bool;
+    forceWatercraftReload:bool;
   end;
 
   Tplayer=record

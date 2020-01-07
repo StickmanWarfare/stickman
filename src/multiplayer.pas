@@ -533,6 +533,7 @@ begin
     ujppl[i].pls.fegyvskin:=fegyver_skin;
     ujppl[i].pls.fejcucc:=fejrevalo;
     ujppl[i].pls.kills:=killek;
+    ujppl[i].auto.forceWatercraftReload:=true;
   end;
   setlength(ppl, n);
   for i:=0 to n - 1 do
@@ -1062,7 +1063,6 @@ begin
       autobyte:=frame.ReadChar;
       pls.autoban:=(autobyte and 1) <> 0;
 
-      auto.changed:=(auto.watercraft <> ((autobyte and 2) <> 0));
       auto.watercraft:=(autobyte and 2) <> 0;
 
       auto.pos:=frame.ReadPackedPos;
