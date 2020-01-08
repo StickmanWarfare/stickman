@@ -8787,7 +8787,7 @@ begin
   for i:=0 to high(ppl) do
     with tobbiekautoi[i] do
     begin
-      if (ppl[i].auto.watercraftLoaded <> ppl[i].auto.watercraft) or ppl[i].auto.forceWatercraftReload then
+      if ppl[i].auto.watercraft <> (vehicletype <> 0) then
       begin
         if ppl[i].auto.watercraft then
         begin
@@ -8810,8 +8810,6 @@ begin
           else
             changeMMOCarScaling(i, 'gun');
         end;
-        ppl[i].auto.watercraftLoaded:=ppl[i].auto.watercraft;
-        ppl[i].auto.forceWatercraftReload:=false;
       end;
 
       if ppl[i].net.avtim = 0 then ppl[i].net.avtim:=10;

@@ -533,7 +533,6 @@ begin
     ujppl[i].pls.fegyvskin:=fegyver_skin;
     ujppl[i].pls.fejcucc:=fejrevalo;
     ujppl[i].pls.kills:=killek;
-    ujppl[i].auto.forceWatercraftReload:=true;
   end;
   setlength(ppl, n);
   for i:=0 to n - 1 do
