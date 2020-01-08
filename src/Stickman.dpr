@@ -337,8 +337,7 @@ var
   recovercar, vanishcar, kiszallas:integer;
   latszonazF, latszonazR:word;
   volthi, voltspeeder, voltbasejump:boolean;
-  nearleavetrigger:boolean = false;
-  leavetrigger_exitpos:TD3DXVector3;
+  currentleavetrigger:integer = -1;
 
 
   tegla:Tauto;
@@ -6918,6 +6917,7 @@ procedure handleleavetriggers;
 var
   i:integer;
 begin
+  currentleavetrigger:=-1;
   for i:=0 to Length(leavetriggers) - 1 do
     with leavetriggers[i] do
       if autoban then
@@ -6925,11 +6925,9 @@ begin
           if (teams = 'both') or ((teams = 'gun') and (myfegyv < 128)) or ((teams = 'tech') and (myfegyv > 127)) then
             if tavpointpointsq(pos, tegla.pos) < sqr(rad) then
             begin
-              nearleavetrigger:=true;
-              leavetrigger_exitpos:= exitpos;
+              currentleavetrigger:=i;
               exit;
             end;
-  nearleavetrigger:= false;
 end;
 
 procedure handleteleports;
@@ -7827,11 +7825,11 @@ begin
       vanishcar:=1;
       cpy^:=cpy^ - 1;
       cpoy^:=cpy^;
-      if nearleavetrigger and (halal = 0) then
+      if (currentleavetrigger <> -1) and (halal = 0) then
       begin
-        cpx^:=leavetrigger_exitpos.x;
-        cpy^:=leavetrigger_exitpos.y;
-        cpz^:=leavetrigger_exitpos.z;
+        cpx^:=leavetriggers[currentleavetrigger].exitpos.x;
+        cpy^:=leavetriggers[currentleavetrigger].exitpos.y;
+        cpz^:=leavetriggers[currentleavetrigger].exitpos.z;
         cpox^:=cpx^;cpoy^:=cpy^;cpoz^:=cpz^;
       end;
     end;
@@ -10642,7 +10640,7 @@ begin
           Drawmessage(lang[47], $FFFF0000);
       end;
 
-      if nearleavetrigger then
+      if currentleavetrigger <> -1 then
       begin
         drawmessage(lang[111], $FF000000 + betuszin);
       end
