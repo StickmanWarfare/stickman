@@ -7490,6 +7490,7 @@ var
   gtc:cardinal;
   aauto:Tauto;
   tuleli:boolean;
+  bubi:boolean;
 
   start, stop:cardinal;
 begin
@@ -7941,16 +7942,14 @@ begin
     inc(rbido);
     if rbszam > -1 then
       rbido:=rbido mod (rbszam + 1);
-    for i:=0 to rbszam do begin
-      {
-          bubi:=false;
-      //    if (rongybabak[i].gmbk[0].y<10)  then
-            for j:=0 to length(bubbles) do
-              with bubbles[j] do
-                if false then
-                  bubi:=true;
-                             }
-      rongybabak[i].step(advwove, i = rbido, false);
+    for i:=0 to rbszam do
+    begin
+      bubi:=false;
+      for j:=0 to length(bubbles) - 1 do
+        with bubbles[j] do
+          if tavpointpointsq(d3dxvector3(rongybabak[i].gmbk[0].x, rongybabak[i].gmbk[0].y, rongybabak[i].gmbk[0].z), d3dxvector3(posx, posy, posz)) < rad * rad then
+            bubi:=true;
+      rongybabak[i].step(advwove, i = rbido, bubi);
     end;
     i:=0;
     while i <= rbszam do

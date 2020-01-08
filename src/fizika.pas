@@ -176,7 +176,8 @@ begin
 
   tmp:=gmbk[i];
   //gmbk[i]:=gmbk[i]*2-voltgmbk[i];
-  if ((gmbk[i].y<10) and not bubi) then begin
+
+  if ((gmbk[i].y<waterlevel) and not bubi) then begin
   //vízben
   gmbk[i].x:=gmbk[i].x +(gmbk[i].x-voltgmbk[i].x)*0.98;
   gmbk[i].y:=gmbk[i].y +(gmbk[i].y-voltgmbk[i].y)*0.98+GRAVITACIO/30;
