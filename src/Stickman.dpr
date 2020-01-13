@@ -7360,7 +7360,7 @@ begin
             begin
               yandnorm(tmp.x, tmpfloat2, tmp.z, n, 1);
 
-              if tmp.y - 0.3 < tmpfloat2 then
+              if (tmp.y - 0.3 < tmpfloat2) or ((aauto.vehicletype = 1) and (tmp.y < waterlevel)) then
               begin
                 tmps:=randomvec(animstat * 100 + hanyszor, 0.1);
                 tmps.x:=tmps.x + (aauto.pos.x - aauto.vpos.x) * 0.8;
