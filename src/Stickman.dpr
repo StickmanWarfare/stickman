@@ -12331,11 +12331,11 @@ var
   matViewProj:TD3DMatrix;
 begin
 
-  inc(framecount); //TODO IF!
+  inc(framecount);
 
-  if framecount = 10 then
+  if frametime + 1000 < GetTickCount then
   begin
-    fps:=floor(10000 / (GetTickCount - frametime));
+    fps:=framecount;
     frametime:=GetTickCount;
     framecount:=0;
   end;
