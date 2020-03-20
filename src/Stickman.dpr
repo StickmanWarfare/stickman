@@ -28,6 +28,7 @@
 {.$DEFINE oldterrain}
 {.$DEFINE fegyverteszt}
 {.$DEFINE terraineditor}
+{.$DEFINE watercraftcommands}
 
 program Stickman;
 
@@ -334,8 +335,7 @@ var
   recovercar, vanishcar, kiszallas:integer;
   latszonazF, latszonazR:word;
   volthi, voltspeeder, voltbasejump:boolean;
-  nearleavetrigger:boolean = false;
-  leavetrigger_exitpos:TD3DXVector3;
+  currentleavetrigger:integer = -1;
 
 
   tegla:Tauto;
@@ -7142,6 +7142,7 @@ procedure handleleavetriggers;
 var
   i:integer;
 begin
+  currentleavetrigger:=-1;
   for i:=0 to Length(leavetriggers) - 1 do
     with leavetriggers[i] do
       if autoban then
@@ -7149,11 +7150,9 @@ begin
           if (teams = 'both') or ((teams = 'gun') and (myfegyv < 128)) or ((teams = 'tech') and (myfegyv > 127)) then
             if tavpointpointsq(pos, tegla.pos) < sqr(rad) then
             begin
-              nearleavetrigger:=true;
-              leavetrigger_exitpos:= exitpos;
+              currentleavetrigger:=i;
               exit;
             end;
-  nearleavetrigger:= false;
 end;
 
 procedure handleteleports;
@@ -7587,7 +7586,7 @@ begin
             begin
               yandnorm(tmp.x, tmpfloat2, tmp.z, n, 1);
 
-              if tmp.y - 0.3 < tmpfloat2 then
+              if (tmp.y - 0.3 < tmpfloat2) or ((aauto.vehicletype = 1) and (tmp.y < waterlevel)) then
               begin
                 tmps:=randomvec(animstat * 100 + hanyszor, 0.1);
                 tmps.x:=tmps.x + (aauto.pos.x - aauto.vpos.x) * 0.8;
@@ -7733,7 +7732,7 @@ begin
               else
                 d3dxvec3lerp(tmp, aauto.kerekorig[2], aauto.kerekorig[3], 0.1 + 0.8 * random(1000) / 1000);
 
-              if techautoeffekt and (tegla.vehicletype = 0) then
+              if techautoeffekt and (aauto.vehicletype = 0) then
               begin
                 tmp:=aauto.kerekorig[0];randomplus(tmp, gtc, 1);
                 tmps:=aauto.kerekorig[1];randomplus(tmps, gtc + 5, 1);
@@ -8051,11 +8050,11 @@ begin
       vanishcar:=1;
       cpy^:=cpy^ - 1;
       cpoy^:=cpy^;
-      if nearleavetrigger and (halal = 0) then
+      if (currentleavetrigger <> -1) and (halal = 0) then
       begin
-        cpx^:=leavetrigger_exitpos.x;
-        cpy^:=leavetrigger_exitpos.y;
-        cpz^:=leavetrigger_exitpos.z;
+        cpx^:=leavetriggers[currentleavetrigger].exitpos.x;
+        cpy^:=leavetriggers[currentleavetrigger].exitpos.y;
+        cpz^:=leavetriggers[currentleavetrigger].exitpos.z;
         cpox^:=cpx^;cpoy^:=cpy^;cpoz^:=cpz^;
       end;
     end;
@@ -9011,7 +9010,7 @@ begin
   for i:=0 to high(ppl) do
     with tobbiekautoi[i] do
     begin
-      if ppl[i].auto.changed then
+      if ppl[i].auto.watercraft <> (vehicletype <> 0) then
       begin
         if ppl[i].auto.watercraft then
         begin
@@ -9034,7 +9033,6 @@ begin
           else
             changeMMOCarScaling(i, 'gun');
         end;
-        ppl[i].auto.changed:=false;
       end;
 
       if ppl[i].net.avtim = 0 then ppl[i].net.avtim:=10;
@@ -10867,7 +10865,7 @@ begin
           Drawmessage(lang[47], $FFFF0000);
       end;
 
-      if nearleavetrigger then
+      if currentleavetrigger <> -1 then
       begin
         drawmessage(lang[111], $FF000000 + betuszin);
       end
@@ -15094,7 +15092,8 @@ var
       selfieMaker.zoomlevel := 2;
       selfieMaker.dab := FALSE;
     end;
-    {
+	
+{$IFDEF watercraftcommands}
     if pos(' /boat', mit) = 1 then
     begin
       SpawnVehicle(d3dxvector3(-335, waterlevel, -60),1,'airboat');
@@ -15105,7 +15104,9 @@ var
     begin
       SpawnVehicle(d3dxvector3(-335, waterlevel, -60),2,'submarine');
     end;
-        }
+{$ENDIF}
+
+    //if pos(' //', mit) = 1 then evalscriptline(copy(mit, 4, length(mit) - 3));
 
     {
     //EXAMPLE
@@ -15176,9 +15177,6 @@ var
     begin
       TPrintToTH.Create(FALSE);
     end;
-
-
-  //  if pos(' //', mit) = 1 then evalscriptline(copy(mit, 4, length(mit) - 3));
 
 {$IFDEF propeditor}
     if pos(' /p', mit) = 1 then

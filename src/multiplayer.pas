@@ -1062,7 +1062,6 @@ begin
       autobyte:=frame.ReadChar;
       pls.autoban:=(autobyte and 1) <> 0;
 
-      auto.changed:=(auto.watercraft <> ((autobyte and 2) <> 0));
       auto.watercraft:=(autobyte and 2) <> 0;
 
       auto.pos:=frame.ReadPackedPos;
