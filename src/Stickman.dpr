@@ -7211,7 +7211,7 @@ begin
             v1.x:=vfrom.x + (Random(200) - 100) / 100 * (rad);
             v1.y:=vfrom.y;
             v1.z:=vfrom.z + (Random(200) - 100) / 100 * (rad);
-            Particlesystem_add(CoolingparticleCreate(v1, D3DXVector3(random(10) * 0.01 - 0.05, 0.03, random(10) * 0.01 - 0.05), 1.5, 8.5 + random(15) * 0.1, random(60) * 0.001 + 0.12, $FFAAAAAA + random(32) * $010101, $00000000, random(230) + 900));
+            Particlesystem_add(CoolingparticleCreate(v1, D3DXVector3(random(10) * 0.01 - 0.05, 0.03, random(10) * 0.01 - 0.05), 1.5, 8.5 + random(15) * 0.1, random(60) * 0.001 + 0.12, $FFAAAAAA + cardinal(random(32)) * $010101, $00000000, random(230) + 900));
           end;
 
         if tip = 0 then
@@ -9908,7 +9908,7 @@ begin
             d3dxvec3subtract(tmp2, aloves.pos, aloves.v2);
             D3DXVec3Normalize(tmp2, tmp2);
             D3DXVec3Scale(tmp2, tmp2, 0.10);
-            ParticleSystem_Add(Coolingparticlecreate(aloves.v2, tmp2, 0.03, 0.24, 0.05, dustcol + random(32) * $010101, $00000000, 20));
+            ParticleSystem_Add(Coolingparticlecreate(aloves.v2, tmp2, 0.03, 0.24, 0.05, dustcol + cardinal(random(32)) * $010101, $00000000, 20));
             //      ParticleSystem_Add(Simpleparticlecreate(aloves.v2,D3DXVector3Zero,0.03,0.24,dustcol+random(32)*$010101,$00000000,2000));
           end;
 
@@ -12859,7 +12859,7 @@ begin
     if g_pEffect <> nil then
     begin
       g_pEffect.SetMatrix('g_mWorldViewProjection', matViewproj);
-      g_pEffect.SetFloat('time', (gettickcount mod ceil(200 * (felho.coverage + 10))) / ceil(200 * (felho.coverage + 10)) * 2 * pi);
+      g_pEffect.SetFloat('time', (gettickcount mod cardinal(ceil(200 * (felho.coverage + 10)))) / ceil(200 * (felho.coverage + 10)) * 2 * pi);
       g_pEffect.SetFloat('weather', max(0, WEATHER_MAX - felho.coverage));
       g_peffect.SetFloat('HDRszorzo', shaderhdr);
     end;
