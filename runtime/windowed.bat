@@ -1,1 +1,1 @@
-stickman.exe windowed
+start stickman.exe windowed
