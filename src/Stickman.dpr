@@ -29,6 +29,7 @@
 {.$DEFINE fegyverteszt}
 {.$DEFINE terraineditor}
 {.$DEFINE watercraftcommands}
+{.$DEFINE uncapFPS} //This also uncaps physics - be careful
 
 program Stickman;
 
@@ -422,14 +423,15 @@ var
   col_fog_sunny, col_fog_rainy, col_fog_water, radius_rainy, radius_sunny:longword;
   col_grass, col_mud, col_sand, col_wetsand, col_water, col_stone:longword;
 
-
-
   nemviz:boolean;
 
-  //timing stats
-  frametime:cardinal;
-  framecount, fps:integer;
   opt_drawfps:boolean = false;
+  framecount:integer;
+  frametime:cardinal;
+  QPC_start:TLargeInteger;
+  QPC_stop:TLargeInteger;
+  QPC_frequency, fps:TLargeInteger;
+
 
 {$IFDEF profiler}
   profile_start:TLargeInteger;
@@ -8694,12 +8696,13 @@ end;
 
   if rbszam > 30 then delrongybaba(-1);
   hvolt:=false;
+{$IFNDEF uncapFPS}
   i:=hanyszor * 10 - timegettime;
 
   if i > 0 then sleep(i)
   else
     hanyszor:=timegettime div 10;
-
+{$ENDIF}
   anticheat2:=round(time * 86400000) - timegettime;
 
   if abs(anticheat1 - anticheat2) > 5000 then
@@ -12327,15 +12330,58 @@ var
   pos:TD3DVector;
   tmplw:longword;
   matViewProj:TD3DMatrix;
+
+  elapsedTime:extended;
 begin
 
-  inc(framecount);
-
-  if frametime + 1000 < GetTickCount then
+  //FPS Counters
+  if opt_drawfps then
   begin
-    fps:=framecount;
-    frametime:=GetTickCount;
-    framecount:=0;
+    inc(framecount);
+    {
+    //GetTickCount - 10-15ms
+    if framecount = 10 then
+    begin
+      fps:=floor(10000 / (GetTickCount - frametime));;
+      frametime:=GetTickCount;
+      framecount:=0;
+    end;
+    }
+
+    {
+    //GetTickCount - divzero fixed
+    if frametime + 1000 < GetTickCount then
+    begin
+      fps:=framecount;
+      frametime:=GetTickCount;
+      framecount:=0;
+    end;
+    }
+
+    //{
+    //QPC ~1µs
+    //TODO replace with StopWatch in Delphi 10
+    QueryPerformanceCounter(QPC_stop);
+    elapsedTime:=(QPC_stop-QPC_start)/QPC_frequency;
+    if elapsedTime >= 0.5 then
+    begin
+      fps:=round(framecount / elapsedTime);
+      QueryPerformanceCounter(QPC_start);
+      framecount:=0;
+    end;
+    //}
+
+    {
+    //timegettime 1-5ms
+    elapsedTime:=(timegettime-frametime)/1000;
+    if elapsedTime >= 0.5 then
+    begin
+      fps:=round(framecount / elapsedTime);
+      frametime:=timegettime;
+      framecount:=0;
+    end;
+    }
+
   end;
 
   //########################
@@ -16604,6 +16650,8 @@ begin //                 BEGIIIN
           AFstart;
 
         multisc.opt_nochat:=opt_nochat;
+
+        QueryPerformanceFrequency(QPC_frequency);
 
 {$IFDEF profiler}
         QueryPerformanceFrequency(profile_frequency);

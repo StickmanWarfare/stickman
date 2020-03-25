@@ -84,7 +84,7 @@ begin
   SetLength(texindices,MAT_MAX+1);
   SetLength(texnum,MAT_MAX+1);
 
-  j:=0;//kell ide
+  //j:=0;//kell ide
   for i:=0 to MAT_MAX do
   begin
     texnum[i]:=stuffjson.GetNum(['bullethole_textures',matname(i)]);
