@@ -29,7 +29,6 @@
 {.$DEFINE fegyverteszt}
 {.$DEFINE terraineditor}
 {.$DEFINE watercraftcommands}
-{.$DEFINE uncapFPS} //This also uncaps physics - be careful
 
 program Stickman;
 
@@ -7498,7 +7497,8 @@ begin
   gtc:=gettickcount;
   //evalscriptline('fastinfo ' + intToStr(gtc));
   korlat:=0;
-  repeat
+  while not (((hanyszor + 1) * 10 > timegettime) or ((korlat + 1) > 20)) do
+  begin
     inc(hanyszor);
 
     // if playrocks>1 then playrocks:=1;
@@ -8691,18 +8691,11 @@ end;
 
     // until (hanyszor*10>timegettime) or (korlat>20);
     inc(korlat);
-  until (hanyszor * 10 > timegettime) or (korlat > 20);
+  end;
   //////////
 
   if rbszam > 30 then delrongybaba(-1);
   hvolt:=false;
-{$IFNDEF uncapFPS}
-  i:=hanyszor * 10 - timegettime;
-
-  if i > 0 then sleep(i)
-  else
-    hanyszor:=timegettime div 10;
-{$ENDIF}
   anticheat2:=round(time * 86400000) - timegettime;
 
   if abs(anticheat1 - anticheat2) > 5000 then
