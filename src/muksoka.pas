@@ -22,6 +22,8 @@ const
                  (x:-0.1;y:amag4-amag3+0.7;z:0),(x:+0.1;y:amag4-amag3+0.7;z:0),
                  (x:0;y:amag4+1.1;z:0));
  alapkapcsk:Tkapcsk=((0,2),(1,3),(2,4),(3,4),(4,5),(5,6),(5,7),(6,8),(7,9),(5,10));
+ MuksoBufferSize=20000;
+ FejcuccBufferSize=20000;
 type
  TMuksoka = class (TObject)
  protected
@@ -122,11 +124,11 @@ begin
   LTFF(g_pd3ddevice,'data/textures/fehk.png',tex);
 
 
-  if FAILED(g_pd3dDevice.CreateVertexBuffer(20000*sizeof(TCustomVertex),
+  if FAILED(g_pd3dDevice.CreateVertexBuffer(MuksoBufferSize*sizeof(TCustomVertex),
                                             D3DUSAGE_WRITEONLY or D3DUSAGE_DYNAMIC, D3DFVF_CUSTOMVERTEX,
                                             D3DPOOL_DEFAULT, g_pmuksVB, nil))
   then Exit;
-  if FAILED(g_pd3dDevice.CreateIndexBuffer(20000*2,
+  if FAILED(g_pd3dDevice.CreateIndexBuffer(MuksoBufferSize*2,
                                             D3DUSAGE_WRITEONLY or D3DUSAGE_DYNAMIC,D3DFMT_INDEX16,
                                             D3DPOOL_DEFAULT, g_pmuksIB, nil))
 
@@ -719,7 +721,7 @@ IBwh2:=IBwh2+IBwh;
 
 VBwh2:=VBwh2+VBwh;
 
-if IBwh2>20000 then
+if IBwh2>MuksoBufferSize then
  flush;
 
 end;
@@ -858,7 +860,7 @@ g_pmuksVB.Unlock;
 IBwh2:=IBwh2+IBwh;
 VBwh2:=VBwh2+VBwh;
 
-if IBwh2>20000 then
+if IBwh2>MuksoBufferSize then
  flush;
 
 end;
@@ -886,11 +888,11 @@ var
 begin
   g_pd3ddevice:=dev;
 
-  if FAILED(g_pd3dDevice.CreateVertexBuffer(20000*sizeof(TPosNormUV),
+  if FAILED(g_pd3dDevice.CreateVertexBuffer(FejcuccBufferSize*sizeof(TPosNormUV),
                                             D3DUSAGE_WRITEONLY+D3DUSAGE_DYNAMIC, D3DFVF_PosNormUV,
                                             D3DPOOL_DEFAULT, g_pmuksVB, nil))
   then Exit;
-  if FAILED(g_pd3dDevice.CreateIndexBuffer(20000*2,
+  if FAILED(g_pd3dDevice.CreateIndexBuffer(FejcuccBufferSize*2,
                                             D3DUSAGE_WRITEONLY+D3DUSAGE_DYNAMIC,D3DFMT_INDEX16,
                                             D3DPOOL_DEFAULT, g_pmuksIB, nil))
 
@@ -1161,7 +1163,7 @@ VBwh2:=VBwh2+vertszam;
 
 end;
 
-if IBwh2>20000 then
+if IBwh2>FejcuccBufferSize then
  flush;
 
 end;
