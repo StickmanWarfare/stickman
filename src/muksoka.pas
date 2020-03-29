@@ -126,7 +126,7 @@ begin
                                             D3DUSAGE_WRITEONLY or D3DUSAGE_DYNAMIC, D3DFVF_CUSTOMVERTEX,
                                             D3DPOOL_DEFAULT, g_pmuksVB, nil))
   then Exit;
-  if FAILED(g_pd3dDevice.CreateIndexBuffer(40000*2,
+  if FAILED(g_pd3dDevice.CreateIndexBuffer(20000*2,
                                             D3DUSAGE_WRITEONLY or D3DUSAGE_DYNAMIC,D3DFMT_INDEX16,
                                             D3DPOOL_DEFAULT, g_pmuksIB, nil))
 
@@ -719,7 +719,7 @@ IBwh2:=IBwh2+IBwh;
 
 VBwh2:=VBwh2+VBwh;
 
-if IBwh2>35000 then
+if IBwh2>20000 then
  flush;
 
 end;
@@ -858,7 +858,7 @@ g_pmuksVB.Unlock;
 IBwh2:=IBwh2+IBwh;
 VBwh2:=VBwh2+VBwh;
 
-if IBwh2>35000 then
+if IBwh2>20000 then
  flush;
 
 end;
@@ -1161,7 +1161,7 @@ VBwh2:=VBwh2+vertszam;
 
 end;
 
-if IBwh2>35000 then
+if IBwh2>20000 then
  flush;
 
 end;
