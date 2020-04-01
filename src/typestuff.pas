@@ -649,10 +649,12 @@ var
   cloudblend:single;
 
   vizkor1,vizkor2,vizkor3:single;
+
+  FPSLimit:cardinal = 0;
 const
-  TEXTURE_LOW_LEG=0;
-  TEXTURE_MED_LEG=1;
-  TEXTURE_HIGH_LEG=2;
+  //FPS limiter
+  FPS_MAX=500; 
+  FPS_MIN=30; // >0 !!
 
   TEXTURE_COLOR=99;
   TEXTURE_SUPERLOW=100;
