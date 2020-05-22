@@ -24,6 +24,11 @@
 {.$DEFINE terraineditor}
 {.$DEFINE watercraftcommands}
 
+{$IFDEF undebug}
+  {$L-}
+  {$D-}
+{$ENDIF}
+
 program Stickman;
 
 uses
