@@ -2519,7 +2519,7 @@ end;
 procedure SetupMyCarMuksmatr;
 var
   matWorld, matWorld2:TD3DMatrix;
-  pos:TD3DVector;
+  //pos:TD3DVector;
 begin
   muks.jkez:=fegyv.jkez(myfegyv, mstat);
   muks.bkez:=fegyv.bkez(myfegyv, mstat);
@@ -7806,7 +7806,8 @@ begin
         if (halal = 0) and (not autoban) then
           if cpy^ > 79.4 then
           begin
-            volthi:=true;multisc.Medal('H', 'I');
+            volthi:=true;
+            multisc.Medal('H', 'I');
           end;
 
       if not iranyithato or (cpy^ < amag) then
@@ -16414,7 +16415,7 @@ begin //                 BEGIIIN
       laststate:= 'Fetching modifier.json';
       writeln(logfile, 'Fetching modifier.json');
 
-      modifierjson:=TQJSON.CreateFromHTTP('http://'+servername+'/modifier.json');
+      modifierjson:=TQJSON.CreateFromHTTP('https://'+servername+'/modifier.json');
       modifierdatachecksum:=StrToInt('$' + modifierjson.getString(['datachecksum']));
       if datachecksum = modifierdatachecksum then //Don't load incompatible modifier
       begin

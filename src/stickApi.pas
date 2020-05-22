@@ -10,7 +10,7 @@ uses
  qjson,
  IdHTTP;
 
-const baseUrl = 'http://stickman.hu/api?mode=';    
+const baseUrl = 'https://stickman.hu/api?mode=';    
 
 //TODO: remove
 type TAsync = class(TThread)
@@ -47,24 +47,12 @@ end;
 function TApi.GET(const url: string): TApiResponse;
 begin
   try
-//TODO: requires Indy10 for https
-//    responseString := TMemoryStream.Create;
-//    client := TIdHTTP.Create(nil);
-//    client.HandleRedirects := TRUE;
-//    Id_HandlerSocket := TIdSSLIOHandlerSocketOpenSSL.Create(nil);
-//    Id_HandlerSocket.SSLOptions.Mode := sslmClient;
-//    Id_HandlerSocket.SSLOptions.Method := sslvTLSv1_2;
-//    client.IOHandler := Id_HandlerSocket;
-//    client.Get(url, responseString);
-
     result.success := true;
     result.data := TQJSON.CreateFromHTTP(url);
   except
     result.success := false;
     result.data := TQJSON.Create;
   end;
-
-//  client.Free;
 end;
 
 end.
