@@ -11,7 +11,7 @@ uses
   math,
   Zlibex,
   sha1,
-  winsock2,
+  Idwinsock2,
   qjson;
 
 const
@@ -510,7 +510,7 @@ type
     texturetable:array of string[50];
   end;
 
-  TInAddr=winsock2.Tinaddr;
+  TInAddr=Idwinsock2.Tinaddr;
 
   Tincim=record
     sin_port:u_short;

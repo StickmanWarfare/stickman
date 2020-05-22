@@ -16,7 +16,7 @@ uses
   D3DX9,
   windows,
   sha1,
-  winsock2,
+  Idwinsock2,
   Direct3d9;
 const
 {$IFNDEF CRYPTO}

@@ -564,6 +564,9 @@ procedure TQJSON.Clear(data:PQJSONData);
 var
 i:integer;
 begin
+ if data = nil then
+   exit;
+   
  if data.typ=QJSON_STRING then
   Dispose(data.strval)
  else

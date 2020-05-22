@@ -63,7 +63,7 @@ uses
   SysUtils,
   Typestuff,
   Windows,
-  Winsock2,
+  IdWinsock2,
   BotGroups,
   Selfie,
   stickApi;
@@ -16308,7 +16308,7 @@ begin //                 BEGIIIN
     //Hacking checking
     errorospointer:=@ahovaajopointermutat;
 
-    
+
 
     if not (canbeadmin and commandlineoption(chr(120))) then
     begin
