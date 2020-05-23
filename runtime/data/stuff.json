@@ -456,7 +456,7 @@
 			"position": [
 				{
 					"x": -299.09,
-					"y": 3.5,
+					"y": -1.5,
 					"z": -9.04
 				}
 			]
@@ -471,7 +471,7 @@
 			"position": [
 				{
 					"x": -285.53,
-					"y": 10.2,
+					"y": 6.2,
 					"z": 88.56
 				}
 			]
@@ -486,7 +486,7 @@
 			"position": [
 				{
 					"x": -348.06,
-					"y": 10.2,
+					"y": 6.2,
 					"z": 94.81
 				}
 			]
@@ -501,7 +501,7 @@
 			"position": [
 				{
 					"x": -348.06,
-					"y": 10.2,
+					"y": 6.2,
 					"z": 94.81
 				}
 			]
@@ -516,7 +516,7 @@
 			"position": [
 				{
 					"x": -348.06,
-					"y": 10.2,
+					"y": 6.2,
 					"z": 165.81
 				}
 			]
@@ -531,7 +531,7 @@
 			"position": [
 				{
 					"x": -282.813,
-					"y": 16.04,
+					"y": 12.04,
 					"z": 158.02
 				}
 			]
@@ -543,7 +543,7 @@
 			"position": [
 				{
 					"x": -219.26,
-					"y": 18.79,
+					"y": 14.79,
 					"z": -39.93
 				}
 			],
@@ -558,27 +558,12 @@
 			"position": [
 				{
 					"x": -280.04,
-					"y": 8.62,
+					"y": 4.62,
 					"z": -105.49
 				}
 			],
 			"special": [
 				"dontflattenterrain"
-			]
-		},
-		"almacomp1": {
-			"scalex": 1,
-			"scaley": 1,
-			"zone": "",
-			"special": [
-				"dontflattenterrain"
-			],
-			"position": [
-				{
-					"x": -311.4,
-					"y": 8.623,
-					"z": -118
-				}
 			]
 		},
 		"romhaz1": {
@@ -591,7 +576,7 @@
 			"position": [
 				{
 					"x": -290.45,
-					"y": 26.06,
+					"y": 22.06,
 					"z": -209.89
 				}
 			]
@@ -606,24 +591,9 @@
 			"position": [
 				{
 					"x": -250.79,
-					"y": 32.16,
+					"y": 28.16,
 					"z": -190.82
 				}
-			]
-		},
-		"banker": {
-			"scalex": 5,
-			"scaley": 5,
-			"zone": "",
-			"position": [
-				{
-					"x": -328.77,
-					"y": 16,
-					"z": -160.37
-				}
-			],
-			"special": [
-				"dontflattenterrain"
 			]
 		},
 		"fuggo": {
@@ -632,7 +602,7 @@
 			"position": [
 				{
 					"x": -400,
-					"y": 4,
+					"y": 0,
 					"z": -100
 				}
 			],
@@ -684,7 +654,7 @@
 			"position": [
 				{
 					"x": -481.19,
-					"y": 18.9,
+					"y": 14.9,
 					"z": -45.27
 				}
 			],
@@ -699,7 +669,7 @@
 			"position": [
 				{
 					"x": -406.07,
-					"y": 19.24,
+					"y": 15.24,
 					"z": 51.29
 				}
 			],
@@ -714,7 +684,7 @@
 			"position": [
 				{
 					"x": -216.38,
-					"y": 18.97,
+					"y": 14.97,
 					"z": -49.15
 				}
 			],
@@ -780,7 +750,7 @@
 			"position": [
 				{
 					"x": -157.191,
-					"y": 13.45,
+					"y": 9.45,
 					"z": 169.497
 				}
 			],
@@ -822,7 +792,7 @@
 			"position": [
 				{
 					"x": -442.26,
-					"y": 19.24,
+					"y": 15.24,
 					"z": 94.14
 				}
 			],
@@ -834,7 +804,7 @@
 			"position": [
 				{
 					"x": -235.553,
-					"y": 10,
+					"y": 6,
 					"z": 166.273
 				}
 			],
@@ -844,21 +814,6 @@
 				"dontflattenterrain"
 			],
 			"zone": ""
-		},
-		"apartment": {
-			"position": [
-				{
-					"x": -427.417,
-					"y": 18,
-					"z": -9.172
-				}
-			],
-			"zone": "",
-			"scalex": 1,
-			"scaley": 1,
-			"special": [
-				"dontflattenterrain"
-			]
 		}
 	},
 	"materials": {
@@ -2108,41 +2063,6 @@
 					"light": 1
 				}
 			]
-		},
-		"lamp": {
-			"model": "lamp.x",
-			"materials": [
-				{
-					"diffuse": "../beton_07.jpg",
-					"specHardness": 26.9,
-					"specIntensity": 0,
-					"emission": 0
-				},
-				{
-					"diffuse": "../feh.bmp",
-					"specHardness": 26.9,
-					"specIntensity": 0,
-					"emission": 1
-				}
-			],
-			"position": [
-				{
-					"x": -337.47,
-					"y": 19.68,
-					"z": -116.75,
-					"rot": 0,
-					"scale": 0.35,
-					"light": 0.4
-				},
-				{
-					"x": -332.02,
-					"y": 18.41,
-					"z": -116.59,
-					"rot": 0,
-					"scale": 0.35,
-					"light": 0.4
-				}
-			]
 		}
 	},
 	"labels": [
@@ -2773,22 +2693,6 @@
 			"watercraft": true,
 			"teams": "both"
 		},
-		"delta": {
-			"pos": {
-				"x": -405,
-				"y": 43,
-				"z": 53
-			},
-			"exit_pos": {
-				"x": -405,
-				"y": 44.5,
-				"z": 51
-			},
-			"radius": 20,
-			"vehicle": false,
-			"watercraft": true,
-			"teams": "both"
-		},
 		"pantibunker": {
 			"pos": {
 				"x": -215.75,
@@ -2817,22 +2721,6 @@
 				"z": -95
 			},
 			"radius": 45,
-			"vehicle": false,
-			"watercraft": true,
-			"teams": "both"
-		},
-		"fantasy": {
-			"pos": {
-				"x": -481.646,
-				"y": 42.20,
-				"z": -45
-			},
-			"exit_pos": {
-				"x": -481.646,
-				"y": 42.30,
-				"z": -45
-			},
-			"radius": 10,
 			"vehicle": false,
 			"watercraft": true,
 			"teams": "both"
