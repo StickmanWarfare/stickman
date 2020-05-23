@@ -15,7 +15,9 @@ uses
 {$ENDIF}
   D3DX9,
   windows,
-  sha1,
+  IdGlobal,
+  IdHash,
+  IdHashSHA,
   Idwinsock2,
   Direct3d9;
 const
@@ -386,11 +388,18 @@ end;
 procedure TMMOServerClient.NewCrypto;
 var
   i:integer;
-  ujcrypto:TSHA1Digest;
+  ujcrypto, tmp:TIdBytes;
 begin
   for i:=0 to 19 do
     crypto[i]:=crypto[i] xor (shared_key[i]);
-  ujcrypto:=SHA1Hash(@crypto[0], 20);
+    SetLength(tmp, Length(crypto));
+    Move(crypto[Low(crypto)], tmp[Low(tmp)], SizeOf(crypto));
+    with TIdHashSHA1.Create do
+    try
+      ujcrypto:=HashBytes(tmp)
+    finally
+      Free;
+    end;
   for i:=0 to 19 do
     crypto[i]:=ujcrypto[i];
 
