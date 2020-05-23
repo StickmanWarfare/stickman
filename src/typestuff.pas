@@ -9,7 +9,7 @@ uses
   Direct3D9,
   perlinnoise,
   math,
-  Zlibex,
+  Zlib,
   Idwinsock2,
   qjson;
 
@@ -3759,8 +3759,8 @@ begin
     for i:=0 to high(vertices) do
     begin povarr[i]:=packojjektumvertex(vertices[i],scl) end;
 
-    ZCompresS(Indices,length(Indices)*sizeof(word),tom1,tom1siz);
-    ZCompresS(povarr,length(povarr)*sizeof(Tpackedojjektumvertex),tom2,tom2siz);
+    CompressBuf(Indices,length(Indices)*sizeof(word),tom1,tom1siz);
+    CompressBuf(povarr,length(povarr)*sizeof(Tpackedojjektumvertex),tom2,tom2siz);
 
     aln:=length(attrtable);
     iln:=length(indices);
@@ -3824,11 +3824,11 @@ begin
     blockread(fil,tom2^,tom2siz);
     closefile(fil);
 
-    ZDecompress(tom1,tom1siz,buf,bufsiz);
+    DecompressBuf(tom1,tom1siz,0,buf,bufsiz);
 
     copymemory(@(indices[0]),buf,bufsiz);
 
-    ZDecompress(tom2,tom2siz,buf,bufsiz);
+    DecompressBuf(tom2,tom2siz,0,buf,bufsiz);
 
     if filevmayor=0 then
       copymemory(@(povarr_leg[0]),buf,bufsiz)
