@@ -1,8 +1,8 @@
-src/*/
-*.bat
+src/units/*
 src/Stickman.dof
 src/Stickman.cfg
-libs/
+libs/*
+!libs/*/
 runtime/
 !runtime/dokumentacio.docx
 !runtime/Download new version.url
@@ -11,6 +11,5 @@ runtime/
 !runtime/LICENSE
 !runtime/data/stuff.json
 !runtime/data/effects.fx
-!runtime/data/gui/lang
-*.md
-!README.md
+!runtime/data/gui/lang.ini
+

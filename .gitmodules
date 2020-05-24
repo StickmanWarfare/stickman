@@ -1,0 +1,3 @@
+[submodule "libs/Indy"]
+	path = libs/Indy
+	url = https://github.com/IndySockets/Indy.git

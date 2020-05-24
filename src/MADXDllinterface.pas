@@ -1,7 +1,7 @@
 unit MADXDllInterface;
 interface
 uses
-  Windows,sysutils,typestuff,winsock2;
+  Windows,sysutils,typestuff,Idwinsock2;
 
 const
   MADX_INPUT_BUFFER_SIZE = (5*1152*8);

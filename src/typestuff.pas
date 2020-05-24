@@ -9,14 +9,13 @@ uses
   Direct3D9,
   perlinnoise,
   math,
-  Zlibex,
-  sha1,
-  winsock2,
+  Zlib,
+  Idwinsock2,
   qjson;
 
 const
-  PROG_VER=210010;
-  datachecksum=$CB1D3A7E;
+  PROG_VER=210020;
+  datachecksum=$F8FC7430;
 
 type
 
@@ -510,7 +509,7 @@ type
     texturetable:array of string[50];
   end;
 
-  TInAddr=winsock2.Tinaddr;
+  TInAddr=Idwinsock2.Tinaddr;
 
   Tincim=record
     sin_port:u_short;
@@ -920,8 +919,6 @@ procedure StickMeshInvertNormals(var mesh:Tstickmesh);
 procedure specialcopymem(dest,src:pointer;deststride,srcstride:integer;elements:integer);
 
 function CommandLineOption(mi:string):boolean;
-
-function SHA1GetHex(dig:TSha1Digest):string;
 
 procedure gethostbynamewrap2(nam:string;hova:PinAddr;canwait:boolean);
 function sockaddrtoincim(sockaddr:sockaddr_in):Tincim;
@@ -3762,8 +3759,8 @@ begin
     for i:=0 to high(vertices) do
     begin povarr[i]:=packojjektumvertex(vertices[i],scl) end;
 
-    ZCompresS(Indices,length(Indices)*sizeof(word),tom1,tom1siz);
-    ZCompresS(povarr,length(povarr)*sizeof(Tpackedojjektumvertex),tom2,tom2siz);
+    CompressBuf(Indices,length(Indices)*sizeof(word),tom1,tom1siz);
+    CompressBuf(povarr,length(povarr)*sizeof(Tpackedojjektumvertex),tom2,tom2siz);
 
     aln:=length(attrtable);
     iln:=length(indices);
@@ -3827,11 +3824,11 @@ begin
     blockread(fil,tom2^,tom2siz);
     closefile(fil);
 
-    ZDecompress(tom1,tom1siz,buf,bufsiz);
+    DecompressBuf(tom1,tom1siz,0,buf,bufsiz);
 
     copymemory(@(indices[0]),buf,bufsiz);
 
-    ZDecompress(tom2,tom2siz,buf,bufsiz);
+    DecompressBuf(tom2,tom2siz,0,buf,bufsiz);
 
     if filevmayor=0 then
       copymemory(@(povarr_leg[0]),buf,bufsiz)
@@ -4036,46 +4033,6 @@ var
   tmp1,tmp2:cardinal;
 begin
   windows.Getvolumeinformation(nil,nil,0,@result,tmp1,tmp2,nil,0);
-end;
-{
-function MD5Encode(mit:dword):string;overload;
-var
-cnt:MD5Context;
-dig:MD5Digest;
-begin
-MD5Init(cnt);
-MD5Update(cnt,pointer(@mit),4);
-MD5Final(cnt,dig);
-result:=MD5GetHex(dig);
-end;
-
-function MD5Encode(mit:string):string;overload;
-var
-dig:MD5Digest;
-begin
-dig:=MD5String(mit);
-result:=MD5getHex(dig);
-end;
-
-function MD5GetHex(dig:MD5Digest):string;
-var
-i:integer;
-begin
-result:='';
-for i:=0 to 15 do
-result:=result+inttohex(dig[i],2);
-result:=lowercase(result);
-end;
-     }
-
-function SHA1GetHex(dig:TSHA1Digest):string;
-var
-  i:integer;
-begin
-  result:='';
-  for i:=0 to 19 do
-  begin result:=result+inttohex(dig[i],2) end;
-  result:=lowercase(result);
 end;
 
 function incimtosockaddr(incim:Tincim):sockaddr_in;
@@ -4660,29 +4617,6 @@ begin
   end;
 end;
 
-//function fegyindex(fegy:byte):byte;//ideiglenes, jsonból kell
-//
-//
-//begin
-//  case fegy of
-//    FEGYV_M4A1:result:=0;
-//    FEGYV_M82A1:result:=1;
-//    FEGYV_LAW:result:=2;
-//    FEGYV_MP5A3:result:=3;
-//    FEGYV_BM3:result:=4;
-//
-//    FEGYV_MPG:result:=5;
-//    FEGYV_QUAD:result:=6;
-//    FEGYV_NOOB:result:=7;
-//    FEGYV_X72:result:=8;
-//    FEGYV_HPL:result:=9;
-//  end;
-//
-//  //  FEGYV_H31_G:result:=100; //a szerveren a 4 a kibaszott quad
-//  //  FEGYV_H31_T=200;
-//
-//end;
-
 procedure log(s:string);  //TODO USE
 begin
   writeln(logfile,s);
@@ -4728,24 +4662,6 @@ begin
   result.y := result.y + cy;
 
 end;
- {
-function getFegyvBySkin(c:integer):byte;
-begin
-       if ((c >= 10) and (c <= 19)) or (c = 0) then result := FEGYV_M4A1
-  else if ((c >= 20) and (c <= 29)) or (c = 1) then result := FEGYV_M82A1
-  else if ((c >= 30) and (c <= 39)) or (c = 2) then result := FEGYV_LAW
-  else if ((c >= 40) and (c <= 49)) or (c = 3) then result := FEGYV_MP5A3
-  else if ((c >= 50) and (c <= 59)) or (c = 4) then result := FEGYV_BM3
-  else if ((c >= 140) and (c <= 149)) or (c = 128) then result := FEGYV_MPG
-  else if ((c >= 150) and (c <= 159)) or (c = 129) then result := FEGYV_QUAD
-  else if ((c >= 160) and (c <= 169)) or (c = 130) then result := FEGYV_NOOB
-  else if ((c >= 170) and (c <= 179)) or (c = 131) then result := FEGYV_X72
-  else if ((c >= 180) and (c <= 189)) or (c = 132) then result := FEGYV_HPL
-  else if (c = 100) then result := FEGYV_H31_G
-  else if (c = 200) then result := FEGYV_H31_T
-  else result := 0;
-end;     }
-
 
 end.
 

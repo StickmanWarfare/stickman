@@ -128,7 +128,7 @@ begin
                                             D3DUSAGE_WRITEONLY or D3DUSAGE_DYNAMIC, D3DFVF_CUSTOMVERTEX,
                                             D3DPOOL_DEFAULT, g_pmuksVB, nil))
   then Exit;
-  if FAILED(g_pd3dDevice.CreateIndexBuffer(MuksoBufferSize*2,
+  if FAILED(g_pd3dDevice.CreateIndexBuffer(MuksoBufferSize*4,
                                             D3DUSAGE_WRITEONLY or D3DUSAGE_DYNAMIC,D3DFMT_INDEX16,
                                             D3DPOOL_DEFAULT, g_pmuksIB, nil))
 

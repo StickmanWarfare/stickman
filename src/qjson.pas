@@ -316,14 +316,11 @@ var
 begin
   IdHTTP := TIdHTTP.Create(nil);
   try
-    try
-      str := IdHTTP.Get(url);
-      if length(str) > 0 then
-      begin
-        i:=1;
-        root:=CreateQJSONFromString(str,i);
-      end;
-    except
+    str := IdHTTP.Get(url);
+    if length(str) > 0 then
+    begin
+      i:=1;
+      root:=CreateQJSONFromString(str,i);
     end;
   finally
     IdHTTP.Free;
@@ -567,6 +564,9 @@ procedure TQJSON.Clear(data:PQJSONData);
 var
 i:integer;
 begin
+ if data = nil then
+   exit;
+   
  if data.typ=QJSON_STRING then
   Dispose(data.strval)
  else

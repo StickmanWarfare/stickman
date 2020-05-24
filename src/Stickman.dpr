@@ -24,6 +24,11 @@
 {.$DEFINE terraineditor}
 {.$DEFINE watercraftcommands}
 
+{$IFDEF undebug}
+  {$L-}
+  {$D-}
+{$ENDIF}
+
 program Stickman;
 
 uses
@@ -58,7 +63,7 @@ uses
   SysUtils,
   Typestuff,
   Windows,
-  Winsock2,
+  IdWinsock2,
   BotGroups,
   Selfie,
   stickApi;
@@ -315,6 +320,7 @@ var
   canbeadmin:boolean;
   invulntim:integer;
   nemlohet:boolean;
+  onSacredLand:boolean;
 
   mapbol:boolean;
   mapmode:single;
@@ -2513,7 +2519,7 @@ end;
 procedure SetupMyCarMuksmatr;
 var
   matWorld, matWorld2:TD3DMatrix;
-  pos:TD3DVector;
+  //pos:TD3DVector;
 begin
   muks.jkez:=fegyv.jkez(myfegyv, mstat);
   muks.bkez:=fegyv.bkez(myfegyv, mstat);
@@ -3778,7 +3784,7 @@ szogx:=szogx+0.2*eltim;{}
   end;
 
 
-  if ((mstat and MSTAT_MASK) <> 0) then
+  if ((mstat and MSTAT_MASK) <> 0) and ((mstat and MSTAT_MASK) < 6) then
     if ((mstat and MSTAT_MASK) = MSTAT_FUT) then
       acpy:=acpy + sin(animstat * 4 * D3DX_PI) / 40
     else
@@ -5144,7 +5150,8 @@ begin
           if nemlohet then
           begin
             kiszall_cooldown:= -1;
-            showHudInfo(lang[64], 200, $FF0000);
+            if onSacredLand then
+              showHudInfo(lang[64], 200, $FF0000);
             goto atugor;
           end
           else
@@ -7799,7 +7806,8 @@ begin
         if (halal = 0) and (not autoban) then
           if cpy^ > 79.4 then
           begin
-            volthi:=true;multisc.Medal('H', 'I');
+            volthi:=true;
+            multisc.Medal('H', 'I');
           end;
 
       if not iranyithato or (cpy^ < amag) then
@@ -7900,7 +7908,7 @@ begin
     laststate:= 'Doing Real Physics 2';
     //Egyéb plr cucc
 
-    if (cpy^ < waterlevel) and ((mstat and MSTAT_MASK) > 0) then
+    if (cpy^ < waterlevel) and ((mstat and MSTAT_MASK) > 0) and ((mstat and MSTAT_MASK) < 6) then
       vizben:=vizben + 0.01
     else
       vizben:=vizben - 0.01;
@@ -8502,14 +8510,22 @@ end;
 
     pantheoneffect;
 
+    onSacredLand:=false;
     nemlohet:=false;
 
     if (sqr(dnsvec.x - cpx^) + sqr(dnsvec.z - cpz^)) < sqr(dnsrad) then
+    begin
+      onSacredLand:=true;
       nemlohet:=true;
+    end;
 
     if (cpx^ > portalpos.x - 13) and (cpx^ < portalpos.x + 9) and
       (cpz^ > portalpos.z - 9) and (cpz^ < portalpos.z + 8) and
-      (cpy^ > portalpos.y - 1) and (cpy^ < portalpos.y + 4) then nemlohet:=true;
+      (cpy^ > portalpos.y - 1) and (cpy^ < portalpos.y + 4) then
+    begin
+      nemlohet:=true;
+      onSacredLand:=true;
+    end;
 
     if multisc <> nil then
       if multisc.disablekill then nemlohet:=true;
@@ -9112,7 +9128,7 @@ begin
   if gugg then hol.y:=hol.y - 0.5;
   PlaceListener(hol, szogx, szogy);
 
-  if ((mstat and MSTAT_MASK) > 0) and (halal = 0) then
+  if ((mstat and MSTAT_MASK) > 0) and ((mstat and MSTAT_MASK) < 6) and (halal = 0) then
   begin
 
     sndnum:=1;
@@ -16292,7 +16308,7 @@ begin //                 BEGIIIN
     //Hacking checking
     errorospointer:=@ahovaajopointermutat;
 
-    
+
 
     if not (canbeadmin and commandlineoption(chr(120))) then
     begin
@@ -16399,7 +16415,7 @@ begin //                 BEGIIIN
       laststate:= 'Fetching modifier.json';
       writeln(logfile, 'Fetching modifier.json');
 
-      modifierjson:=TQJSON.CreateFromHTTP('http://'+servername+'/modifier.json');
+      modifierjson:=TQJSON.CreateFromHTTP('https://'+servername+'/modifier.json');
       modifierdatachecksum:=StrToInt('$' + modifierjson.getString(['datachecksum']));
       if datachecksum = modifierdatachecksum then //Don't load incompatible modifier
       begin

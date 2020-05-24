@@ -1,7 +1,17 @@
 unit myUI;
 
 interface
-uses Windows, SysUtils, typestuff, Direct3D9, D3DX9, directinput, sha1, math;
+uses
+  Windows,
+  SysUtils,
+  typestuff,
+  Direct3D9,
+  D3DX9,
+  directinput,
+  IdGlobal,
+  IdHash,
+  IdHashSHA,
+  math;
 
 type
   Tmatteg = record
@@ -54,9 +64,9 @@ type
   end;
 
   T3DMIPasswordbox = class(T3DMITextbox)
+  private
+    sha1hex,pass:string;
   public
-    sha1cnt:TSHA1Context;
-    sha1hex:string;
     constructor create(aminx, aminy, amaxx, amaxy, scala:single;szoveghossz:integer;maxs:integer;asha1hex:string);
     procedure HandleChar(mit:char); override;
     function GetPasswordMD5:string;
@@ -257,14 +267,12 @@ const
   sha1bors:string = 'mert ez egy jo hosszu salt';
 
 constructor T3DMIPasswordBox.create(aminx, aminy, amaxx, amaxy, scala:single;szoveghossz:integer;maxs:integer;asha1hex:string);
-
 begin
   inherited create(aminx, aminy, amaxx, amaxy, scala, stringofchar('*', szoveghossz), maxs);
-  SHA1Init(sha1cnt);
-  SHA1Update(sha1cnt, @sha1so[1], length(sha1so));
   sha1hex:=asha1hex;
   if not (lasthash = '-') then
     ValueS:= '********';
+
 end;
 
 procedure T3DMIPasswordBox.HandleChar(mit:char);
@@ -273,39 +281,38 @@ begin
 
   lasthash:= '-';
 
-
   if (mit = chr(VK_BACK)) or (sha1hex <> '') then
   begin
     ValueS:= '';
     sha1hex:= '';
-    SHA1Init(sha1cnt);
-    SHA1Update(sha1cnt, @sha1so[1], length(sha1so));
+    pass:='';
     if mit = chr(VK_BACK) then exit;
   end;
 
   if length(ValueS) < value then
     ValueS:=ValueS + '*';
-  SHA1Update(sha1cnt, @mit, 1);
+  pass:=pass+mit;
 end;
 
 function T3DMIPasswordBox.GetPasswordMD5:string;
-var
-  dig:TSHA1Digest;
 begin
   if sha1hex <> '' then
     result:=sha1hex
   else
   begin
-    if valueS <> '' then
+    if (valueS <> '') and (pass <> '') then
     begin
-      SHA1Update(sha1cnt, @sha1bors[1], length(sha1bors));
-      SHA1Final(sha1cnt, dig);
-      sha1hex:=SHA1GetHex(dig);
+      with TIdHashSHA1.Create do
+        try
+          sha1hex:=lowercase(HashStringAsHex(sha1so+pass+sha1bors))
+        finally
+          Free;
+        end;
+      pass:='';
     end
     else
-      //   sha1hex:='----------------------------------------';
       sha1hex:= '';
-    result:=sha1hex;
+  result:=sha1hex;
   end;
 end;
 

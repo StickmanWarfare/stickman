@@ -5,8 +5,26 @@ unit multiplayer;
 
 interface
 
-uses sysutils, socketstuff, typestuff, crypto, D3DX9, windows, sha1, winsock2, Direct3d9;
+uses
+  sysutils,
+  socketstuff,
+  typestuff,
+{$IFDEF CRYPTO}
+  {$MESSAGE 'OFFICIAL crypto'}
+  crypto,
+{$ENDIF}
+  D3DX9,
+  windows,
+  IdGlobal,
+  IdHash,
+  IdHashSHA,
+  Idwinsock2,
+  Direct3d9;
 const
+{$IFNDEF CRYPTO}
+  {$MESSAGE Warn 'EMPTY crypto'}
+  shared_key:array[0..19] of byte = ($00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00);
+{$ENDIF}
   TOKEN_RATE = 10; //ezredmásodpercenkénti tokenek száma
   TOKEN_LIMIT = 2000; //bucket max mérete
   PRIOR_NINCSPLOVES = 0.5; //nem lõttem rá pontosat
@@ -370,11 +388,18 @@ end;
 procedure TMMOServerClient.NewCrypto;
 var
   i:integer;
-  ujcrypto:TSHA1Digest;
+  ujcrypto, tmp:TIdBytes;
 begin
   for i:=0 to 19 do
     crypto[i]:=crypto[i] xor (shared_key[i]);
-  ujcrypto:=SHA1Hash(@crypto[0], 20);
+    SetLength(tmp, Length(crypto));
+    Move(crypto[Low(crypto)], tmp[Low(tmp)], SizeOf(crypto));
+    with TIdHashSHA1.Create do
+    try
+      ujcrypto:=HashBytes(tmp)
+    finally
+      Free;
+    end;
   for i:=0 to 19 do
     crypto[i]:=ujcrypto[i];
 

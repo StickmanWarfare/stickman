@@ -1,7 +1,7 @@
 unit socketstuff;
 
 interface
-uses sysutils,winsock2,windows;
+uses sysutils,Idwinsock2,windows;
 
 type
 
@@ -62,16 +62,26 @@ procedure InitWinsock;
 var
 dat:TWSAData;
 begin
+ InitializeWinSock;
  WSAStartup(MAKEWORD(2,2),dat);
 end;
 
 function gethostbynamewrap(nam:string):Tinaddr;
 var
-hste:Phostent;
+LHost:PHostEnt;
+Lsa:TInAddr;
+Lpa:PAnsiChar;
 begin
-  hste:=gethostbyname(Pchar(nam));
-  if hste=nil then begin result.s_addr:=0; exit; end;
-  result := Pinaddr(hste.h_addr^ )^;
+  LHost:=gethostbyname(Pchar(nam));
+  if LHost <> nil then
+  begin
+    Lpa := LHost^.h_address_list^;
+    Lsa.S_un_b.s_b1 := Ord(Lpa[0]);
+    Lsa.S_un_b.s_b2 := Ord(Lpa[1]);
+    Lsa.S_un_b.s_b3 := Ord(Lpa[2]);
+    Lsa.S_un_b.s_b4 := Ord(Lpa[3]);
+    Result:=Lsa;
+  end;
 end;
 
 function CreateClientSocket(srvc:sockaddr_in):TSocket;
