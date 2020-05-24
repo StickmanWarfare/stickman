@@ -14,8 +14,8 @@ uses
   qjson;
 
 const
-  PROG_VER=210010;
-  datachecksum=$CB1D3A7E;
+  PROG_VER=210020;
+  datachecksum=$F8FC7430;
 
 type
 
