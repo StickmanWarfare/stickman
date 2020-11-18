@@ -1,7 +1,16 @@
 unit qjson;
 
 interface
-uses SysUtils,Classes,windows,math,IdHTTP;
+uses
+  SysUtils,
+  StrUtils,
+  Classes,
+  Windows,
+  Math,
+  IdHTTP,
+  IdSSLOpenSSL,
+  Types;
+
 type
 
  EJSONParserError = class(EParserError)
@@ -313,8 +322,12 @@ var
   i:integer;
   str: string;
   IdHTTP: TIdHTTP;
+  IdSSLIOHandler: TIdSSLIOHandlerSocketOpenSSL;
 begin
   IdHTTP := TIdHTTP.Create(nil);
+  IdSSLIOHandler := TIdSSLIOHandlerSocketOpenSSL.Create(nil);
+  IdSSLIOHandler.SSLOptions.SSLVersions := [sslvTLSv1,sslvTLSv1_1,sslvTLSv1_2];
+  IdHTTP.IOHandler := IdSSLIOHandler;
   try
     str := IdHTTP.Get(url);
     if length(str) > 0 then
