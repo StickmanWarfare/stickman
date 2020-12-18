@@ -1,7 +1,7 @@
 unit MADXDllInterface;
 interface
 uses
-  Windows,sysutils,typestuff,Idwinsock2;
+  Windows,sysutils,typestuff,socketstuff,Idwinsock2;
 
 const
   MADX_INPUT_BUFFER_SIZE = (5*1152*8);
@@ -232,7 +232,8 @@ begin
  strhost:=copy(strhost,1,pos(':',strhost)-1);
 
 
- gethostbynamewrap2(strhost,@(incim.sin_addr),false);
+ //gethostbynamewrap2(strhost,@(incim.sin_addr),false);
+ incim.sin_addr:=gethostbynamewrap(strhost);
  incim.sin_port:=htons(strtoint(strport));
 
  sck:=socket(AF_INET,SOCK_STREAM, IPPROTO_TCP);
