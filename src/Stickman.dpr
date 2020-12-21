@@ -7530,7 +7530,7 @@ begin
   while not (((hanyszor + 1) * 10 > timegettime) or ((korlat + 1) > 20)) do
   begin
     inc(hanyszor);
-
+ {$IFNDEF godmode}
     // if playrocks>1 then playrocks:=1;
     if vizben < 0 then vizben:=0;
     if vizben > 1 then vizben:=1;
@@ -7573,7 +7573,7 @@ begin
             addrongybaba(d3dxvector3(cpx^, cpy^, cpz^), d3dxvector3(cpox^, cpoy^, cpoz^), d3dxvector3(0.00, 0.0, 0), myfegyv, 10, 0, -1);
           end;
         end;
-
+{$ENDIF}
     if recovercar > 0 then
     begin
       inc(recovercar);

@@ -4,7 +4,6 @@ unit ojjektumok;
 {.$DEFINE testtris}
 {.$DEFINE normaltest}
 {.$DEFINE reKD}
-{.$DEFINE tereprendezes}
 {.$DEFINE terraineditor}
 
 interface
