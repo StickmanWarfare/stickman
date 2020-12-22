@@ -11,6 +11,7 @@ uses
   IdGlobal,
   IdHash,
   IdHashSHA,
+  Classes,
   math;
 
 type
@@ -30,7 +31,7 @@ type
     focused, focusable, handleschar:boolean;
     clicked:boolean;
     minx, miny, maxx, maxy, scale:single;
-    elx, ely:single; //egérlent
+    elx, ely:single; //egï¿½rlent
     rect:Trect;
     value:single;
     valueS:string;
@@ -165,7 +166,7 @@ end;
 
 procedure T3DMenuitem.HandleChar(mit:char);
 begin
-  //MÉG NAGYOBB SEMMI (ezért "virtual")
+  //Mï¿½G NAGYOBB SEMMI (ezï¿½rt "virtual")
 end;
 
 constructor T3DMIText.create(aminx, aminy, amaxx, amaxy, scala:single;szoveg:string;fable:boolean);
@@ -365,6 +366,8 @@ end;
 constructor T3DMenu.Create(aDevice:IDirect3DDevice9;sm:boolean);
 var
   splashnev:string;
+  ResStream: TResourceStream;
+  FontsCount: DWORD;
 begin
   inherited Create;
   safemode:=sm;
@@ -376,13 +379,18 @@ begin
   zeromemory(@lastkeyb, sizeof(lastkeyb));
   g_pd3ddevice:=aDevice;
   write(logfile, 'Loading fonts...');flush(logfile);
-  addfiletochecksum('data/gui/eurostar.ttf');
-  if (AddFontResource('data/gui/eurostar.ttf') = 0) then
-    writeln(logfile, 'unsuccesful...');flush(logfile);
+  ResStream := TResourceStream.Create(hInstance, 'EUROSTAR', RT_RCDATA);
+  try
+    if (AddFontMemResourceEx(ResStream.Memory, ResStream.Size, nil, @FontsCount) = 0) then
+      writeln(logfile, 'unsuccesful...');flush(logfile);
+  finally
+    ResStream.Free;
+  end;
   write(logfile, 'font, ');flush(logfile);
   if FAILED(D3DXCreateFont(g_pD3dDevice, trunc(12 + 12 * (SCHeight / 600)), 0, FW_NORMAL, 0, FALSE, DEFAULT_CHARSET, OUT_STRING_PRECIS, PROOF_QUALITY, DEFAULT_PITCH or FF_SWISS, 'Eurostar Black Extended', g_pFont)) then
     if FAILED(D3DXCreateFont(g_pD3dDevice, trunc(15 + 15 * (SCHeight / 600)), 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH or FF_SWISS, 'Arial', g_pFont)) then
       Exit;
+
   write(logfile, 'fontmini, ');flush(logfile);
   if FAILED(D3DXCreateFont(g_pD3dDevice, trunc(9 + 9 * (SCHeight / 600)), 0, FW_NORMAL, 0, FALSE, DEFAULT_CHARSET, OUT_RASTER_PRECIS, PROOF_QUALITY, DEFAULT_PITCH or FF_SWISS, 'Verdana', g_pFontmini)) then
     Exit;
@@ -422,7 +430,7 @@ begin
   end;
   //NO checksum for splashes
   splashnev:=stuffjson.GetString(['splashes', random(stuffjson.GetNum(['splashes']))]);
-  D3DXGetImageInfoFromFile(PChar('data/textures/gui/splash/' + splashnev), splashinfo); //feltételezzük, hogy egyformák a splashek
+  D3DXGetImageInfoFromFile(PChar('data/textures/gui/splash/' + splashnev), splashinfo); //feltï¿½telezzï¿½k, hogy egyformï¿½k a splashek
 
   splashratio:=splashinfo.Width / splashinfo.Height;
   splashwidth:=round(SCheight * splashratio);
@@ -516,7 +524,6 @@ destructor T3DMenu.Destroy;
 var
   i, j:integer;
 begin
-  RemoveFontResource('data/gui/eurostar.ttf');
   for i:=0 to high(items) do
   begin
     for j:=0 to high(items[i]) do
@@ -584,7 +591,7 @@ begin
     case lap of
       0:lap:=3;
       1, 2:lap:=0;
-      4, 5, 6, 7, 8:lap:=2; //TODO ezt frissíteni kell mindig
+      4, 5, 6, 7, 8:lap:=2; //TODO ezt frissï¿½teni kell mindig
       3:items[3, 4].clicked:=true; //exit gomb
     end
   else
@@ -1150,7 +1157,7 @@ var
   i:integer;
 begin
 
-  if (alap<(MENULAP_MAX - 1)) or (length(tegs[alap]) = 0) then //TAB vagy label és üres
+  if (alap<(MENULAP_MAX - 1)) or (length(tegs[alap]) = 0) then //TAB vagy label ï¿½s ï¿½res
     setlength(tegs[alap], length(tegs[alap]) + 1);
 
   with tegs[alap, high(tegs[alap])] do

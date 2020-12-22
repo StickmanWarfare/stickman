@@ -16849,7 +16849,6 @@ begin //                 BEGIIIN
     if not iswindowed and lostdevice then messagebox(0, Pchar(lang[31]), Pchar(lang[30]), MB_SETFOREGROUND or MB_ICONWARNING);
     writeln(logfile, 'Game ended at:', formatdatetime('yyyy.mm.dd/hh:nn:ss', date + time));
     closefile(logfile);
-    RemoveFontResource('data/gui/eurostar.ttf');
   except
     on E:Exception do
     begin
@@ -16865,7 +16864,6 @@ begin //                 BEGIIIN
       
       writeln(logfile, 'Exception at:', formatdatetime('yyyy.mm.dd/hh:nn:ss', date + time));
       closefile(logfile);
-      RemoveFontResource('data/gui/eurostar.ttf');
     end;
   end;
 
@@ -16873,7 +16871,6 @@ begin //                 BEGIIIN
   afupquit;
   closefile(logfile);
   deletefile('data/cfg/skins.cfg');
-  RemoveFontResource('data/gui/eurostar.ttf');
   exitprocess(0);
 end.
 
