@@ -20,9 +20,9 @@
 	"spawn_height": 4,
 	"spawn_radius": 5,
 	"terrain": {
-		"grass_level": 47.75,
-		"wetsand_level": 42.75,
-		"water_baselevel": 42.15
+		"grass_level": 15.75,
+		"wetsand_level": 10.75,
+		"water_baselevel": 10.15
 	},
 	"cloud": {
 		"color": "0xFFFFFF",
@@ -313,7 +313,7 @@
 		}
 	},
 	"buildings": {
-        "bunker4": {
+		"bunker4": {
 			"special": [
 				"spawngun",
 				"spawntech",
@@ -325,153 +325,227 @@
 			"zone": "Bunker",
 			"position": [
 				{
+					"x": -200.75,
+					"y": 27.11,
+					"z": -119.56
+				},
+				{
+					"x": -355.06,
+					"y": 12.64,
+					"z": -23.18
+				},
+				{
 					"x": -215.75,
 					"y": 46.12,
 					"z": 35.33
 				},
 				{
+					"x": -349.62,
+					"y": 14.62,
+					"z": -114.77
+				},
+				{
 					"x": -117.48,
 					"y": 42.66,
 					"z": -133.85
+				},
+				{
+					"x": -384.21,
+					"y": 25.3,
+					"z": 34.12
+				},
+				{
+					"x": -271.07,
+					"y": 30.29,
+					"z": -207.6
+				},
+				{
+					"x": -219.41,
+					"y": 23.88,
+					"z": -73.96
+				},
+				{
+					"x": -118.94,
+					"y": 41,
+					"z": -45.65
+				},
+				{
+					"x": -258.41,
+					"y": 14.62,
+					"z": -113.2
+				},
+				{
+					"x": -325.3,
+					"y": 20.71,
+					"z": -179.45
+				},
+				{
+					"x": -322.18,
+					"y": 14.62,
+					"z": -130.45
+				},
+				{
+					"x": -405.45,
+					"y": 14.11,
+					"z": -140.9
+				},
+				{
+					"x": -431.1,
+					"y": 25.28,
+					"z": 44.56
+				},
+				{
+					"x": -383.77,
+					"y": 16.25,
+					"z": 102.42
+				},
+				{
+					"x": -256.08,
+					"y": 16.2,
+					"z": 71.9
+				},
+				{
+					"x": -319.61,
+					"y": 16.2,
+					"z": 57.14
+				},
+				{
+					"x": -248.3,
+					"y": 22.04,
+					"z": 164.67
+				},
+				{
+					"x": -293,
+					"y": 22.04,
+					"z": 131.09
+				},
+				{
+					"x": -471.81,
+					"y": 25.25,
+					"z": 78.58
+				},
+				{
+					"x": -434.12,
+					"y": 25.24,
+					"z": 122.27
+				},
+				{
+					"x": -306.52,
+					"y": 22,
+					"z": 179.44
+				},
+				{
+					"x": -364.06,
+					"y": 16.2,
+					"z": 142.91
+				},
+				{
+					"x": -358.56,
+					"y": 16.2,
+					"z": 195.04
+				},
+				{
+					"x": -136.41,
+					"y": 25.07,
+					"z": 152.33
+				},
+				{
+					"x": -150.64,
+					"y": 19,
+					"z": 195.79
+				},
+				{
+					"x": -185,
+					"y": 20,
+					"z": 137.4
+				},
+				{
+					"x": -431.401,
+					"y": 23.5,
+					"z": -30.398
+				},
+				{
+					"x": -489.28,
+					"y": 22.01,
+					"z": -55.98
 				}
 			]
 		},
-        "floatbunker": {
-			"special": [
-                "spawngun",
-                "spawntech",
-				"watercraftgun",
-				"watercrafttech",
-                "dontflattenterrain"
-            ],
-			"scalex": 1,
-			"scaley": 1,
-			"zone": "",
-			"position": [
-                {
-					"x": -205,
-					"y": 41.5,
-					"z": -112,
-                    "name": "mayan_ruins"
-				},
-                {
-					"x": -233,
-					"y": 41.5,
-					"z": -70,
-                    "name": "lighthouse"
-				},
-                {
-					"x": -262,
-					"y": 41.5,
-					"z": -10,
-                    "name": "military"
-				},
-                {
-					"x": -340,
-					"y": 41.5,
-					"z": 0,
-                    "name": "delta"
-				},
-                {
-					"x": -287,
-					"y": 41.5,
-					"z": -86,
-                    "name": "colors"
-				},
-                {
-					"x": -351.5,
-					"y": 41.5,
-					"z": -35,
-                    "name": "bridge"
-				}
-            ]
-		},
-        "gunship": {
-            "special": [
-                "dontflattenterrain"
-            ],
-            "scalex": 3,
-            "scaley": 3,
-            "zone": "Warship",
-            "position": [
-                {
-                    "x": -380,
-					"y": 48.5,
-					"z": 100
-                }
-            ]
-        },
-        "lhtop_colors": {
-            "special": [
-                "dontflattenterrain"
-            ],
-            "scalex": 2,
-            "scaley": 2,
-            "zone": "Barracks",
-            "position": [
-                {
-                    "x": -220,
-					"y": 42,
-					"z": -10
-                }
-            ]
-        },
-        "flaot_bighid": {
-            "special": [
-                "dontflattenterrain"
-            ],
-            "scalex": 2,
-            "scaley": 2,
-            "zone": "Overpass",
-            "position": [
-                {
-                    "x": -314,
-					"y": 42,
-					"z": -77
-                }
-            ]
-        },
-        "flaot_military": {
-            "special": [
-                "dontflattenterrain"
-            ],
-            "scalex": 2,
-            "scaley": 2,
-            "zone": "Outpost",
-            "position": [
-                {
-                    "x": -236.5,
-					"y": 42,
-					"z": -38
-                }
-            ]
-        },
 		"kikoto": {
 			"scalex": 1,
 			"scaley": 1,
-			"zone": "",
+			"zone": "Port",
 			"special": [
 				"dontflattenterrain"
 			],
 			"position": [
 				{
 					"x": -299.09,
-					"y": -1.5,
+					"y": 10.51,
 					"z": -9.04
+				}
+			]
+		},
+		"floatbunker": {
+			"special": [
+				"watercraftgun",
+				"watercrafttech",
+				"dontflattenterrain"
+			],
+			"scalex": 1,
+			"scaley": 1,
+			"zone": "",
+			"position": [
+				{
+					"x": -327.14,
+					"y": 9.5,
+					"z": -56.21
+				},
+				{
+					"x": -394.63,
+					"y": 9.5,
+					"z": -72.59
+				}
+			]
+		},
+		"flaot_bighid": {
+			"special": [
+				"dontflattenterrain"
+			],
+			"scalex": 2,
+			"scaley": 2,
+			"zone": "WoodenBridge",
+			"position": [
+				{
+					"x": -357.07,
+					"y": 9.5,
+					"z": -114.57
+				}
+			]
+		},
+		"flaot_military": {
+			"special": [
+				"dontflattenterrain"
+			],
+			"scalex": 2,
+			"scaley": 2,
+			"zone": "Outpost",
+			"position": [
+				{
+					"x": -265.29,
+					"y": 10,
+					"z": -94.16
 				}
 			]
 		},
 		"steelworks": {
 			"scalex": 4,
 			"scaley": 4,
-			"zone": "",
-			"special": [
-				"dontflattenterrain"
-			],
+			"zone": "Industrial District B",
 			"position": [
 				{
 					"x": -285.53,
-					"y": 6.2,
+					"y": 16.2,
 					"z": 88.56
 				}
 			]
@@ -479,14 +553,11 @@
 		"raktar1": {
 			"scalex": 1,
 			"scaley": 1,
-			"zone": "",
-			"special": [
-				"dontflattenterrain"
-			],
+			"zone": "Industrial District B",
 			"position": [
 				{
 					"x": -348.06,
-					"y": 6.2,
+					"y": 16.2,
 					"z": 94.81
 				}
 			]
@@ -494,14 +565,11 @@
 		"raktar2": {
 			"scalex": 1,
 			"scaley": 1,
-			"zone": "",
-			"special": [
-				"dontflattenterrain"
-			],
+			"zone": "Industrial District B",
 			"position": [
 				{
 					"x": -348.06,
-					"y": 6.2,
+					"y": 16.2,
 					"z": 94.81
 				}
 			]
@@ -509,14 +577,11 @@
 		"oil": {
 			"scalex": 2.5,
 			"scaley": 2.5,
-			"zone": "",
-			"special": [
-				"dontflattenterrain"
-			],
+			"zone": "Industrial District B",
 			"position": [
 				{
 					"x": -348.06,
-					"y": 6.2,
+					"y": 16.2,
 					"z": 165.81
 				}
 			]
@@ -524,14 +589,11 @@
 		"nafta": {
 			"scalex": 5,
 			"scaley": 5,
-			"zone": "",
-			"special": [
-				"dontflattenterrain"
-			],
+			"zone": "Industrial District A",
 			"position": [
 				{
 					"x": -282.813,
-					"y": 12.04,
+					"y": 22.04,
 					"z": 158.02
 				}
 			]
@@ -539,31 +601,40 @@
 		"towerhouse": {
 			"scalex": 3,
 			"scaley": 3,
-			"zone": "",
+			"zone": "Lighthouse",
 			"position": [
 				{
 					"x": -219.26,
-					"y": 14.79,
+					"y": 24.79,
 					"z": -39.93
 				}
-			],
-			"special": [
-				"dontflattenterrain"
 			]
 		},
 		"radio2": {
 			"scalex": 2.2,
 			"scaley": 2.2,
-			"zone": "",
+			"zone": "AlComp",
 			"position": [
 				{
 					"x": -280.04,
-					"y": 4.62,
+					"y": 14.62,
 					"z": -105.49
 				}
-			],
+			]
+		},
+		"almacomp1": {
+			"scalex": 1,
+			"scaley": 1,
+			"zone": "AlComp",
 			"special": [
 				"dontflattenterrain"
+			],
+			"position": [
+				{
+					"x": -311.4,
+					"y": 14.623,
+					"z": -118
+				}
 			]
 		},
 		"romhaz1": {
@@ -571,12 +642,12 @@
 			"scaley": 7,
 			"zone": "Modern ruins",
 			"special": [
-				"dontflattenterrain"
+				"fittoterrain"
 			],
 			"position": [
 				{
 					"x": -290.45,
-					"y": 22.06,
+					"y": 32.06,
 					"z": -209.89
 				}
 			]
@@ -586,13 +657,25 @@
 			"scaley": 2.5,
 			"zone": "Modern ruins",
 			"special": [
-				"dontflattenterrain"
+				"fittoterrain"
 			],
 			"position": [
 				{
 					"x": -250.79,
-					"y": 28.16,
+					"y": 38.16,
 					"z": -190.82
+				}
+			]
+		},
+		"banker": {
+			"scalex": 5,
+			"scaley": 5,
+			"zone": "AlComp",
+			"position": [
+				{
+					"x": -328.77,
+					"y": 20.7,
+					"z": -160.37
 				}
 			]
 		},
@@ -602,14 +685,14 @@
 			"position": [
 				{
 					"x": -400,
-					"y": 0,
+					"y": 10,
 					"z": -100
 				}
 			],
 			"special": [
 				"dontflattenterrain"
 			],
-			"zone": ""
+			"zone": "Bridge"
 		},
 		"pantheon": {
 			"scalex": 4,
@@ -635,6 +718,36 @@
 				}
 			]
 		},
+		"maya_a3": {
+			"scalex": 2,
+			"scaley": 2,
+			"special": [
+				"fittoterrain"
+			],
+			"zone": "Mayan ruins",
+			"position": [
+				{
+					"x": -182.26,
+					"y": 34.58,
+					"z": -105.38
+				}
+			]
+		},
+		"maya_b3": {
+			"scalex": 2,
+			"scaley": 2,
+			"special": [
+				"fittoterrain"
+			],
+			"zone": "Mayan ruins",
+			"position": [
+				{
+					"x": -159.09,
+					"y": 40.94,
+					"z": -51.18
+				}
+			]
+		},
 		"kispiri": {
 			"scalex": 1.5,
 			"scaley": 1.5,
@@ -642,7 +755,7 @@
 			"position": [
 				{
 					"x": -92.74,
-					"y": 42.5,
+					"y": 41,
 					"z": -47.1
 				}
 			]
@@ -654,12 +767,9 @@
 			"position": [
 				{
 					"x": -481.19,
-					"y": 14.9,
+					"y": 22.01,
 					"z": -45.27
 				}
-			],
-			"special": [
-				"dontflattenterrain"
 			]
 		},
 		"techkomplex": {
@@ -669,27 +779,21 @@
 			"position": [
 				{
 					"x": -406.07,
-					"y": 15.24,
+					"y": 25.24,
 					"z": 51.29
 				}
-			],
-			"special": [
-				"dontflattenterrain"
 			]
 		},
 		"towerV": {
 			"scalex": 3,
 			"scaley": 3,
-			"zone": "",
+			"zone": "Lighthouse",
 			"position": [
 				{
 					"x": -216.38,
-					"y": 14.97,
+					"y": 24.97,
 					"z": -49.15
 				}
-			],
-			"special": [
-				"dontflattenterrain"
 			]
 		},
 		"kbsz": {
@@ -699,7 +803,7 @@
 			"position": [
 				{
 					"x": -800,
-					"y": 8,
+					"y": 17,
 					"z": -800
 				}
 			]
@@ -750,7 +854,7 @@
 			"position": [
 				{
 					"x": -157.191,
-					"y": 9.45,
+					"y": 19.45,
 					"z": 169.497
 				}
 			],
@@ -792,19 +896,16 @@
 			"position": [
 				{
 					"x": -442.26,
-					"y": 15.24,
+					"y": 25.24,
 					"z": 94.14
 				}
-			],
-			"special": [
-				"dontflattenterrain"
 			]
 		},
 		"autohid": {
 			"position": [
 				{
 					"x": -235.553,
-					"y": 6,
+					"y": 16,
 					"z": 166.273
 				}
 			],
@@ -813,7 +914,52 @@
 			"special": [
 				"dontflattenterrain"
 			],
-			"zone": ""
+			"zone": "Highway"
+		},
+		"apartment": {
+			"position": [
+				{
+					"x": -427.417,
+					"y": 24,
+					"z": -9.172
+				}
+			],
+			"zone": "Apartment",
+			"scalex": 1,
+			"scaley": 1,
+			"special": [
+				"dontflattenterrain"
+			]
+		},
+		"palmalittle": {
+			"position": [
+				{
+					"x": 185.44,
+					"y": 10.8,
+					"z": 312.17
+				}
+			],
+			"zone": "Oasis",
+			"special": [
+				"dontflattenterrain"
+			],
+			"scalex": 2,
+			"scaley": 2
+		},
+		"gunship": {
+			"special": [
+				"dontflattenterrain"
+			],
+			"scalex": 3,
+			"scaley": 3,
+			"zone": "Warship",
+			"position": [
+				{
+					"x": -493.71,
+					"y": 17.5,
+					"z": -128.11
+				}
+			]
 		}
 	},
 	"materials": {
@@ -1234,7 +1380,7 @@
 		"net2.png": {
 			"special": [
 				"alphatest",
-                "notbulletproof"
+				"notbulletproof"
 			]
 		}
 	},
@@ -1404,6 +1550,36 @@
 			"z": 31.15,
 			"type": "smallfire"
 		},
+		"kemeny1": {
+			"x": -284,
+			"y": 57.4,
+			"z": 155,
+			"type": "kemenyfust"
+		},
+		"kemeny2": {
+			"x": -273.5,
+			"y": 51.5,
+			"z": 179.65,
+			"type": "kemenyfust"
+		},
+		"kiskemeny1": {
+			"x": -336.55,
+			"y": 41.81,
+			"z": 161,
+			"type": "kiskemenyfust"
+		},
+		"kiskemeny2": {
+			"x": -340.07,
+			"y": 41.81,
+			"z": 161.05,
+			"type": "kiskemenyfust"
+		},
+		"szikra": {
+			"x": -417.28,
+			"y": 46.78,
+			"z": 60.58,
+			"type": "szikra"
+		},
 		"kislang1": {
 			"x": -116.4,
 			"y": 46.035,
@@ -1438,7 +1614,7 @@
 			},
 			"to": {
 				"x": -777.6,
-				"y": 8.1,
+				"y": 17.1,
 				"z": -780.18
 			},
 			"radius": 1,
@@ -1454,7 +1630,7 @@
 			},
 			"to": {
 				"x": -836.49,
-				"y": 8.1,
+				"y": 17.1,
 				"z": -799.52
 			},
 			"radius": 1,
@@ -1467,7 +1643,7 @@
 			"visible_range": 20,
 			"from": {
 				"x": -85.1,
-				"y": 43.39,
+				"y": 41.89,
 				"z": -45.36
 			},
 			"to": {
@@ -1483,7 +1659,7 @@
 			"visible_range": 20,
 			"from": {
 				"x": -93.12,
-				"y": 43.39,
+				"y": 41.89,
 				"z": -53.36
 			},
 			"to": {
@@ -1499,7 +1675,7 @@
 			"visible_range": 20,
 			"from": {
 				"x": -93.12,
-				"y": 43.39,
+				"y": 41.89,
 				"z": -40.71
 			},
 			"to": {
@@ -1515,7 +1691,7 @@
 			"visible_range": 20,
 			"from": {
 				"x": -85.57,
-				"y": 43.39,
+				"y": 41.89,
 				"z": -49.1
 			},
 			"to": {
@@ -1531,7 +1707,7 @@
 			"visible_range": 20,
 			"from": {
 				"x": -89.72,
-				"y": 43.39,
+				"y": 41.89,
 				"z": -40.71
 			},
 			"to": {
@@ -1547,7 +1723,7 @@
 			"visible_range": 20,
 			"from": {
 				"x": -89.78,
-				"y": 43.39,
+				"y": 41.89,
 				"z": -53.17
 			},
 			"to": {
@@ -1859,6 +2035,14 @@
 			"radius": 6,
 			"offset": 9.5,
 			"name": "port2"
+		},
+		{
+			"x": -362.797,
+			"y": 11.7437,
+			"z": -104.7457,
+			"radius": -0.7,
+			"offset": 9.8,
+			"name": "woodenbridge"
 		}
 	],
 	"bubbles": [
@@ -1867,26 +2051,7 @@
 			"y": -120,
 			"z": 746.667,
 			"radius": 75
-		},
-        {
-            "x": -800,
-            "y": -15,
-            "z": -795,
-            "radius": 53,
-			"special": [
-				"nofog",
-				"grass"
-			]
-        },
-        {
-            "x": -86.667,
-            "y": 2,
-            "z": -306.667,
-            "radius": 30,
-			"special": [
-				"nofog"
-			]
-        }
+		}
 	],
 	"menubackgrounds": [
 		{
@@ -2061,6 +2226,49 @@
 					"rot": 70,
 					"scale": 0.08,
 					"light": 1
+				}
+			]
+		},
+		"lamp": {
+			"model": "lamp.x",
+			"materials": [
+				{
+					"diffuse": "../beton_07.jpg",
+					"specHardness": 26.9,
+					"specIntensity": 0,
+					"emission": 0
+				},
+				{
+					"diffuse": "../feh.bmp",
+					"specHardness": 26.9,
+					"specIntensity": 0,
+					"emission": 1
+				}
+			],
+			"position": [
+				{
+					"x": -422.42,
+					"y": 32,
+					"z": -17.12,
+					"rot": 0,
+					"scale": 0.35,
+					"light": 0.4
+				},
+				{
+					"x": -337.47,
+					"y": 19.68,
+					"z": -116.75,
+					"rot": 0,
+					"scale": 0.35,
+					"light": 0.4
+				},
+				{
+					"x": -332.02,
+					"y": 18.41,
+					"z": -116.59,
+					"rot": 0,
+					"scale": 0.35,
+					"light": 0.4
 				}
 			]
 		}
@@ -2597,169 +2805,162 @@
 	"scripts": {},
 	"triggers": {},
 	"leave_triggers": {
-		"military": {
-			"pos": {
-				"x": -261.8,
-				"y": 42,
-				"z": -14.8
-			},
-			"exit_pos": {
-				"x": -261.8,
-				"y": 43,
-				"z": -14.8
-			},
-			"radius": 10,
-			"vehicle": false,
-			"watercraft": true,
-			"teams": "both"
-		},
-		"lighthouse": {
-			"pos": {
-				"x": -233,
-				"y": 43,
-				"z": -74.8
-			},
-			"exit_pos": {
-				"x": -233,
-				"y": 43,
-				"z": -74.8
-			},
-			"radius": 10,
-			"vehicle": false,
-			"watercraft": true,
-			"teams": "both"
-		},
-		"mayan_ruins": {
-			"pos": {
-				"x": -204.9,
-				"y": 43,
-				"z": -111.61
-			},
-			"exit_pos": {
-				"x": -204.9,
-				"y": 43,
-				"z": -111.61
-			},
-			"radius": 10,
-			"vehicle": false,
-			"watercraft": true,
-			"teams": "both"
-		},
-		"military_end": {
-			"pos": {
-				"x": -339.9,
-				"y": 43,
-				"z": -5.1
-			},
-			"exit_pos": {
-				"x": -339.9,
-				"y": 43,
-				"z": -5.1
-			},
-			"radius": 10,
-			"vehicle": false,
-			"watercraft": true,
-			"teams": "both"
-		},
-		"colors": {
-			"pos": {
-				"x": -286.9,
-				"y": 43,
-				"z": -90.8
-			},
-			"exit_pos": {
-				"x": -286.9,
-				"y": 43,
-				"z": -90.8
-			},
-			"radius": 10,
-			"vehicle": false,
-			"watercraft": true,
-			"teams": "both"
-		},
-		"bridge": {
-			"pos": {
-				"x": -351.37,
-				"y": 43,
-				"z": -39.9
-			},
-			"exit_pos": {
-				"x": -351.37,
-				"y": 43,
-				"z": -39.9
-			},
-			"radius": 10,
-			"vehicle": false,
-			"watercraft": true,
-			"teams": "both"
-		},
-		"pantibunker": {
-			"pos": {
-				"x": -215.75,
-				"y": 42.12,
-				"z": 35.33
-			},
-			"exit_pos": {
-				"x": -215.75,
-				"y": 48.12,
-				"z": 35.33
-			},
-			"radius": 30,
-			"vehicle": false,
-			"watercraft": true,
-			"teams": "both"
-		},
-		"mayan": {
-			"pos": {
-				"x": -125.56,
-				"y": 42.66,
-				"z": -96.93
-			},
-			"exit_pos": {
-				"x": -155,
-				"y": 42.66,
-				"z": -95
-			},
-			"radius": 45,
-			"vehicle": false,
-			"watercraft": true,
-			"teams": "both"
-		},
 		"gunship_front": {
 			"pos": {
-				"x": -393.25,
-				"y": 42,
-				"z": 100
+				"x": -517,
+				"y": 10,
+				"z": -128
 			},
 			"exit_pos": {
-				"x": -405,
-				"y": 47,
-				"z": 100
+				"x": -517,
+				"y": 15.7,
+				"z": -128
 			},
-			"radius": 25,
+			"radius": 20,
 			"vehicle": false,
 			"watercraft": true,
 			"teams": "both"
 		},
 		"gunship_back": {
 			"pos": {
-				"x": -350.25,
-				"y": 42,
-				"z": 100
+				"x": -464,
+				"y": 10,
+				"z": -128
 			},
 			"exit_pos": {
-				"x": -340.25,
-				"y": 47,
-				"z": 100
+				"x": -464,
+				"y": 15.7,
+				"z": -128
 			},
-			"radius": 25,
+			"radius": 20,
 			"vehicle": false,
 			"watercraft": true,
 			"teams": "both"
 		}
 	},
-	"bots_default_enabled": false,
-	"botgroups": [],
+	"bots_default_enabled": true,
+	"botgroups": [
+		{
+			"count": 5,
+			"team": "GUN",
+			"mode": "NORMAL",
+			"weapons": [
+				"M4A1",
+				"M82A1",
+				"BM3"
+			],
+			"spawnpos": {
+				"x": -372,
+				"z": -179
+			},
+			"spawnrad": 50
+		},
+		{
+			"count": 5,
+			"team": "TECH",
+			"mode": "NORMAL",
+			"weapons": [
+				"MPG",
+				"QUADRO",
+				"HPL"
+			],
+			"spawnpos": {
+				"x": -372,
+				"z": -179
+			},
+			"spawnrad": 50
+		},
+		{
+			"count": 5,
+			"team": "GUN",
+			"mode": "NORMAL",
+			"weapons": [
+				"M4A1",
+				"M82A1",
+				"BM3"
+			],
+			"spawnpos": {
+				"x": -258,
+				"z": -157
+			},
+			"spawnrad": 70
+		},
+		{
+			"count": 5,
+			"team": "TECH",
+			"mode": "NORMAL",
+			"weapons": [
+				"MPG",
+				"QUADRO",
+				"HPL"
+			],
+			"spawnpos": {
+				"x": -258,
+				"z": -157
+			},
+			"spawnrad": 70
+		},
+		{
+			"count": 5,
+			"team": "GUN",
+			"mode": "NORMAL",
+			"weapons": [
+				"M4A1",
+				"M82A1",
+				"BM3"
+			],
+			"spawnpos": {
+				"x": -244,
+				"z": -53
+			},
+			"spawnrad": 50
+		},
+		{
+			"count": 5,
+			"team": "TECH",
+			"mode": "NORMAL",
+			"weapons": [
+				"MPG",
+				"QUADRO",
+				"HPL"
+			],
+			"spawnpos": {
+				"x": -244,
+				"z": -53
+			},
+			"spawnrad": 50
+		},
+		{
+			"count": 5,
+			"team": "GUN",
+			"mode": "NORMAL",
+			"weapons": [
+				"M4A1",
+				"M82A1",
+				"BM3"
+			],
+			"spawnpos": {
+				"x": -396,
+				"z": 5
+			},
+			"spawnrad": 50
+		},
+		{
+			"count": 5,
+			"team": "TECH",
+			"mode": "NORMAL",
+			"weapons": [
+				"MPG",
+				"QUADRO",
+				"HPL"
+			],
+			"spawnpos": {
+				"x": -396,
+				"z": 5
+			},
+			"spawnrad": 50
+		}
+	],
 	"foliages": [
 		{
 			"texture": "bush256.png",
