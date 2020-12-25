@@ -7503,13 +7503,13 @@ procedure handlefizik;
 var
   i, j, k, l, m, m1:integer;
   ox, oy, oz, amag, tx, tz:single;
-  norm, hova, opos, tmp, tmp3, tmp4, tmp5, tmps:TD3DXVector3;
+  norm, hova, opos, tmp, tmp3, tmp4, tmp5, tmp6, tmps:TD3DXVector3;
   korlat:integer;
   rbid:integer;
   h1, h2, h3:integer;
   bol:boolean;
   eses, nagyeses:boolean;
-  rnd:integer;
+  rnd, anglediv:integer;
   cnt:integer;
   mxh:integer;
   mx, tmp2, tmpfloat1, tmpfloat2:single;
@@ -8089,6 +8089,23 @@ begin
         cpy^:=leavetriggers[currentleavetrigger].exitpos.y;
         cpz^:=leavetriggers[currentleavetrigger].exitpos.z;
         cpox^:=cpx^;cpoy^:=cpy^;cpoz^:=cpz^;
+      end
+      else if (advwove(tegla.pos.x, tegla.pos.z) < waterlevel) and (tegla.pos.y < waterlevel + 5) then //terrain is below water and vehicle is near or under waterlevel
+      begin //try to find safe position on land to exit
+          for anglediv := 1 to 10 do
+          begin
+            tmp6.x := tegla.pos.x + 15 * cos(2 * D3DX_PI / anglediv); //15 radius
+            tmp6.z := tegla.pos.z + 15 * sin(2 * D3DX_PI / anglediv);
+            tmp6.y := advwove(tmp6.x, tmp6.z);
+            if tmp6.y >= waterlevel then
+            begin
+              cpx^:=tmp6.x;
+              cpy^:=tmp6.y;
+              cpz^:=tmp6.z;
+              cpox^:=cpx^;cpoy^:=cpy^;cpoz^:=cpz^;
+              break;
+            end;
+          end;
       end;
     end;
     if mszogx>(szogx + pi) then
