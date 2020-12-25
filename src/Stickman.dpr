@@ -116,9 +116,9 @@ var
   botGroupArr: array of TBotGroup;
   selfieMaker: TSelfie;
 
-  CMAP1_PATH:string = CMAP_PATH+'default/cmap.png'; //régi terep
-  CMAP2_PATH:string = CMAP_PATH+'default/cmap2.png'; //térkép
-  CMAP3_PATH:string = CMAP_PATH+'default/cmap3.png'; //shader terep
+  CMAP1_NAME:string = 'cmap.png'; //régi terep
+  CMAP2_NAME:string = 'cmap2.png'; //térkép
+  CMAP3_NAME:string = 'cmap3.png'; //shader terep
   modifierjson:TQJSON;
 {$IFDEF matieditor}
   debugstr:string = ' ';
@@ -2083,6 +2083,8 @@ var
 
   y_waterstart:single;
   y_waterend:single;
+
+  path:string;
 begin
 
   setlength(cmap1, CMAP_SIZE * CMAP_SIZE);
@@ -2112,12 +2114,15 @@ begin
   l2c:=D3DXColorFromDWORD(stuffjson.GetInt(['light', 'color_shadow']));
   l3c:=D3DXColorFromDWORD(stuffjson.GetInt(['light', 'color_ambient']));
 
+  path := CMAP_PATH + inttohex(checksum,8) + '/';
+  if not DirectoryExists(path) then
+    CreateDir(path);
 
-  if (useoldterrain or (g_pEffect <> nil)) and fileexists(CMAP1_PATH) then
+  if (useoldterrain or (g_pEffect <> nil)) and fileexists(path + CMAP1_NAME) then
   begin
-    LTFF(g_pd3dDevice, CMAP1_PATH, mt1, TEXFLAG_FIXRES, nil, false);
+    LTFF(g_pd3dDevice, path + CMAP1_NAME, mt1, TEXFLAG_FIXRES, nil, false);
   end
-  else if (not fileexists(CMAP2_PATH)) or (not fileexists(CMAP1_PATH)) then
+  else if (not fileexists(path + CMAP2_NAME)) or (not fileexists(path + CMAP1_NAME)) then
   begin
 
     laststate:= 'Generating terrain';
@@ -2170,7 +2175,7 @@ begin
         cmap1[j * CMAP_SIZE + i, 3]:=min(round(col.a * 255), 255);
       end;
 
-    if not fileexists(CMAP1_PATH) then
+    if not fileexists(path + CMAP1_NAME) then
     begin
       result:=tmptex.LockRect(0, lr, nil, 0);
       if Failed(result) then Exit;
@@ -2183,7 +2188,7 @@ begin
       end;
       tmptex.UnlockRect(0);
 
-      D3DXSaveTextureToFile(PChar(CMAP1_PATH), D3DXIFF_PNG, tmptex, nil);
+      D3DXSaveTextureToFile(PChar(path + CMAP1_NAME), D3DXIFF_PNG, tmptex, nil);
 
       g_pd3ddevice.UpdateTexture(tmptex, mt1);
     end;
@@ -2191,9 +2196,9 @@ begin
 
   //////////
 
-  if fileexists(CMAP2_PATH) then
+  if fileexists(path + CMAP2_NAME) then
   begin
-    LTFF(g_pd3dDevice, CMAP2_PATH, mt2, 0, nil, false);
+    LTFF(g_pd3dDevice, path + CMAP2_NAME, mt2, 0, nil, false);
   end
   else
   begin
@@ -2232,16 +2237,16 @@ begin
     end;
     tmptex.UnlockRect(0);
 
-    D3DXSaveTextureToFile(PChar(CMAP2_PATH), D3DXIFF_PNG, tmptex, nil);
+    D3DXSaveTextureToFile(PChar(path + CMAP2_NAME), D3DXIFF_PNG, tmptex, nil);
 
     g_pd3ddevice.UpdateTexture(tmptex, mt2);
   end;
   ///////////////////
 
   if not useoldterrain then
-    if fileexists(CMAP3_PATH) then
+    if fileexists(path + CMAP3_NAME) then
     begin
-      LTFF(g_pd3dDevice, CMAP3_PATH, mt1, TEXFLAG_FIXRES, nil, false);
+      LTFF(g_pd3dDevice, path + CMAP3_NAME, mt1, TEXFLAG_FIXRES, nil, false);
     end
     else
     begin
@@ -2262,7 +2267,7 @@ begin
 
       // start := GetTickCount; //indev
       laststate:= 'Generating shader terrain';
-      menu.DrawLoadScreen(75);
+      menu.DrawLoadScreen(80);
 
       l1:=D3DXVector3(-1, 1.0, 0);
       D3DXVec3Normalize(l1, l1);
@@ -2365,7 +2370,7 @@ begin
       end;
       tmptex.UnlockRect(0);
 
-      D3DXSaveTextureToFile(PChar(CMAP3_PATH), D3DXIFF_PNG, tmptex, nil);
+      D3DXSaveTextureToFile(PChar(path + CMAP3_NAME), D3DXIFF_PNG, tmptex, nil);
 
       g_pd3ddevice.UpdateTexture(tmptex, mt1);
     end;
@@ -3539,9 +3544,7 @@ begin
     dec(alapind[y], lvlsizp * lvlsizp * (lvlmax - farlvl + 1));
 
 
-  menu.DrawLoadScreen(75);
-  initmaptex;
-  menu.DrawLoadScreen(80);
+
 
   menu.lowermenutext:=stuffjson.GetString(['lower_menu_text']);
   if menu.lowermenutext = '' then
@@ -3586,6 +3589,7 @@ begin
 
   writeln(logfile, 'Initilazing geometry succesful');flush(logfile);
 
+  initmaptex;  //75-80
 
   laststate:= 'Loading sounds';
   writeln(logfile, 'Loading sounds');flush(logfile);
@@ -7499,13 +7503,13 @@ procedure handlefizik;
 var
   i, j, k, l, m, m1:integer;
   ox, oy, oz, amag, tx, tz:single;
-  norm, hova, opos, tmp, tmp3, tmp4, tmp5, tmps:TD3DXVector3;
+  norm, hova, opos, tmp, tmp3, tmp4, tmp5, tmp6, tmps:TD3DXVector3;
   korlat:integer;
   rbid:integer;
   h1, h2, h3:integer;
   bol:boolean;
   eses, nagyeses:boolean;
-  rnd:integer;
+  rnd, anglediv:integer;
   cnt:integer;
   mxh:integer;
   mx, tmp2, tmpfloat1, tmpfloat2:single;
@@ -7526,7 +7530,7 @@ begin
   while not (((hanyszor + 1) * 10 > timegettime) or ((korlat + 1) > 20)) do
   begin
     inc(hanyszor);
-
+ {$IFNDEF godmode}
     // if playrocks>1 then playrocks:=1;
     if vizben < 0 then vizben:=0;
     if vizben > 1 then vizben:=1;
@@ -7569,7 +7573,7 @@ begin
             addrongybaba(d3dxvector3(cpx^, cpy^, cpz^), d3dxvector3(cpox^, cpoy^, cpoz^), d3dxvector3(0.00, 0.0, 0), myfegyv, 10, 0, -1);
           end;
         end;
-
+{$ENDIF}
     if recovercar > 0 then
     begin
       inc(recovercar);
@@ -8085,6 +8089,23 @@ begin
         cpy^:=leavetriggers[currentleavetrigger].exitpos.y;
         cpz^:=leavetriggers[currentleavetrigger].exitpos.z;
         cpox^:=cpx^;cpoy^:=cpy^;cpoz^:=cpz^;
+      end
+      else if (advwove(tegla.pos.x, tegla.pos.z) < waterlevel) and (tegla.pos.y < waterlevel + 5) then //terrain is below water and vehicle is near or under waterlevel
+      begin //try to find safe position on land to exit
+          for anglediv := 1 to 10 do
+          begin
+            tmp6.x := tegla.pos.x + 15 * cos(2 * D3DX_PI / anglediv); //15 radius
+            tmp6.z := tegla.pos.z + 15 * sin(2 * D3DX_PI / anglediv);
+            tmp6.y := advwove(tmp6.x, tmp6.z);
+            if tmp6.y >= waterlevel then
+            begin
+              cpx^:=tmp6.x;
+              cpy^:=tmp6.y;
+              cpz^:=tmp6.z;
+              cpox^:=cpx^;cpoy^:=cpy^;cpoz^:=cpz^;
+              break;
+            end;
+          end;
       end;
     end;
     if mszogx>(szogx + pi) then
@@ -16453,13 +16474,6 @@ begin //                 BEGIIIN
     //Bots
     bots_enabled:=stuffjson.getBool(['bots_default_enabled']);
 
-    if winter then
-    begin
-      CMAP1_PATH := CMAP_PATH+'winter/cmap.png'; //régi terep
-      CMAP2_PATH := CMAP_PATH+'winter/cmap2.png'; //térkép
-      CMAP3_PATH := CMAP_PATH+'winter/cmap3.png'; //shader terep
-    end;
-
     perlin:=Tperlinnoise.create(stuffjson.GetInt(['random_seed']));
 
  	laststate:= 'Loading weapon skins';
@@ -16849,7 +16863,6 @@ begin //                 BEGIIIN
     if not iswindowed and lostdevice then messagebox(0, Pchar(lang[31]), Pchar(lang[30]), MB_SETFOREGROUND or MB_ICONWARNING);
     writeln(logfile, 'Game ended at:', formatdatetime('yyyy.mm.dd/hh:nn:ss', date + time));
     closefile(logfile);
-    RemoveFontResource('data/gui/eurostar.ttf');
   except
     on E:Exception do
     begin
@@ -16865,7 +16878,6 @@ begin //                 BEGIIIN
       
       writeln(logfile, 'Exception at:', formatdatetime('yyyy.mm.dd/hh:nn:ss', date + time));
       closefile(logfile);
-      RemoveFontResource('data/gui/eurostar.ttf');
     end;
   end;
 
@@ -16873,7 +16885,6 @@ begin //                 BEGIIIN
   afupquit;
   closefile(logfile);
   deletefile('data/cfg/skins.cfg');
-  RemoveFontResource('data/gui/eurostar.ttf');
   exitprocess(0);
 end.
 

@@ -14,8 +14,8 @@ uses
   qjson;
 
 const
-  PROG_VER=210020;
-  datachecksum=$F8FC7430;
+  PROG_VER=211000;
+  datachecksum=$46D75CAF;
 
 type
 
@@ -920,7 +920,7 @@ procedure specialcopymem(dest,src:pointer;deststride,srcstride:integer;elements:
 
 function CommandLineOption(mi:string):boolean;
 
-procedure gethostbynamewrap2(nam:string;hova:PinAddr;canwait:boolean);
+//procedure gethostbynamewrap2(nam:string;hova:PinAddr;canwait:boolean);
 function sockaddrtoincim(sockaddr:sockaddr_in):Tincim;
 function incimtosockaddr(incim:Tincim):sockaddr_in;
 function recvall(sck:cardinal;var buffer;length,timeout:cardinal):integer;
@@ -4048,8 +4048,8 @@ begin
   result.sin_addr:=sockaddr.sin_addr;
 end;
 
+{
 type
-
   Pghbntrktyp=^Tghbntrktyp;
   Tghbntrktyp=record
     nam:string[250];
@@ -4068,10 +4068,11 @@ begin
   hste:=gethostbyname(Pchar(nam2));
   if hste=nil then
   begin cucc^.hova^.s_addr:=0;exit; end;
-  cucc^.hova^:=Pinaddr(hste.h_addr^)^;
+  cucc^.hova^:=Pinaddr(hste.h_addr^)^;  //FIXME this no work
   dispose(cucc);
 end;
 
+//FIXME currently broken - use socketstuff gethostbynamewrap instead
 procedure gethostbynamewrap2(nam:string;hova:PinAddr;canwait:boolean);
 var
   hste:Phostent;
@@ -4095,11 +4096,12 @@ begin
   else
   begin
     hste:=gethostbyname(Pchar(nam));
-    if hste=nil then
+    if hste = nil then
     begin hova^.s_addr:=0;exit; end;
-    hova^:=Pinaddr(hste.h_addr^)^;
+    hova^:=Pinaddr(hste.h_addr^)^; //FIXME this no work
   end;
 end;
+}
 
 function recvall(sck:cardinal;var buffer;length,timeout:cardinal):integer;
 var
@@ -4664,4 +4666,5 @@ begin
 end;
 
 end.
+
 
