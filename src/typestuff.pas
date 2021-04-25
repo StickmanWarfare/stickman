@@ -21,6 +21,14 @@ type
 
   array4ofbyte=array[0..3] of byte;
 
+  TProcedure = procedure;
+  TProcedureArray = array of TProcedure;
+  TCallback = procedure of object;
+  TCallbackArray = array of TCallback;  
+
+  TComparatorFunction = function(value: Variant; key: string = ''): boolean;
+  TMutatorFunction = function(value: Variant; key: string = ''): Variant;
+
   THUDmessage=class(TObject)
   public
     value:string;

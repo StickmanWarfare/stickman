@@ -5,7 +5,10 @@ uses
   Sysutils,
   Typestuff,
   D3DX9,
-  ojjektumok;
+  Direct3D9,
+  ojjektumok,
+  fizika,
+  windows;
 
 type
   ByteArrayUtils = class
@@ -74,7 +77,137 @@ type
 //TODO    procedure filterByFegyv();
   end;
 
+  type TRenderUtils = class (TObject)
+    protected
+      g_pD3Ddevice: IDirect3ddevice9;
+    public
+      constructor Create(d3dxDevice: IDirect3DDevice9);
+      //TODO: procedure drawTextOnHud(text: string; pos: TD3DXVector2; color: Cardinal);
+      //TODO: procedure drawText(text: string; pos: TD3DXVector2; color: Cardinal);
+      procedure drawBox(pos: TD3DXVector3; size: TD3DXVector3; color: Cardinal);
+      //TODO: procedure displayText(text: string);
+  end;
+
+  type TMapUtils = class (TObject)
+    public
+      function getMapHeight(xx, zz: Single): Single;
+      function vanOttValami(xx:single;var yy:single;zz:single):boolean;
+      function raytestlvl(v1, v2:TD3DXVector3; hany:integer; var v3:TD3DXVector3):boolean;
+  end;
+
+
+  
 implementation
+    
+//MAP START
+function TMapUtils.vanOttValami(xx:single;var yy:single;zz:single):boolean; //copy of vanottvalami
+const
+  szor = 2;
+var
+  i:integer;
+  tav:single;
+begin
+  result:=false;
+
+  for i:=0 to high(posrads) do
+    with posrads[i] do
+    begin
+
+      tav:=sqr(posx - xx) + sqr(posz - zz);
+      if tav > sqr(raddn) then continue;
+
+      if tav < sqr(radd) then
+        tav:=0
+      else
+      begin
+        tav:=sqrt(tav);
+        if tav<(radd + raddn) * 0.5 then
+          tav:=sqr((tav - radd) / (raddn - radd)) * 2
+        else
+          tav:=1 - sqr((raddn - tav) / (raddn - radd)) * 2;
+      end;
+      yy:=posy * (1 - tav) + yy * tav;
+      result:=true;
+    end;
+end;
+
+function TMapUtils.raytestlvl(v1, v2:TD3DXVector3; hany:integer; var v3:TD3DXVector3):boolean; //copy of raytestlvl
+var
+  k:integer;
+  v4:TD3DXVector3;
+begin
+  v4:=v1;
+  for k:=0 to hany do
+  begin
+    v3:=v4;
+    d3dxvec3lerp(v4, v1, v2, k / (hany + 1));
+    try
+      if getMapHeight(v4.x, v4.z) > v4.y then
+      begin
+        result:=true;exit;
+        v3:=v4;
+      end;
+    except
+      v3:=v2;result:=false;exit;
+    end;
+  end;
+
+  result:=false;
+end;
+
+function TMapUtils.getMapHeight(xx, zz: Single): Single;
+var
+  ay:single;
+begin
+  if (xx < -10000) or (xx > 10000) or (zz < -10000) or (zz > 10000) then
+  begin
+    result:=0;
+    exit;
+  end;
+  ay:=wove(xx, zz);
+  vanOttValami(xx, ay, zz);
+  result:=ay;
+end;
+
+//RENDER START
+constructor TRenderUtils.Create(d3dxDevice: IDirect3DDevice9);
+begin
+  inherited Create;
+
+  g_pD3Ddevice := d3dxDevice;
+end;
+
+procedure TRenderUtils.drawBox(pos: TD3DXVector3; size: TD3DXVector3; color: Cardinal);
+var
+  oo: HRESULT;
+  mesh: ID3DXMesh;
+  tempmesh:ID3DXMesh;
+begin
+  g_pd3dDevice.SetRenderState(D3DRS_FOGENABLE, itrue);
+
+  g_pd3dDevice.SetTexture(0, nil);
+  g_pd3dDevice.SetRenderState(D3DRS_FOGENABLE, iFalse);
+  g_pd3dDevice.SetRenderState(D3DRS_LIGHTING, iTrue);
+  g_pd3dDevice.SetRenderState(D3DRS_AMBIENT, color);
+
+  oo := D3DXCreateBox(g_pD3DDevice, size.x, size.y, size.z, tempmesh, nil);
+  if (oo <> D3D_OK) then Exit;
+  if tempmesh = nil then exit;
+  if FAILED(tempmesh.CloneMeshFVF(0, D3DFVF_XYZ or D3DFVF_NORMAL, g_pd3ddevice, mesh)) then exit;
+  if tempmesh <> nil then tempmesh:=nil;
+
+  //normalizemesh(mesh);
+
+  mat_world:=identmatr;
+  mat_world._11:=1;
+  mat_world._22:=1;
+  mat_world._33:=1;
+  mat_world._41:=pos.x;
+  mat_world._42:=pos.y;
+  mat_world._43:=pos.z;
+  g_pd3dDevice.SetTransform(D3DTS_WORLD, mat_World);
+  mesh.DrawSubset(0);
+end;
 
 //BYTE START
 function ByteArrayUtils.indexOf(arr: array of Byte; value: Byte): Integer;
@@ -354,3 +487,4 @@ begin
 end;
 
 end.
+

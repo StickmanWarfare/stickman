@@ -67,7 +67,10 @@ uses
   BotGroups,
   Selfie,
   stickApi,
-  Scripts;
+  Scripts,
+  MutableObject,
+  Redux,
+  DynamicArray;
 
 const
   lvlmin = 0; //ENNEK ÍGY KÉNE MARADNIA
