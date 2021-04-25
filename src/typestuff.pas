@@ -25,7 +25,8 @@ type
   TProcedure = procedure;
   TProcedureArray = array of TProcedure;
   TCallback = procedure of object;
-  TCallbackArray = array of TCallback;  
+  TCallbackArray = array of TCallback;
+  TIndefiniteProcedute = procedure(const args: array of const); 
 
   TComparatorFunction = function(value: Variant; key: string = ''): boolean;
   TMutatorFunction = function(value: Variant; key: string = ''): Variant;

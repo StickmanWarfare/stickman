@@ -71,7 +71,8 @@ uses
   MutableObject,
   Redux,
   DynamicArray,
-  Sentry;
+  Sentry,
+  ThreadHandler;
 
 const
   lvlmin = 0; //ENNEK ÍGY KÉNE MARADNIA
@@ -2911,6 +2912,12 @@ begin
     end;
 end;
 
+//TODO: remove
+procedure fastinfo(const args: array of const);
+begin
+  scriptsHandler.evalScriptLine('fastinfo ' + VariantUtils.VarRecToStr(args[0]));
+end;
+
 function InitializeAll:HRESULT;
 var
   pIndices:PWordArray;
@@ -2936,6 +2943,14 @@ begin
   Result:=E_FAIL;
   enableeffects:=true;
   laststate:= 'Initializing';
+
+  //TODO: remove
+  //raise Exception.Create('faszom varja ki amig tolt');
+
+  threadHandlerModule := TThreadHandler.Create;
+
+  fastinfoSaga := TSaga.Create('fastinfo', fastinfo);
+  threadHandlerModule.addSaga(fastinfoSaga);
 
   sundir:=D3DXVector3(-1, 1.0, 0);
 
@@ -4749,7 +4764,13 @@ begin
     else if dine.MousMovScrl > 0 then
       selfieMaker.zoomlevel := max(selfieMaker.zoomlevelMin, selfieMaker.zoomlevel - 0.1);
 
-    if dine.keyprsd(DIK_B) then selfieMaker.dab := not selfieMaker.dab;
+    if dine.keyprsd(DIK_B) then
+    begin
+      //TODO: remove
+      threadHandlerModule.call('fastinfo', ['pressed B']);
+
+      selfieMaker.dab := not selfieMaker.dab;
+    end;
   end;
 
   // TODO

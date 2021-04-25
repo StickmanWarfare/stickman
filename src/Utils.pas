@@ -95,9 +95,36 @@ type
       function raytestlvl(v1, v2:TD3DXVector3; hany:integer; var v3:TD3DXVector3):boolean;
   end;
 
+  type VariantUtils = class (TObject)
+    published
+      class function VarRecToStr(rec: TVarRec): string;
+      //TODO: class function VarRecToInt(): string;
+      //TODO: class function VarRecToFloat(): string;
+    end;      
 
   
 implementation
+
+class function VariantUtils.VarRecToStr(rec: TVarRec): string;
+begin
+  with rec do
+    case VType of
+      vtInteger:  Result := Result + IntToStr(VInteger);
+      vtBoolean:  Result := Result + BoolToStr(VBoolean);
+      vtChar:     Result := Result + VChar;
+      vtExtended: Result := Result + FloatToStr(VExtended^);
+      vtString:   Result := Result + VString^;
+      vtPChar:    Result := Result + VPChar;
+      vtObject:   Result := Result + VObject.ClassName;
+      vtClass:    Result := Result + VClass.ClassName;
+      vtAnsiString:  Result := Result + string(VAnsiString);
+      //vtUnicodeString:  Result := Result + string(VUnicodeString);
+      vtCurrency:    Result := Result + CurrToStr(VCurrency^);
+      vtVariant:     Result := Result + string(VVariant^);
+      vtInt64:       Result := Result + IntToStr(VInt64^);
+    
+  end;
+end;
     
 //MAP START
 function TMapUtils.vanOttValami(xx:single;var yy:single;zz:single):boolean; //copy of vanottvalami
