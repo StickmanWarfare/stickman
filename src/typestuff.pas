@@ -328,42 +328,6 @@ type
     tex:IDirect3DTexture9;
   end;
 
-  TScript=record
-    name:string;
-    instructions:array of string;
-  end;
-
-  T3dLabel=record
-    pos:TD3DXVector3;
-    rad:single;
-    text:string;
-  end;
-
-  TVecVar=record
-    pos:TD3DXVector3;
-    name:string;
-  end;
-
-  TNumVar=record
-    num:single;
-    name:string;
-  end;
-
-  TStrVar=record
-    text:string;
-    name:string;
-  end;
-
-  TBind=record
-    key:char;
-    script:string;
-  end;
-
-  TTimedscript=record
-    time:cardinal;
-    script:string;
-  end;
-
   TParticleSys=record
     from,spd:TD3DXVector3;
     tipus:integer;
@@ -382,7 +346,6 @@ type
 
   Pbinmsg=^Tbinmsg;
   Tbinmsg=packed array[0..511] of byte;
-
 
 
   PVecArr2=^TVecarr2;
@@ -577,6 +540,10 @@ var
   cpy:Psingle;///FRÖCCCS
   cpz:Psingle;///FRÖCCCS
 
+  addchatindex: integer;
+  
+  displaycloseevent: string;
+
   sundir:TD3DXVector3;
   texturefilelist:string;
 
@@ -651,6 +618,24 @@ var
   vizkor1,vizkor2,vizkor3:single;
 
   FPSLimit:cardinal = 0;
+
+  teleports:array of TTeleport;
+  particlesSyses:array of TParticleSys;
+  particlesProtos:array of TParticleSys;
+  triggers:array of TTrigger;
+  leavetriggers:array of TLeaveTrigger;
+
+  labelactive:boolean;
+  labeltext:string;
+  
+  bots_enabled:boolean = true;
+
+  battle:boolean = false;
+  skirmish:boolean = false;
+  wave:integer = 0;
+  accuracy_modif:single = 0;
+
+  safemode:boolean = false;
 const
   //FPS limiter
   FPS_MAX=500; 
@@ -779,6 +764,9 @@ const
                           _31:0;_32:0;_33:0.5;_34:0;
                           _41:0;_42:0;_43:0;_44:1); }
   sqrt2=1.414213;
+
+//TODO: move to separate unit
+procedure addHudMessage(input:string;col:longword;f:word = 500);
 
 function CustomVertex(x,y,z,nx,ny,nz:single;acolor:longword;au,av,au2,av2:single):TCustomVertex;overload;
 function CustomVertex(pos:TD3DXVector3;nx,ny,nz:single;acolor:longword;au,av,au2,av2:single):TCustomVertex;overload;
@@ -985,6 +973,12 @@ procedure logerror(s:string);
 
 function rotate2d(x,y,cx,cy:single;angle:single):TD3DXVector2;
 
+procedure AddLAW(av1, av2:TD3DXvector3;akl:integer);
+procedure AddNOOB(av1, av2:TD3DXvector3;akl:integer);
+procedure AddX72(av1, av2:TD3DXvector3;akl:integer);  
+procedure AddH31_G(av1, av2:TD3DXvector3;akl:integer);   
+procedure AddH31_T(av1, av2:TD3DXvector3;akl:integer);
+
 procedure log(s:string);
 function csicsahdr:boolean;
 
@@ -1006,12 +1000,120 @@ var
   isnormals:boolean;
   lang:array of string;
   weapons:array of TWeaponType;
+
+  noobproj, lawproj, x72proj, h31_gproj, h31_tproj:array of Tnamedprojectile;
+  lawmesh, noobmesh:ID3DXMesh;
+  rezg:single;
+  hatralok:single;
+  LAWkesleltetes:integer = -1;
+  mp5ptl:single;
+  x72gyrs:single;
+  
 implementation
 
 var
   //infcheckstuff
   Infinity:single=(1.00/0);
   InfinityMask:cardinal absolute infinity;
+
+procedure AddLAW(av1, av2:TD3DXvector3;akl:integer);
+begin
+  setlength(lawproj, length(lawproj) + 1);
+  with lawproj[high(lawproj)] do
+  begin
+    v1:=av1;
+    v2:=av2;
+    v3:=v2;
+    name:=XORHash2x12byte(v1, v2);
+    kilotte:=akl;
+    eletkor:=0;
+  end;
+end;
+
+procedure AddNOOB(av1, av2:TD3DXvector3;akl:integer);
+begin
+  setlength(noobproj, length(noobproj) + 1);
+  with noobproj[high(noobproj)] do
+  begin
+    v1:=av1;
+    v2:=av2;
+    v3:=v2;
+    name:=XORHash2x12byte(v1, v2);
+    kilotte:=akl;
+    eletkor:=0;
+  end;
+end;
+
+procedure AddX72(av1, av2:TD3DXvector3;akl:integer);
+var
+  tmp1, tmp2:TD3DXVector3;
+  szog, l:single;
+begin
+  setlength(X72proj, length(X72proj) + 1);
+  with X72proj[high(X72proj)] do
+  begin
+    v1:=av1;
+    cel:=av2;
+    d3dxvec3Subtract(v2, av2, av1);
+
+    name:=XORHash2x12byte(av1, av2);
+    name:=(name + 1) * (name + 2) * (name - 1) * (name - 2) * 134775813;
+    D3DXVec3Cross(tmp1, v2, D3DXVector3(0, 1, 0));
+    D3DXVec3Cross(tmp2, v2, tmp1);
+
+    FastVec3Normalize(tmp1);
+    FastVec3Normalize(tmp2);
+
+    szog:=((name and $FFFF) / $10000) * D3DX_PI;
+
+    d3dxvec3scale(tmp1, tmp1, cos(szog));
+    d3dxvec3scale(tmp2, tmp2, -sin(szog));
+    l:=d3dxvec3length(v2);
+    if l > 0.000001 then
+      d3dxvec3scale(v2, v2, 1 / l);
+    d3dxvec3add(v2, v2, tmp1);
+    d3dxvec3add(v2, v2, tmp2);
+    d3dxvec3scale(v2, v2, 0.005 * l);
+
+    d3dxvec3subtract(v2, v1, v2);
+
+    v3:=v2;
+    kilotte:=akl;
+    eletkor:=0;
+  end;
+end;
+
+procedure AddH31_G(av1, av2:TD3DXvector3;akl:integer);
+begin
+  setlength(h31_gproj, length(h31_gproj) + 1);
+  with h31_gproj[high(h31_gproj)] do
+  begin
+    D3DXvec3subtract(v1, av2, av1);
+    D3DXvec3normalize(v1, v1);
+    D3DXvec3add(v1, v1, av1);
+    v2:=av1;
+    v3:=v2;
+    name:=XORHash2x12byte(v1, v2);
+    kilotte:=akl;
+    eletkor:=0;
+  end;
+end;
+
+procedure AddH31_T(av1, av2:TD3DXvector3;akl:integer);
+begin
+  setlength(h31_tproj, length(h31_tproj) + 1);
+  with h31_tproj[high(h31_tproj)] do
+  begin
+    D3DXvec3subtract(v1, av2, av1);
+    D3DXvec3normalize(v1, v1);
+    D3DXvec3add(v1, v1, av1);
+    v2:=av1;
+    v3:=v2;
+    name:=XORHash2x12byte(v1, v2);
+    kilotte:=akl;
+    eletkor:=0;
+  end;
+end;
 
 function clip(low,high:single;alany:single):single;
 begin
@@ -4663,6 +4765,19 @@ begin
   result.x := result.x + cx;
   result.y := result.y + cy;
 
+end;
+
+//TODO: move to separate unit
+procedure addHudMessage(input:string;col:longword;f:word = 500);
+var
+  i:byte;
+begin
+  for i:=high(hudMessages) downto low(hudMessages) + 1 do
+    hudMessages[i]:=hudMessages[i - 1];
+
+  i:=low(hudMessages);
+
+  hudMessages[i]:=THUDMessage.create(input, col, f);
 end;
 
 end.

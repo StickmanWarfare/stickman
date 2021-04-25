@@ -6,7 +6,7 @@
 
 {$R stickman.RES}
 {$DEFINE force16bitindices} //ez hibás, pár helyen, ha nincs kipontozva, meg kell majd nézni
-{$DEFINE undebug} //Remove dot for release, add dot for dev
+{.$DEFINE undebug} //Remove dot for release, add dot for dev
 {.$DEFINE nochecksumcheck}
 {.$DEFINE speedhack}
 {.$DEFINE repkedomod}
@@ -17,7 +17,7 @@
 {.$DEFINE matieditor}
 {.$DEFINE profiler}
 {.$DEFINE propeditor}
-{.$DEFINE localhost}
+{$DEFINE localhost}
 {.$DEFINE nomodifier}
 {.$DEFINE oldterrain}
 {.$DEFINE fegyverteszt}
@@ -66,7 +66,8 @@ uses
   IdWinsock2,
   BotGroups,
   Selfie,
-  stickApi;
+  stickApi,
+  Scripts;
 
 const
   lvlmin = 0; //ENNEK ÍGY KÉNE MARADNIA
@@ -114,7 +115,9 @@ var
   // REMOVE
 
   botGroupArr: array of TBotGroup;
-  selfieMaker: TSelfie;
+  selfieMaker: TSelfie; 
+
+  scriptsHandler: TScriptsHandler; 
 
   CMAP1_NAME:string = 'cmap.png'; //régi terep
   CMAP2_NAME:string = 'cmap2.png'; //térkép
@@ -178,7 +181,6 @@ var
   foliages:array of Tfoliage; //Növényzet
   //  foliagelevels:array of integer;
   ojjektumrenderer:T3DORenderer;
-  propsystem:TPropsystem;
   fegyv:Tfegyv = nil;
   test:array[0..9] of single;
   VBwhere:integer;
@@ -191,14 +193,6 @@ var
   menu:T3dMenu = nil;
   nohud:boolean = false;
   nofegyv:boolean = false;
-  bots_enabled:boolean = true;
-
-  battle:boolean = false;
-  skirmish:boolean = false;
-  wave:integer = 0;
-  accuracy_modif:single = 0;
-
-  safemode:boolean = false;
 
   portalbaugras:boolean = false;
 
@@ -218,15 +212,6 @@ var
 
   portalpos:TD3DXVector3;
   portalstarted:boolean = false;
-
-  scripts:array of TScript;
-  vecVars:array of TVecVar;
-  numVars:array of TNumVar;
-  strVars:array of TStrVar;
-  actualscript:string;
-  actualscriptline:integer;
-  scriptdepth:integer = 0;
-  scriptevaling:array[0..50] of boolean;
 
   usebutton:boolean = false;
 
@@ -267,8 +252,6 @@ var
   coordsniper:boolean = false;
   fsettings:TFormatSettings;
 
-  addchatindex:integer;
-
 {$IFDEF propeditor}
   debugstr:string;
   propsniper:boolean;
@@ -306,9 +289,6 @@ var
   suicidevolt:integer;
   tauntvolt:boolean;
   labelvolt:boolean;
-
-  labelactive:boolean;
-  labeltext:string;
 
   HDRarr:array[0..7, 0..7] of integer;
   HDRscanline:byte;
@@ -349,14 +329,6 @@ var
   villambol:byte;
   //  fogc,fogstart,fogend,lightIntensity:single;
 
-  noobproj, lawproj, x72proj, h31_gproj, h31_tproj:array of Tnamedprojectile;
-  lawmesh, noobmesh:ID3DXMesh;
-  rezg:single;
-  hatralok:single;
-  LAWkesleltetes:integer = -1;
-  mp5ptl:single;
-  x72gyrs:single;
-
   effecttexture, reflecttexture:IDirect3DTexture9;
   waterbumpmap:IDirect3DTexture9;
   enableeffects:boolean;
@@ -385,19 +357,9 @@ var
   //  frust:Tfrustum;
 
   vegeffekt:integer;
-
-  teleports:array of TTeleport;
-  particlesSyses:array of TParticleSys;
-  particlesProtos:array of TParticleSys;
+  
   labels:array of T3dLabel;
-  triggers:array of TTrigger;
-  leavetriggers:array of TLeaveTrigger;
-  binds:array of TBind;
-  timedscripts:array of TTimedscript;
-
   sounds:array of TSoundData;
-
-  displaycloseevent:string;
 
   opt_taunts:boolean;
 
@@ -446,9 +408,6 @@ var
   //  re_pos:TD3DXVector3;
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-procedure evalscriptline(line:string);forward;
-procedure evalScript(name:string);forward;
 procedure writeChat(s:string);forward;
 procedure fillupmenu;forward;
 
@@ -540,7 +499,7 @@ begin
         line := inttostr(i + 1) + '. ' + nev + ' ' + pont;
         output := output + NL + line;
        end;
-       evalscriptline('display ' + output);
+       scriptsHandler.evalscriptline('display ' + output);
     end;
   finally
     Terminate;
@@ -585,7 +544,7 @@ begin
     begin
       output := _response.data.getString(['data', 'rank']);
 
-      evalscriptline('display ' + output);
+      scriptsHandler.evalscriptline('display ' + output);
     end;
 
   finally
@@ -627,7 +586,7 @@ begin
         line := inttostr(i + 1) + '. ' + nev + ' ' + pont;
         output := output + NL + line;
        end;
-       evalscriptline('display ' + output);
+       scriptsHandler.evalscriptline('display ' + output);
     end;
   finally
     Terminate;
@@ -668,7 +627,7 @@ begin
         line := inttostr(i + 1) + '. ' + nev + ' ' + pont;
         output := output + NL + line;
        end;
-       evalscriptline('display ' + output);
+       scriptsHandler.evalscriptline('display ' + output);
     end;
   finally
     Terminate;
@@ -1376,6 +1335,8 @@ var
   //  start:cardinal;
   // sw : TStopWatch;
 begin
+  laststate := 'tryupdatefoliage start';
+
   //  start:=GetTickCount;
   //  for j:=lvlmin to lvlmax do
 
@@ -1404,6 +1365,8 @@ begin
   //    writeln(logfile,  sw.ElapsedMilliseconds);
   //        if (GetTickCount-start)<>0 then
   //        writeln(logfile,  GetTickCount-start);
+
+  laststate := 'tryupdatefoliage end';
 end;
 
 procedure updateterrain;
@@ -1411,6 +1374,8 @@ var
   volt:boolean;
   i:integer;
 begin
+  laststate:='updateterrain start';
+
   volt:=false;
   for i:=lvlmax downto lvlmin do
     if lvlupd[i] then
@@ -1419,16 +1384,22 @@ begin
       volt:=true;
     end;
   if volt then remakeindexbuffer;
+
+  laststate:='updateterrain end';
 end;
 
 procedure remaketerrain;
 var
   i:integer;
 begin
+  laststate:='remaketerrain start';
+
   for i:=lvlmax downto lvlmin do
     remakelvl(i);
   updateterrain;
   tryupdatefoliage(true);
+
+  laststate:='remaketerrain end';
 end;
 
 procedure stepb;
@@ -1821,18 +1792,8 @@ begin
     end;
   end;
 
-  n:=stuffjson.GetNum(['scripts']);
-  setlength(scripts, n);
-  for i:=0 to n - 1 do
-    with scripts[i] do
-    begin
-      m:=stuffjson.GetNum(['scripts', i]);
-      setlength(scripts[i].instructions, m);
-      scripts[i].name:=stuffjson.GetKey(['scripts'], i);
-
-      for j:=0 to m - 1 do
-        scripts[i].instructions[j]:=stuffjson.GetString(['scripts', i, j]);
-    end;
+  //load scripts
+  scriptsHandler := TScriptsHandler.Create(stuffjson);
 
   n:=stuffjson.GetNum(['triggers']);
   setlength(triggers, n);
@@ -3999,7 +3960,9 @@ var
   bunkerek:array of TBunker;
   mytime:TDateTime;
   minute, dummy:Word;
-begin
+begin    
+  laststate := 'respawn start';
+
   mytime:=Time;
   DecodeTime(mytime, dummy, minute, dummy, dummy);
 
@@ -4145,6 +4108,8 @@ begin
   updateterrain;
   tryupdatefoliage(true);
 
+  laststate := 'respawn after update';
+
   Dine.Reset;
 
   hanyszor:=(timegettime div 10) + 1;
@@ -4155,6 +4120,8 @@ begin
   snowballs:=50;
 
   meghaltam:=false;
+
+  laststate := 'respawn end';
 end;
 
 
@@ -4694,19 +4661,6 @@ begin
   hudInfoColor:=col;
 end;
 
-
-procedure addHudMessage(input:string;col:longword;f:word = 500);
-var
-  i:byte;
-begin
-  for i:=high(hudMessages) downto low(hudMessages) + 1 do
-    hudMessages[i]:=hudMessages[i - 1];
-
-  i:=low(hudMessages);
-
-  hudMessages[i]:=THUDMessage.create(input, col, f);
-end;
-
 procedure stepHudMessages;
 var
   i:byte;
@@ -5141,7 +5095,7 @@ begin
         if not ((myfegyv = FEGYV_QUAD) and csipo) or autoban then
         begin
           labelactive:=false;
-          evalscript(displaycloseevent);
+          scriptsHandler.evalscript(displaycloseevent);
 
           if autoban then
           begin
@@ -6552,107 +6506,6 @@ begin
 end;
 //{$IFEND}
 
-procedure AddLAW(av1, av2:TD3DXvector3;akl:integer);
-begin
-  setlength(lawproj, length(lawproj) + 1);
-  with lawproj[high(lawproj)] do
-  begin
-    v1:=av1;
-    v2:=av2;
-    v3:=v2;
-    name:=XORHash2x12byte(v1, v2);
-    kilotte:=akl;
-    eletkor:=0;
-  end;
-end;
-
-procedure AddNOOB(av1, av2:TD3DXvector3;akl:integer);
-begin
-  setlength(noobproj, length(noobproj) + 1);
-  with noobproj[high(noobproj)] do
-  begin
-    v1:=av1;
-    v2:=av2;
-    v3:=v2;
-    name:=XORHash2x12byte(v1, v2);
-    kilotte:=akl;
-    eletkor:=0;
-  end;
-end;
-
-
-
-procedure AddX72(av1, av2:TD3DXvector3;akl:integer);
-var
-  tmp1, tmp2:TD3DXVector3;
-  szog, l:single;
-begin
-  setlength(X72proj, length(X72proj) + 1);
-  with X72proj[high(X72proj)] do
-  begin
-    v1:=av1;
-    cel:=av2;
-    d3dxvec3Subtract(v2, av2, av1);
-
-    name:=XORHash2x12byte(av1, av2);
-    name:=(name + 1) * (name + 2) * (name - 1) * (name - 2) * 134775813;
-    D3DXVec3Cross(tmp1, v2, D3DXVector3(0, 1, 0));
-    D3DXVec3Cross(tmp2, v2, tmp1);
-
-    FastVec3Normalize(tmp1);
-    FastVec3Normalize(tmp2);
-
-    szog:=((name and $FFFF) / $10000) * D3DX_PI;
-
-    d3dxvec3scale(tmp1, tmp1, cos(szog));
-    d3dxvec3scale(tmp2, tmp2, -sin(szog));
-    l:=d3dxvec3length(v2);
-    if l > 0.000001 then
-      d3dxvec3scale(v2, v2, 1 / l);
-    d3dxvec3add(v2, v2, tmp1);
-    d3dxvec3add(v2, v2, tmp2);
-    d3dxvec3scale(v2, v2, 0.005 * l);
-
-    d3dxvec3subtract(v2, v1, v2);
-
-    v3:=v2;
-    kilotte:=akl;
-    eletkor:=0;
-  end;
-end;
-
-procedure AddH31_G(av1, av2:TD3DXvector3;akl:integer);
-begin
-  setlength(h31_gproj, length(h31_gproj) + 1);
-  with h31_gproj[high(h31_gproj)] do
-  begin
-    D3DXvec3subtract(v1, av2, av1);
-    D3DXvec3normalize(v1, v1);
-    D3DXvec3add(v1, v1, av1);
-    v2:=av1;
-    v3:=v2;
-    name:=XORHash2x12byte(v1, v2);
-    kilotte:=akl;
-    eletkor:=0;
-  end;
-end;
-
-procedure AddH31_T(av1, av2:TD3DXvector3;akl:integer);
-begin
-  setlength(h31_tproj, length(h31_tproj) + 1);
-  with h31_tproj[high(h31_tproj)] do
-  begin
-    D3DXvec3subtract(v1, av2, av1);
-    D3DXvec3normalize(v1, v1);
-    D3DXvec3add(v1, v1, av1);
-    v2:=av1;
-    v3:=v2;
-    name:=XORHash2x12byte(v1, v2);
-    kilotte:=akl;
-    eletkor:=0;
-  end;
-end;
-
 
 procedure handleHDR;
 var
@@ -7021,33 +6874,6 @@ begin
   menu.DrawMultilineText(labeltext, 0.3, 0.3, 0.7, 0.7, 1, $FFFFFFFF);
 end;
 
-procedure handletimedscripts;
-var
-  i, j, n:integer;
-  now:cardinal;
-begin
-  n:=length(timedscripts);
-  now:=GetTickCount;
-
-  for i:=0 to n - 1 do
-  begin
-    if timedscripts[i].time < now then
-    begin
-      evalscript(timedscripts[i].script);
-    end;
-  end;
-
-  for i:=0 to length(timedscripts) - 1 do
-  begin
-    if timedscripts[i].time < now then
-    begin
-      for j:=i to length(timedscripts) - 2 do
-        timedscripts[j]:=timedscripts[j + 1];
-      SetLength(timedscripts, length(timedscripts) - 1);
-    end;
-  end;
-end;
-
 procedure handletriggers;
 var
   i, j, n:integer;
@@ -7086,15 +6912,15 @@ begin
             begin
              if (not touched) then
              begin
-               evalscriptline('$thistrigger = ' + name);
-               evalScript(ontouchscript);
+               scriptsHandler.evalscriptline('$thistrigger = ' + name);
+               scriptsHandler.evalScript(ontouchscript);
                touched:=true;
              end;
 
              if (usebutton) then
              begin
-               evalscriptline('$thistrigger = ' + name);
-               evalScript(onusescript);
+               scriptsHandler.evalscriptline('$thistrigger = ' + name);
+               scriptsHandler.evalScript(onusescript);
              end;
 
             end
@@ -7102,8 +6928,8 @@ begin
             begin
              if touched then
              begin
-               evalscriptline('$thistrigger = ' + name);
-               evalscript(onleavescript);
+               scriptsHandler.evalscriptline('$thistrigger = ' + name);
+               scriptsHandler.evalscript(onleavescript);
              end;
              touched:=false;
             end
@@ -7139,8 +6965,8 @@ begin
               begin
                if (not touched) then
                begin
-                evalscriptline('$thistrigger = ' + name);
-                evalScript(ontouchscript);
+                scriptsHandler.evalscriptline('$thistrigger = ' + name);
+                scriptsHandler.evalScript(ontouchscript);
                 touched:=true;
                end;
               end
@@ -7148,8 +6974,8 @@ begin
               begin
                if touched then
                begin
-                evalscriptline('$thistrigger = ' + name);
-                evalscript(onleavescript);
+                scriptsHandler.evalscriptline('$thistrigger = ' + name);
+                scriptsHandler.evalscript(onleavescript);
                end;
                touched:=false;
                end
@@ -7944,7 +7770,7 @@ begin
     handlelabels;
     handletriggers;
     handleleavetriggers;
-    handletimedscripts;
+    scriptsHandler.handletimedscripts;
     propsystem.updatedynamic;
 
     if multisc.atrak then
@@ -14205,963 +14031,6 @@ begin
 
 end;
 
-procedure evalScript(name:string);
-var
-  i, j, n, m:integer;
-begin
-  if name = '' then exit;
-
-  scriptdepth:=0;
-  scriptevaling[scriptdepth]:=true;
-
-  n:=Length(scripts);
-  for i:=0 to n - 1 do
-  begin
-    if scripts[i].name = name then
-    begin
-      m:=Length(scripts[i].instructions);
-      actualscript:=name;
-      for j:=0 to m - 1 do
-      begin
-        actualscriptline:=j + 1;
-        evalscriptline(scripts[i].instructions[j]);
-      end;
-
-      scriptdepth:=0;
-      scriptevaling[scriptdepth]:=true;
-
-      exit;
-    end;
-  end;
-end;
-
-function getVecVar(name:string):TD3DXVector3;
-var
-  i, n:integer;
-begin
-  n:=length(vecVars);
-  result:=D3DXVector3Zero;
-  for i:=0 to n - 1 do
-    if vecVars[i].name = name then
-    begin
-      result:=vecVars[i].pos;
-      exit;
-    end;
-  multisc.chats[addchatindex].uzenet:= 'No such vector variable: ' + name;
-  addchatindex:=addchatindex + 1;
-end;
-
-function getNumVar(name:string):single;
-var
-  i, n:integer;
-begin
-  n:=length(numVars);
-  result:=0;
-  for i:=0 to n - 1 do
-    if numVars[i].name = name then
-    begin
-      result:=numVars[i].num;
-      exit;
-    end;
-  multisc.chats[addchatindex].uzenet:= 'No such numeric variable: ' + name;
-  addchatindex:=addchatindex + 1;
-end;
-
-
-procedure scripterror(text:string);
-begin
-  writeln(logfile, text, ' in ', actualscript, ' : ', actualscriptline);
-end;
-
-function compute(words:TStringArray):TSingleArray;
-var
-  i, j, n:integer;
-  tmp:TD3DXVector3;
-  error:Integer;
-  numnum, varnum:integer;
-  nums, vars:array[0..2] of single;
-  operator:char;
-    value:single;
-    r:TSingleArray;
-  begin
-    // ! a vektor változó
-    // % a szám változó
-
-    n:=length(words) + 1;
-    SetLength(words, n);
-    words[n - 1]:= '//';
-
-    for i:=0 to n - 1 do
-      if words[i][1] = '!' then
-      begin
-        tmp:=getVecVar(copy(words[i], 2, length(words[i]) - 1));
-
-        SetLength(words, n + 2);
-        n:=n + 2;
-        if i <> n - 2 then
-          for j:=n - 1 downto i + 3 do
-            words[j]:=words[j - 2];
-        words[i]:=FloatToStr(tmp.x);
-        words[i + 1]:=FloatToStr(tmp.y);
-        words[i + 2]:=FloatToStr(tmp.z);
-
-      end else
-        if words[i][1] = '%' then
-          words[i]:=FloatToStr(getNumVar(copy(words[i], 2, length(words[i]) - 1)));
-
-    //számoljunk, most hogy nincsenek változók
-    numnum:=0;
-    varnum:=0;
-    operator:= ' ';
-      for i:=0 to n - 1 do
-      begin
-
-        val(words[i], value, error);
-
-        if error = 0 then
-        begin //szám!
-
-          inc(numnum); //számoljuk hány szám jön egymás után
-
-          if numnum > 3 then
-          begin
-            scripterror('Unexpected fourth number: ' + words[i]);
-            exit;
-          end;
-
-          nums[numnum - 1]:=value;
-
-        end
-        else
-        begin
-
-          if (operator<> ' ') then // az operátorok mûködése
-          begin
-            if (numnum = 1) and (varnum = 1) then
-            begin
-              if operator = '+' then vars[0]:=vars[0] + nums[0];
-                if operator = '-' then vars[0]:=vars[0] - nums[0];
-                  if operator = '*' then vars[0]:=vars[0] * nums[0];
-                    if operator = '/' then vars[0]:=vars[0] / nums[0];
-            end else
-              if (numnum = 3) and (varnum = 1) then
-              begin
-                if operator = '+' then
-                begin
-                  scripterror('Single and vector addition');exit end;
-                if operator = '-' then
-                begin
-                  scripterror('Single and vector substraction');exit end;
-                if operator = '*' then
-                begin
-                  vars[0]:=vars[0] * nums[0];vars[1]:=vars[0] * nums[1];vars[2]:=vars[0] * nums[2]; end;
-                if operator = '/' then
-                begin
-                  vars[0]:=vars[0] / nums[0];vars[1]:=vars[0] / nums[1];vars[2]:=vars[0] / nums[2]; end;
-              end else
-                if (numnum = 1) and (varnum = 3) then
-                begin
-                  if operator = '+' then
-                  begin
-                    scripterror('Single and vector addition');exit end;
-                  if operator = '-' then
-                  begin
-                    scripterror('Single and vector substraction');exit end;
-                  if operator = '*' then
-                  begin
-                    vars[0]:=vars[0] * nums[0];vars[1]:=vars[1] * nums[0];vars[2]:=vars[2] * nums[0]; end;
-                  if operator = '/' then
-                  begin
-                    scripterror('Vector and single division');exit end;
-                end else
-                  if (numnum = 3) and (varnum = 3) then
-                  begin
-                    if operator = '+' then
-                    begin
-                      vars[0]:=vars[0] + nums[0];vars[1]:=vars[1] + nums[1];vars[2]:=vars[2] + nums[2]; end;
-                    if operator = '-' then
-                    begin
-                      vars[0]:=vars[0] - nums[0];vars[1]:=vars[1] - nums[2];vars[2]:=vars[2] - nums[2]; end;
-                    if operator = '*' then
-                    begin
-                      vars[0]:=vars[0] * nums[0];vars[1]:=vars[1] * nums[1];vars[2]:=vars[2] * nums[2]; end;
-                    if operator = '/' then
-                    begin
-                      vars[0]:=vars[0] / nums[0];vars[1]:=vars[1] / nums[1];vars[2]:=vars[2] / nums[2]; end;
-                  end else
-
-
-          end
-          else
-          begin
-            if (numnum = 1) then begin vars[0]:=nums[0];varnum:=1 end else
-              if (numnum = 3) then begin vars[0]:=nums[0];vars[1]:=nums[1];vars[2]:=nums[2];varnum:=3 end;
-          end;
-
-          if (words[i] = '+') or (words[i] = '-') or (words[i] = '*') then
-          begin
-            if (numnum = 0) or (numnum = 2) then
-            begin
-              scripterror('Unexpected operator: ' + words[i]);
-              exit;
-            end;
-
-            operator:=words[i][1];
-              numnum:=0;
-
-          end
-          else
-            if (words[i] = '//') then //vége!
-            begin
-              SetLength(r, 3);
-              r[0]:=vars[0];
-              r[1]:=vars[1];
-              r[2]:=vars[2];
-              result:=r;
-            end
-            else
-            begin
-              scripterror('Syntax error: ' + words[i]);
-              exit;
-            end;
-        end;
-      end;
-
-  end;
-
-  function computevecs(words:array of string):TD3DXVector3;
-  var
-    tmp:TSingleArray;
-    tmp2:TStringArray;
-    i, n:integer;
-  begin
-
-    n:=length(words);
-    setLength(tmp2, n);
-    for i:=0 to n - 1 do
-      tmp2[i]:=words[i];
-
-    tmp:=compute(tmp2);
-    Result:=D3DXVector3(tmp[0], tmp[1], tmp[2]);
-  end;
-
-  function computenums(words:array of string):single;
-  var
-    tmp:TSingleArray;
-    tmp2:TStringArray;
-    i, n:integer;
-  begin
-
-    n:=length(words);
-    setLength(tmp2, n);
-    for i:=0 to n - 1 do
-      tmp2[i]:=words[i];
-
-    tmp:=compute(tmp2);
-    Result:=tmp[0];
-  end;
-
-  function varToString(input:string):string;
-  var
-    i, n:integer;
-    varname:string;
-  begin
-    result:=input;
-    if length(input) < 2 then exit;
-    if input[1] = '%' then
-    begin
-      varname:=copy(input, 2, length(input) - 1);
-      n:=Length(numVars);
-      for i:=0 to n - 1 do
-        if numVars[i].name = varname then
-        begin
-          result:=FormatFloat('0.####', numVars[i].num);
-          exit;
-        end;
-    end
-    else
-      if input[1] = '!' then
-      begin
-        varname:=copy(input, 2, length(input) - 1);
-        n:=Length(vecVars);
-        for i:=0 to n - 1 do
-          if vecVars[i].name = varname then
-          begin
-            result:=FloatToStr(vecVars[i].pos.x) + ', ' + FloatToStr(vecVars[i].pos.y) + ', ' + FloatToStr(vecVars[i].pos.z);
-            exit;
-          end;
-      end
-      else
-        if input[1] = '$' then
-        begin
-          if input = '$_' then begin result:= ' ';exit; end;
-          if input = '$NL' then begin result:=AnsiString(#13#10);exit; end;
-          varname:=copy(input, 2, length(input) - 1);
-          n:=Length(strVars);
-          for i:=0 to n - 1 do
-            if strVars[i].name = varname then
-            begin
-              result:=strVars[i].text;
-              exit;
-            end;
-        end
-  end;
-
-  procedure varCompare(args:array of string);
-  var
-    argnum, i, j:integer;
-    v1, v2:single;
-    truth:boolean;
-    op:string;
-    a, b:TStringArray;
-  begin
-    argnum:=length(args);
-    //find the comparator
-    for i:=0 to argnum - 1 do
-      if (args[i] = '=') or (args[i] = '>') or (args[i] = '<') or (args[i] = '<>') or (args[i] = '>=') or (args[i] = '<=') then
-      begin
-        op:=args[i];
-        SetLength(a, i);
-        SetLength(b, argnum - i - 1);
-
-        for j:=0 to i - 1 do
-          a[j]:=args[j];
-
-        for j:=0 to argnum - i - 2 do
-          b[j]:=args[i + 1 + j];
-
-        v1:=compute(a)[0];
-        v2:=compute(b)[0];
-        truth:=false;
-
-        if (op = '=') then
-        begin if (v1 = v2) then truth:=true; end
-        else
-          if (op = '<') then
-          begin if (v1 < v2) then truth:=true; end
-          else
-            if (op = '>') then
-            begin if (v1 > v2) then truth:=true; end
-            else
-              if (op = '!=') then
-              begin if (v1 <> v2) then truth:=true; end
-              else
-                if (op = '<=') then
-                begin if (v1 <= v2) then truth:=true; end
-                else
-                  if (op = '>=') then
-                    if (v1 >= v2) then truth:=true;
-
-        inc(scriptdepth);
-        scriptevaling[scriptdepth]:=truth;
-
-        exit;
-      end;
-  end;
-
-  procedure evalscriptline(line:string);
-  var
-    args:array of string;
-    len, i, j, argnum,k,l:integer;
-    tmp:string;
-    v1:single;
-    t:char;
-    vec1,vec2:TD3DXVector3;
-    a:TStringArray;
-    b:Cardinal;
-    testmuks:Tplayer;
-	HTTPClient: TIdHTTP;
-    postData: TIdMultipartFormDataStream;
-    response:string;
-  begin
-
-    //bontsuk szavakra, és tegyük egy args arraybe
-    len:=Length(line);
-    j:=0;
-    SetLength(args, 1);
-
-    for i:=1 to len do begin
-      if (line[i] = ' ') then
-      begin
-        if ((Length(args[j]) > 0)) then
-        begin
-          inc(j);
-          SetLength(args, j + 1);
-        end;
-      end
-      else
-      begin
-        args[j]:=args[j] + line[i];
-      end;
-    end;
-
-    DecimalSeparator:= '.';
-    argnum:=Length(args);
-    //behelyettesítés
-    for i:=1 to Length(args) - 1 do
-    begin
-      if args[i] = '!playerpos' then
-      begin
-        setLength(args, Length(args) + 2);
-        argnum:=argnum + 2;
-        for j:=argnum - 1 downto i + 1 do
-          args[j]:=args[j - 2];
-        args[i]:=FloatToStr(cpx^);
-        args[i + 1]:=FloatToStr(cpy^);
-        args[i + 2]:=FloatToStr(cpz^);
-      end
-      else
-      if args[i] = '$weapon' then
-      begin
-        case myfegyv of
-          FEGYV_MPG:args[i] := 'FEGYV_MPG';
-          FEGYV_M82A1:args[i] := 'FEGYV_M82A1';
-          FEGYV_M4A1:args[i] := 'FEGYV_M4A1';
-          FEGYV_QUAD:args[i] := 'FEGYV_QUAD';
-          FEGYV_NOOB:args[i] := 'FEGYV_NOOB';
-          FEGYV_LAW:args[i] := 'FEGYV_LAW';
-          FEGYV_X72:args[i] := 'FEGYV_X72';
-          FEGYV_MP5A3:args[i] := 'FEGYV_MP5A3';
-          FEGYV_H31_T:args[i] := 'FEGYV_H31_T';
-          FEGYV_H31_G:args[i] := 'FEGYV_H31_G';
-          FEGYV_HPL:args[i] := 'FEGYV_HPL';
-          FEGYV_BM3:args[i] := 'FEGYV_BM3';
-          FEGYV_BM3_2, FEGYV_BM3_3:;
-        end;
-      end
-      else
-      if args[i] = '$team' then
-      begin
-        case myfegyv of
-          FEGYV_MPG, FEGYV_QUAD, FEGYV_NOOB, FEGYV_X72, FEGYV_H31_T, FEGYV_HPL:args[i] := 'TECH';
-        else
-          args[i] := 'GUN';
-        end;
-      end
-      else
-      if args[i] = '%teamn' then
-      begin
-        case myfegyv of
-          FEGYV_MPG, FEGYV_QUAD, FEGYV_NOOB, FEGYV_X72, FEGYV_H31_T, FEGYV_HPL:args[i] := '0';
-        else
-          args[i] := '1';
-        end;
-      end;
-    end;
-
-    //wow, tudunk valamit
-
-    if (args[0] = 'else') then
-    begin
-      if scriptdepth > 0 then
-      begin
-        scriptevaling[scriptdepth]:= not scriptevaling[scriptdepth] and scriptevaling[scriptdepth - 1];
-      end
-      else
-        scripterror('Unexpected else');
-      exit;
-    end
-    else
-
-      if (args[0] = 'endif') then
-      begin
-        if scriptdepth > 0 then
-        begin
-          dec(scriptdepth);
-        end
-        else
-          scripterror('Unexpected endif');
-        exit;
-      end
-      else
-
-        if (args[0] = 'if') then
-        begin
-          if not scriptevaling[scriptdepth] then
-          begin
-            inc(scriptdepth);
-            scriptevaling[scriptdepth]:=false;
-          end
-          else
-            varCompare(copy(args, 1, argnum - 1));
-
-          exit;
-        end
-        else
-
-          if not scriptevaling[scriptdepth] then exit;
-
-    if (Length(args) > 1) then
-    begin
-      t:=args[0][1];
-      if (t = '!') and (args[1] = '=') then
-      begin
-        for i:=0 to Length(vecvars) - 1 do
-          if args[0] = '!' + vecvars[i].name then
-            vecvars[i].pos:=computevecs(copy(args, 2, argnum - 2));
-        exit;
-      end
-      else
-        if (t = '%') and (args[1] = '=') then
-        begin
-          for i:=0 to Length(numVars) - 1 do
-            if args[0] = '%' + numVars[i].name then
-              numVars[i].num:=computenums(copy(args, 2, argnum - 2));
-          exit;
-        end
-        else
-          if (t = '$') and (args[1] = '=') then
-          begin
-            for i:=0 to Length(strvars) - 1 do
-              if args[0] = '$' + strvars[i].name then
-              begin
-                tmp:= '';
-                for j:=2 to Length(args) - 1 do
-                begin
-                  tmp:=tmp + varToString(args[j]);
-                  //if j<Length(args)-1 then tmp := tmp + ' ';
-                end;
-                strvars[i].text:=tmp;
-              end;
-
-
-            exit;
-          end;
-    end;
-
-    //új változó
-    if (args[0] = 'var') and (Length(args) > 1) then
-    begin
-      if (args[1][1] = '%') then
-      begin
-        setLength(numVars, length(numVars) + 1);
-        numVars[length(numVars) - 1].name:=copy(args[1], 2, Length(args[1]) - 1);
-      end
-      else
-        if (args[1][1] = '!') then
-        begin
-          setLength(vecvars, length(vecvars) + 1);
-          vecvars[length(vecvars) - 1].name:=copy(args[1], 2, Length(args[1]) - 1);
-        end
-        else
-          if (args[1][1] = '$') then
-          begin
-            setLength(strvars, length(strvars) + 1);
-            strvars[length(strvars) - 1].name:=copy(args[1], 2, Length(args[1]) - 1);
-          end;
-      exit;
-    end
-    else
-
-      if (args[0] = 'getlang') and (Length(args) > 1) then
-      begin
-        t:=args[1][1];
-        if (t = '$') then
-        begin
-          for i:=0 to Length(strvars) - 1 do
-            if args[1] = '$' + strvars[i].name then //megvan mibe tesszük
-            begin
-              tmp:= '';
-              j:=trunc(computenums(copy(args, 2, argnum - 2)));
-              if sizeof(lang) < j then
-                strvars[i].text:=lang[j];
-              exit;
-            end;
-
-        end;
-      end
-      else
-
-        if (args[0] = 'bind') then
-        begin
-          if Length(args) < 3 then begin scripterror('Not enough paramater for bind');exit; end;
-          if (args[1] = 'closedisplay') then
-            displaycloseevent:=args[2]
-          else
-          begin
-            for i:=0 to Length(binds) - 1 do
-              if binds[i].key = args[1][1] then
-              begin
-                binds[i].script:=args[2];
-                exit;
-              end;
-            SetLength(binds, Length(binds) + 1);
-            binds[Length(binds) - 1].key:=args[1][1];
-            binds[Length(binds) - 1].script:=args[2];
-          end;
-          exit;
-        end
-        else
-
-          if (args[0] = 'unbind') then
-          begin
-            if Length(args) < 2 then begin scripterror('Not enough paramater for unbind');exit; end;
-            if (args[1] = 'closedisplay') then
-              displaycloseevent:= ''
-            else
-            begin
-              for i:=0 to Length(binds) - 1 do
-                if binds[i].key = args[1][1] then
-                begin
-                  for j:=i to Length(binds) - 2 do
-                    binds[j]:=binds[j + 1];
-                  SetLength(binds, length(binds) - 1);
-                end;
-            end;
-            exit;
-          end
-          else
-
-            if (args[0] = 'unbindall') then
-            begin
-              SetLength(binds, 0);
-              exit;
-            end
-            else
-
-              //nagy kiírás középre
-              if (args[0] = 'fastinfo') then
-              begin
-                for i:=1 to Length(args) - 1 do
-                  tmp:=tmp + ' ' + varToString(args[i]);
-
-                addHudMessage(tmp, 255, betuszin);
-                exit;
-              end
-              else
-
-              //nagy kiírás középre - piros
-              if (args[0] = 'fastinfored') then
-              begin
-                for i:=1 to Length(args) - 1 do
-                  tmp:=tmp + ' ' + varToString(args[i]);
-
-                addHudMessage(tmp, $FF0000);
-                exit;
-              end
-              else
-
-              //fenycsik
-              if (args[0] = 'lightbeam') then
-              begin
-                j:=stuffjson.GetNum(['lightbeams']);
-                //i:=0;
-                for i:=0 to j - 1 do
-                begin
-                  if stuffjson.GetString(['lightbeams', i, 'name']) = args[1] then
-                  begin
-                     vec1 := D3DXVector3(stuffjson.GetFloat(['lightbeams', i, 'start', 'x']),
-                           stuffjson.GetFloat(['lightbeams', i, 'start', 'y']),
-                           stuffjson.GetFloat(['lightbeams', i, 'start', 'z']));
-                     vec2 := D3DXVector3(stuffjson.GetFloat(['lightbeams', i, 'end', 'x']),
-                           stuffjson.GetFloat(['lightbeams', i, 'end', 'y']),
-                           stuffjson.GetFloat(['lightbeams', i, 'end', 'z']));
-                     k:=stuffjson.GetInt(['lightbeams', i, 'time']);
-                     l:=stuffjson.GetInt(['lightbeams', i, 'size']);
-                     b:=stuffjson.GetInt(['lightbeams', i, 'color']);
-                     Particlesystem_add(fenycsikcreate(vec1,vec2,l,b,k));
-                     exit;
-                  end;
-                end;
-
-                exit;
-              end
-              else
-
-                //chat kiírás
-                if (args[0] = 'print') then
-                begin
-                  for i:=1 to Length(args) - 1 do
-                    tmp:=tmp + ' ' + varToString(args[i]);
-
-                  multisc.chats[addchatindex].uzenet:=tmp;
-                  addchatindex:=addchatindex + 1;
-                  exit;
-                end
-                else
-
-                  //ablakos kiírás
-                  if (args[0] = 'display') then
-                  begin
-                    for i:=1 to Length(args) - 1 do
-                      tmp:=tmp + ' ' + varToString(args[i]);
-
-                    labeltext:=tmp;
-                    labelactive:=true;
-                    exit;
-                  end
-                  else
-
-                    if (args[0] = 'closedisplay') then
-                    begin
-                      labelactive:=false;
-                      exit;
-                    end;
-
-    //részecske rendszer kikapcs
-    if (args[0] = 'particle_stop') and (Length(args) > 2) then
-    begin
-      for i:=0 to Length(particlesSyses) - 1 do
-        if particlesSyses[i].name = args[1] then
-        begin
-          particlesSyses[i].disabled:=true;
-          v1:=computenums(copy(args, 2, argnum - 2));
-          if v1 = 0 then
-            particlesSyses[i].restart:=0
-          else
-            particlesSyses[i].restart:=gettickcount + trunc(v1);
-        end;
-      exit;
-    end
-    else
-
-      //részecske rendszer bekapcs
-      if (args[0] = 'particle_start') and (Length(args) > 1) then
-      begin
-        for i:=0 to Length(particlesSyses) - 1 do
-          if particlesSyses[i].name = args[1] then
-            particlesSyses[i].disabled:=false;
-        exit;
-      end
-      else
-
-        //prop elrejtés
-        if (args[0] = 'prop_hide') and (Length(args) > 1) then
-        begin
-          propsystem.setVisibility(args[1], false);
-          exit;
-        end
-        else
-
-          //prop elõhozás
-          if (args[0] = 'prop_show') and (Length(args) > 1) then
-          begin
-            propsystem.setVisibility(args[1], true);
-            exit;
-          end
-          else
-
-            if (args[0] = 'trigger_enable') and (Length(args) > 1) then
-            begin
-              tmp:=varToString(args[1]);
-              for i:=0 to Length(triggers) - 1 do
-                if triggers[i].name = tmp then
-                  triggers[i].active:=true;
-              exit;
-            end
-            else
-
-              if (args[0] = 'trigger_disable') and (Length(args) > 2) then
-              begin
-                tmp:=varToString(args[1]);
-                for i:=0 to Length(triggers) - 1 do
-                  if triggers[i].name = tmp then
-                  begin
-                    triggers[i].active:=false;
-                    v1:=computenums(copy(args, 2, argnum - 2));
-                    if v1 = 0 then
-                      triggers[i].restart:=0
-                    else
-                      triggers[i].restart:=gettickcount + trunc(v1);
-                  end;
-                exit;
-              end
-              else
-
-                if (args[0] = 'dynamizate') and (Length(args) > 1) then
-                begin
-                  tmp:=varToString(args[1]);
-                  propsystem.dynamizate(tmp).speed:=D3DXVector3(0, 0.5, 0);
-                  exit;
-                end
-                else
-
-                  if (args[0] = 'dynamic_speed') and (Length(args) > 4) then
-                  begin
-                    tmp:=varToString(args[1]);
-                    propsystem.getdynamic(tmp).speed:=computevecs(copy(args, 2, argnum - 2));
-
-                    exit;
-                  end
-                  else
-
-                    if (args[0] = 'prop_position') and (Length(args) > 4) then
-                    begin
-                      tmp:=varToString(args[1]);
-                      propsystem.getprop(tmp).pos:=computevecs(copy(args, 2, argnum - 2));
-
-                      exit;
-                    end
-                    else
-
-                      if (args[0] = 'prop_rotation') and (Length(args) > 2) then
-                      begin
-                        tmp:=varToString(args[1]);
-                        propsystem.getprop(tmp).rot:=computenums(copy(args, 2, argnum - 2));
-
-                        exit;
-                      end
-                      else
-
-                        if (args[0] = 'particle_position') and (Length(args) > 4) then
-                        begin
-                          tmp:=varToString(args[1]);
-                          for i:=0 to length(particlesSyses) - 1 do
-                            if particlesSyses[i].name = tmp then
-                              particlesSyses[i].from:=computevecs(copy(args, 2, argnum - 2));
-
-                          exit;
-                        end
-                        else
-
-                          //law robbanás
-                          if (args[0] = 'explode') then
-                          begin
-                            AddLAW(D3DXVector3Zero, computevecs(copy(args, 1, argnum - 1)), -1);
-                            exit;
-                          end
-                          else
-
-                          //wave
-                          if (args[0] = 'wave') and (Length(args) > 1)then
-                          begin
-                            wave:= strtoint(args[1]);
-                            exit;
-                          end
-                          else
-
-                          //skirmish
-                          if (args[0] = 'skirmish') then
-                          begin
-                            skirmish:= true;
-                            exit;
-                          end
-                          else
-
-                          //startbattle
-                          if (args[0] = 'startbattle') then
-                          begin
-                            battle:=true;
-                            exit;
-                          end
-                          else
-
-                          //stopbattle
-                          if (args[0] = 'stopbattle') then
-                          begin
-                            battle:=false;
-                            exit;
-                          end
-                          else
-
-                           //fegyvskin load
-                          if (args[0] = 'fegyvskin') then
-                          begin
-                            //evalscriptline('display fegyvskin');
-                            case myfegyv of
-                              FEGYV_MPG: myfegyv_skin := fegyvskins[5];
-                              FEGYV_M82A1: myfegyv_skin := fegyvskins[1];
-                              FEGYV_M4A1: myfegyv_skin := fegyvskins[0];
-                              FEGYV_QUAD: myfegyv_skin := fegyvskins[6];
-                              FEGYV_NOOB: myfegyv_skin := fegyvskins[7];
-                              FEGYV_LAW: myfegyv_skin := fegyvskins[2];
-                              FEGYV_X72: myfegyv_skin := fegyvskins[8];
-                              FEGYV_MP5A3: myfegyv_skin := fegyvskins[3];
-                              FEGYV_H31_T: myfegyv_skin := FEGYV_H31_T;
-                              FEGYV_H31_G: myfegyv_skin := FEGYV_H31_G;
-                              FEGYV_HPL: myfegyv_skin := fegyvskins[9];
-                              FEGYV_BM3: myfegyv_skin := fegyvskins[4];
-                            end;
-                            exit;
-                          end
-                          else
-
-                          //global uzenet
-                          if (args[0] = 'chatmost') then
-                          begin
-                            tmp := '';
-                            for i:=1 to Length(args) - 1 do
-                               tmp := tmp + ' ' + varToString(args[i]);
-
-                            Multisc.Chat(tmp);
-                            exit;
-                          end
-                          else
-
-						              if (args[0] = 'respawn') then
-                          begin
-                            respawn;
-                            exit;
-                          end
-                          else
-                                   {
-                          //submit api communication
-                          if (args[0] = 'submit') then
-                          begin
-                            if (args[1] = 'atlantisevent') then
-                            begin
-                                 HTTPClient := TidHTTP.Create(nil);
-                                 try
-                                  postData := TIdMultiPartFormDataStream.Create;
-                                  try
-                                    postData.AddFormField('form[nev]', multisc.nev);
-                                    postData.AddFormField('form[kills]', intToStr(multisc.kills - multisc.killsbeforedeath));
-                                    response := HTTPClient.Post('http://stickman.hu/api?mode=atlantisevent', postData);
-                                  finally
-                                    postData.Free;
-                                  end;
-                                 finally
-                                  HTTPClient.Free;
-                                 end;
-                            end;
-                            exit;
-                          end
-                          else
-
-                          //spawn airboat/submarine
-                          if (args[0] = 'watercraft') and (Length(args) > 3) then
-                          begin
-                            if myfegyv > 127 then
-                              SpawnVehicle(computevecs(copy(args, 1, argnum - 1)), 2, 'airboat')
-                            else
-                              SpawnVehicle(computevecs(copy(args, 1, argnum - 1)), 1, 'submarine');
-                            exit;
-                          end
-                          else
-                                  }
-                            //hang
-                            if (args[0] = 'sound') and (Length(args) > 4) then
-                            begin
-                              playsound(StrToInt(args[1]), false, integer(timegettime) + random(10000), true, D3DXVector3(StrToFloat(args[2]), StrToFloat(args[3]), StrToFloat(args[4])));
-                              exit;
-                            end
-                            else
-
-                              //script
-                              if (args[0] = 'script') and (Length(args) > 1) then
-                              begin
-                                evalScript(args[1]);
-                                exit;
-                              end
-                              else
-
-                                if (args[0] = 'timeout') and (Length(args) > 2) then
-                                begin
-                                  SetLength(timedscripts, length(timedscripts) + 1);
-                                  with timedscripts[length(timedscripts) - 1] do
-                                  begin
-                                    script:=args[1];
-                                    time:=gettickcount + trunc(computenums(copy(args, 2, argnum - 2)));
-                                  end;
-                                  exit;
-                                end
-                                else
-
-                                  multisc.chats[addchatindex].uzenet:= 'Unhandled scriptline: ' + line;
-    addchatindex:=addchatindex + 1;
-
-  end;
-
 procedure handleparancsok(var mit:String);
 var
    tmp: string;
@@ -15454,11 +14323,11 @@ end;   {}
       if (chr(mit) = 'c') or (chr(mit) = 'C') then chatmost:= ' /c ';
 
       //script binds
-      for i:=0 to Length(binds) - 1 do
+      for i:=0 to Length(scriptsHandler._binds) - 1 do
       begin
-        if Length(binds) = 0 then break;
-        if LowerCase(chr(mit)) = binds[i].key then
-          evalScript(binds[i].script);
+        if Length(scriptsHandler._binds) = 0 then break;
+        if LowerCase(chr(mit)) = scriptsHandler._binds[i].key then
+          scriptsHandler.evalScript(scriptsHandler._binds[i].script);
       end;
 
 
@@ -15550,7 +14419,7 @@ end;   {}
       if (mit = VK_ESCAPE) and labelactive then
       begin
         labelactive:=false;
-        evalscript(displaycloseevent);
+        scriptsHandler.evalscript(displaycloseevent);
       end;
       if ((chr(mit) = 'f') or (chr(mit) = 'F')) then usebutton:=true;
       if ((chr(mit) = 'f') or (chr(mit) = 'F')) and not labelactive and labelvolt then
@@ -15562,7 +14431,7 @@ end;   {}
       if ((chr(mit) = 'f') or (chr(mit) = 'F')) and labelactive then
       begin
         labelactive:=false;
-        evalscript(displaycloseevent);
+        scriptsHandler.evalscript(displaycloseevent);
       end;
 
       //debug stuff
@@ -16708,8 +15577,10 @@ begin //                 BEGIIIN
         laststate:= 'Initialzing game 3';
 
         respawn;
-        evalScript('startup');
-        evalscriptline('var $thistrigger');
+
+        lastState := 'startup script';
+        scriptsHandler.evalScript('startup');
+        scriptsHandler.evalscriptline('var $thistrigger');
 
         laststate:= 'Initialzing game 4';
         if not iswindowed then
