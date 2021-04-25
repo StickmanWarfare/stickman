@@ -11,7 +11,8 @@ uses
   math,
   Zlib,
   Idwinsock2,
-  qjson;
+  qjson,
+  Variants;
 
 const
   PROG_VER=211000;
@@ -990,6 +991,8 @@ procedure AddH31_T(av1, av2:TD3DXvector3;akl:integer);
 procedure log(s:string);
 function csicsahdr:boolean;
 
+function variantToStr(value: Variant): string;
+
 var
   perlin:Tperlinnoise;
   stuffjson:TQJSON;
@@ -1023,6 +1026,20 @@ var
   //infcheckstuff
   Infinity:single=(1.00/0);
   InfinityMask:cardinal absolute infinity;
+
+function variantToStr(value: Variant): string;
+begin
+  case VarType(value) of
+    varWord: result := intToStr(value);
+    varByte: result := intToStr(value);
+    varSmallInt: result := intToStr(value);
+    varInteger: result := intToStr(value);
+    varSingle: result := floatToStr(value);
+    varDouble: result := floatToStr(value);
+    varBoolean: if value then result := 'true' else result := 'false';
+    varString: result := value;
+  end;
+end;
 
 procedure AddLAW(av1, av2:TD3DXvector3;akl:integer);
 begin

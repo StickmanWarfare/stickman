@@ -2,7 +2,7 @@ unit MutableObject;
 
 interface
 
-  uses Typestuff, SysUtils;
+  uses Typestuff, SysUtils, Variants;
 
     type TKeyValuePair = record
       key: string;
@@ -35,6 +35,7 @@ interface
         procedure unFreeze();
         procedure merge(other: TMutableObject); overload;
         procedure merge(others: array of TMutableObject); overload;
+        function toJSON: string;
         constructor Create(freeze: boolean = false);
     end;
 
@@ -279,6 +280,29 @@ var
   i: Integer;
 begin
   for i := 0 to high(others) do merge(others[i]);
+end;
+
+function TMutableObject.toJSON: string;
+var
+  i: Integer;
+  isString: boolean;
+begin
+  result := '{';
+
+  for i := 0 to high(__values) do
+  begin
+    if i > 0 then result := result + ', ';
+
+    isString := varType(__values[i].value) = varString;
+    
+    result := result + '"' + __values[i].key + '": ';
+
+    if isString then result := result + '"';
+    result := result + variantToStr(__values[i].value);
+    if isString then result := result + '"';
+  end;
+
+  result := result + '}';
 end;
 
 end.

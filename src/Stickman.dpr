@@ -70,7 +70,8 @@ uses
   Scripts,
   MutableObject,
   Redux,
-  DynamicArray;
+  DynamicArray,
+  Sentry;
 
 const
   lvlmin = 0; //ENNEK ÍGY KÉNE MARADNIA
@@ -2930,6 +2931,7 @@ var
 label
   visszobj, visszfegyv;
 begin
+  sentryModule.addBreadcrumb(makeBreadcrumb('called initializeAll'));
 
   Result:=E_FAIL;
   enableeffects:=true;
@@ -3069,12 +3071,14 @@ begin
     agkerekarr[i].y:=stuffjson.GetFloat(['vehicle', 'tech', 'wheels', 'position', i, 'y']);
     agkerekarr[i].z:=stuffjson.GetFloat(['vehicle', 'tech', 'wheels', 'position', i, 'z']);
   end;
+
+
+  sentryModule.addBreadcrumb(makeBreadcrumb('muks init'));
   g_pd3ddevice.GetDeviceCaps(devicecaps);
-
   g_pd3dDevice.SetRenderState(D3DRS_ZENABLE, iTrue);
-
   FAKE_HDR:=D3DTOP_MODULATE;
   muks:=Tmuksoka.create(g_pd3ddevice);
+
   if muks = nil then
   begin
     messagebox(0, 'TMuks.create brutal error', Pchar(lang[30]), 0);
@@ -3087,9 +3091,11 @@ begin
   end;
   writeln(logfile, 'Loaded stickmen');flush(logfile);
 
+  sentryModule.addBreadcrumb(makeBreadcrumb('selfieMaker init'));
   selfieMaker := TSelfie.Create(muks, myfegyv, myfejcucc, D3DXVector3(cpx^, cpy^, cpz^), szogx, szogy);
   writeln(logfile, 'Inited selfie maker');flush(logfile);
 
+  sentryModule.addBreadcrumb(makeBreadcrumb('bots init'));
   initbots;
   writeln(logfile, 'Loaded bots');flush(logfile);
 
@@ -4687,6 +4693,8 @@ var
 label
   atugor;
 begin
+  sentryModule.addBreadcrumb(makeBreadcrumb('called iranyit'));
+
   D3DXVec3Subtract(mysebVec, d3dxvector3(cpx^, cpy^, cpz^), d3dxvector3(cpox^, cpoy^, cpoz^));
   myseb:=D3DXVec3Length(mysebVec);
 
@@ -15172,6 +15180,8 @@ begin //                 BEGIIIN
   NtSIT(GetCurrentThread, $11, nil, 0);
 {$ENDIF}
 
+  sentryModule := TSentry.Create;
+
   try
 
     //Absolute Initialization
@@ -15740,6 +15750,8 @@ begin //                 BEGIIIN
   except
     on E:Exception do
     begin
+      sentryModule.reportError(E, 'Fatal Error');
+
       g_pD3Ddevice:=nil;
       g_pD3D:=nil;
       closeSound;

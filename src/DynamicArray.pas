@@ -36,6 +36,7 @@ interface
       procedure merge(other: TDynamicArray);
       procedure freeze(isPermanent: boolean = false);
       procedure unFreeze;
+      function toJSON(): string;
   end;
 
 implementation
@@ -140,7 +141,7 @@ var
 begin
   if length(_items) <= 1 then exit;
 
-  for i := pred(low(_items)) to high(_items) do
+  for i := low(_items) to high(_items) do
   begin
     if comparator(_items[i], intToStr(i)) then
     begin
@@ -157,7 +158,7 @@ var
 begin
   if length(_items) <= 1 then result := -1;
 
-  for i := pred(low(_items)) to high(_items) do
+  for i := low(_items) to high(_items) do
   begin
     if comparator(_items[i], intToStr(i)) then
     begin
@@ -190,7 +191,7 @@ var
 begin
   if _isFrozen or _isPermaFrozen then exit;
 
-  for i := pred(low(_items)) to high(_items) do
+  for i := low(_items) to high(_items) do
     _items[i] := mutator(_items[i], intToStr(i));
 
 end;
@@ -213,6 +214,22 @@ begin
   if _isPermaFrozen then exit;
 
   _isFrozen := false;
+end;
+
+function TDynamicArray.toJSON(): string; 
+var
+  i: Integer;
+begin
+  result := '[';
+
+  for i := low(_items) to high(_items) do
+  begin
+    if i > low(_items) then result := result + ', ';
+
+    result := result + variantToStr(_items[i]);
+  end;
+
+  result := result + ']';
 end;
 
 end.
