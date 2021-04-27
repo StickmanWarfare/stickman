@@ -118,8 +118,6 @@ const
   //-----------------------------------------------------------------------------
 var
   // REMOVE
-
-  botGroupArr: array of TBotGroup;
   selfieMaker: TSelfie; 
 
   CMAP1_NAME:string = 'cmap.png'; //régi terep
@@ -2552,6 +2550,8 @@ var
   tfegyv: Byte;
 begin
   laststate:='initbots';
+  sentryModule.addBreadcrumb(makeBreadcrumb('called initbots'));
+  
   groupCount := stuffjson.GetNum(['botgroups']);
   setlength(botGroupArr, groupCount);
   for groupIndex := 0 to high(botGroupArr) do
@@ -2687,9 +2687,98 @@ begin
     end;
 end;
 
-procedure fastinfo(const args: array of const);
+
+
+function getAllBots: TBotArray;
+var
+  groupIndex, botIndex: Integer;
 begin
-  scriptsHandler.evalScriptLine('fastinfo ' + VariantUtils.VarRecToStr(args[0]));
+  for groupIndex := low(botGroupArr) to high(botGroupArr) do
+    for botIndex := low(botGroupArr[groupIndex].bots) to high(botGroupArr[groupIndex].bots) do
+      if not botGroupArr[groupIndex].bots[botIndex].getIsDead then
+      begin
+        setlength(result, succ(length(result)));
+        result[high(result)] := botGroupArr[groupIndex].bots[botIndex];
+      end;
+end;
+
+procedure handlebots(args: TQJSON);
+var
+  groupIndex, botIndex: Integer;
+begin
+  laststate:='handlebots';
+  if menu.lap >= 0 then exit;
+  if length(ppl) > 1 then exit;
+  if not bots_enabled then exit;
+  
+  laststate := 'real handlebots';
+  for groupIndex := low(botGroupArr) to high(botGroupArr) do
+    for botIndex := low(botGroupArr[groupIndex].bots) to high(botGroupArr[groupIndex].bots) do
+    begin
+      botGroupArr[groupIndex].bots[botIndex].passInfo(
+        halal > 0, myfegyv, D3DXVector3(cpx^, cpy^, cpz^), mat_World, getAllBots
+      );
+      botGroupArr[groupIndex].bots[botIndex].doLogic;
+    end;
+end;
+
+procedure handlebotsGettingShot(loves: TLoves);
+var
+  groupIndex, botIndex: Integer;
+begin
+  laststate:='renderbots';
+  if menu.lap >= 0 then exit;
+  if length(ppl) > 1 then exit;
+  if not bots_enabled then exit;
+  for groupIndex := low(botGroupArr) to high(botGroupArr) do
+    for botIndex := low(botGroupArr[groupIndex].bots) to high(botGroupArr[groupIndex].bots) do
+      botGroupArr[groupIndex].bots[botIndex].collideProjectile(loves);
+end;
+
+procedure renderbots;
+var
+  groupIndex, botIndex: Integer;
+begin
+  laststate:='renderbots';
+  if menu.lap >= 0 then exit;
+  if length(ppl) > 1 then exit;
+  if not bots_enabled then exit;
+  for groupIndex := low(botGroupArr) to high(botGroupArr) do
+    for botIndex := low(botGroupArr[groupIndex].bots) to high(botGroupArr[groupIndex].bots) do
+      if not botGroupArr[groupIndex].bots[botIndex].getIsDead then
+        botGroupArr[groupIndex].bots[botIndex].Draw(muks, fegyv, campos);
+end;
+
+procedure renderbotFegyvs;
+var
+  groupIndex, botIndex: Integer;
+  worldMatr: TD3DMatrix;
+label skipEgyet;
+begin
+  laststate:='renderbotFegyvs';
+  if menu.lap >= 0 then exit;
+  if length(ppl) > 1 then exit;
+  if not bots_enabled then exit;
+  for groupIndex := low(botGroupArr) to high(botGroupArr) do
+    for botIndex := low(botGroupArr[groupIndex].bots) to high(botGroupArr[groupIndex].bots) do
+    begin
+      if botGroupArr[groupIndex].bots[botIndex].getIsDead then goto skipEgyet;
+      
+      worldMatr := botGroupArr[groupIndex].bots[botIndex].getFegyvMatr;
+      g_pd3dDevice.SetTransform(D3DTS_WORLD, worldMatr);
+      fegyv.drawfegyv(botGroupArr[groupIndex].bots[botIndex].getFegyv, felho.coverage, 10); //TODO figure out fegyvlit
+
+      skipEgyet:
+    end;
+end;
+
+procedure fastinfo(args: TQJSON);
+var
+  text: string;
+begin
+  args.SaveToFile('args.json');
+  text := args.GetString(['text']);
+  scriptsHandler.evalScriptLine('fastinfo ' + text);
 end;
 
 procedure initThreadHandler;
@@ -2698,17 +2787,20 @@ begin
   
   threadHandlerModule := TThreadHandler.Create;
 
-  fastinfoSaga := TSaga.Create('fastinfo', fastinfo);
+  fastinfoSaga := TSaga.Create('fastinfo', TAKE_EVERY, fastinfo);
   threadHandlerModule.addSaga(fastinfoSaga);
 
-  printTopSaga := TSaga.Create('printTop', printTop);
+  printTopSaga := TSaga.Create('printTop', TAKE_LEADING, printTop);
   threadHandlerModule.addSaga(printTopSaga);
 
-  printRankSaga := TSaga.Create('printRank', printRank);
+  printRankSaga := TSaga.Create('printRank', TAKE_LEADING, printRank);
   threadHandlerModule.addSaga(printRankSaga);
 
-  printKothSaga := TSaga.Create('printKoth', printKoth);
+  printKothSaga := TSaga.Create('printKoth', TAKE_LEADING, printKoth);
   threadHandlerModule.addSaga(printKothSaga);
+
+  handleBotsSaga := TSaga.Create('handlebots', TAKE_LEADING, handlebots);
+  threadHandlerModule.addSaga(handleBotsSaga);
 end;
 
 function InitializeAll:HRESULT;
@@ -2901,7 +2993,6 @@ begin
   selfieMaker := TSelfie.Create(muks, myfegyv, myfejcucc, D3DXVector3(cpx^, cpy^, cpz^), szogx, szogy);
   writeln(logfile, 'Inited selfie maker');flush(logfile);
 
-  sentryModule.addBreadcrumb(makeBreadcrumb('bots init'));
   initbots;
   writeln(logfile, 'Loaded bots');flush(logfile);
 
@@ -4556,7 +4647,7 @@ begin
     if dine.keyprsd(DIK_B) then
     begin
       //TODO: remove
-      threadHandlerModule.call('fastinfo', ['pressed B']);
+      //threadHandlerModule.call('fastinfo', TQJSON.CreateFromString('{ "text": "testasd" }'));
 
       selfieMaker.dab := not selfieMaker.dab;
     end;
@@ -7047,87 +7138,6 @@ begin
    end;
 end;
 
-function getAllBots: TBotArray;
-var
-  groupIndex, botIndex: Integer;
-begin
-  for groupIndex := low(botGroupArr) to high(botGroupArr) do
-    for botIndex := low(botGroupArr[groupIndex].bots) to high(botGroupArr[groupIndex].bots) do
-      if not botGroupArr[groupIndex].bots[botIndex].getIsDead then
-      begin
-        setlength(result, succ(length(result)));
-        result[high(result)] := botGroupArr[groupIndex].bots[botIndex];
-      end;
-end;
-
-procedure handlebots;
-var
-  groupIndex, botIndex: Integer;
-begin
-  laststate:='handlebots';
-  if menu.lap >= 0 then exit;
-  if length(ppl) > 1 then exit;
-  if not bots_enabled then exit;
-  for groupIndex := low(botGroupArr) to high(botGroupArr) do
-    for botIndex := low(botGroupArr[groupIndex].bots) to high(botGroupArr[groupIndex].bots) do
-    begin
-      botGroupArr[groupIndex].bots[botIndex].passInfo(
-        halal > 0, myfegyv, D3DXVector3(cpx^, cpy^, cpz^), mat_World, getAllBots
-      );
-      botGroupArr[groupIndex].bots[botIndex].doLogic;
-    end;
-end;
-
-procedure handlebotsGettingShot(loves: TLoves);
-var
-  groupIndex, botIndex: Integer;
-begin
-  laststate:='renderbots';
-  if menu.lap >= 0 then exit;
-  if length(ppl) > 1 then exit;
-  if not bots_enabled then exit;
-  for groupIndex := low(botGroupArr) to high(botGroupArr) do
-    for botIndex := low(botGroupArr[groupIndex].bots) to high(botGroupArr[groupIndex].bots) do
-      botGroupArr[groupIndex].bots[botIndex].collideProjectile(loves);
-end;
-
-procedure renderbots;
-var
-  groupIndex, botIndex: Integer;
-begin
-  laststate:='renderbots';
-  if menu.lap >= 0 then exit;
-  if length(ppl) > 1 then exit;
-  if not bots_enabled then exit;
-  for groupIndex := low(botGroupArr) to high(botGroupArr) do
-    for botIndex := low(botGroupArr[groupIndex].bots) to high(botGroupArr[groupIndex].bots) do
-      if not botGroupArr[groupIndex].bots[botIndex].getIsDead then
-        botGroupArr[groupIndex].bots[botIndex].Draw(muks, fegyv, campos);
-end;
-
-procedure renderbotFegyvs;
-var
-  groupIndex, botIndex: Integer;
-  worldMatr: TD3DMatrix;
-label skipEgyet;
-begin
-  laststate:='renderbotFegyvs';
-  if menu.lap >= 0 then exit;
-  if length(ppl) > 1 then exit;
-  if not bots_enabled then exit;
-  for groupIndex := low(botGroupArr) to high(botGroupArr) do
-    for botIndex := low(botGroupArr[groupIndex].bots) to high(botGroupArr[groupIndex].bots) do
-    begin
-      if botGroupArr[groupIndex].bots[botIndex].getIsDead then goto skipEgyet;
-      
-      worldMatr := botGroupArr[groupIndex].bots[botIndex].getFegyvMatr;
-      g_pd3dDevice.SetTransform(D3DTS_WORLD, worldMatr);
-      fegyv.drawfegyv(botGroupArr[groupIndex].bots[botIndex].getFegyv, felho.coverage, 10); //TODO figure out fegyvlit
-
-      skipEgyet:
-    end;
-end;
-
 procedure handleSelfies;
 begin
   if selfieMaker.isSelfieModeOn then
@@ -7171,6 +7181,8 @@ var
 
   start, stop:cardinal;
 begin
+  laststate := 'handlefizik start';
+
   gtc:=gettickcount;
   //evalscriptline('fastinfo ' + intToStr(gtc));
   korlat:=0;
@@ -8408,6 +8420,8 @@ end;
 
   handleskins;
   csinaljfaszapointereket;
+
+  laststate := 'handlefizik end';
 end;
 
 {$IFDEF hazudsz}
@@ -11807,8 +11821,6 @@ procedure Mechanics;
 var
   i:integer;
 begin
-
-
   laststate:= 'Basic handling stuff';
 
   if volttim = 0 then volttim:=timegettime;
@@ -13016,8 +13028,10 @@ begin
   QueryPerformanceCounter(profile_start);
 {$ENDIF}
 
+  laststate := 'before undebug';
   undebug_magic1; // Mechanics;
   undebug_untrace;
+  laststate := 'after undebug';
 
 {$IFDEF profiler}
   QueryPerformanceCounter(profile_stop);
@@ -13026,7 +13040,9 @@ begin
 {$ENDIF}     
 
   handleSelfies;
-  handlebots;
+
+  laststate := 'call handlebots';
+  threadHandlerModule.call('handlebots', TQJSON.Create);
 
   renderbots;
   RenderScene;
@@ -13912,22 +13928,22 @@ var
 
     if pos(' /havitop', mit) = 1 then
     begin
-      threadHandlerModule.call('printTop', ['havitop']);
+      threadHandlerModule.call('printTop', TQJSON.CreateFromString('{ "mode": "havitop" }'));
     end;
 
     if pos(' /hetitop', mit) = 1 then
     begin
-      threadHandlerModule.call('printTop', ['hetitop']);
+      threadHandlerModule.call('printTop', TQJSON.CreateFromString('{ "mode": "hetitop" }'));
     end;
 
     if pos(' /napitop', mit) = 1 then
     begin
-      threadHandlerModule.call('printTop', ['napitop']);
+      threadHandlerModule.call('printTop', TQJSON.CreateFromString('{ "mode": "napitop" }'));
     end;
 
     if pos(' /top', mit) = 1 then
     begin
-      threadHandlerModule.call('printTop', ['top']);
+      threadHandlerModule.call('printTop', TQJSON.CreateFromString('{ "mode": "top" }'));
     end;
 
     if pos(' /rank', mit) = 1 then
@@ -13935,7 +13951,7 @@ var
       tmp := '';
       for i:=0 to high(ppl) do
         if (ppl[i].net.UID = 0) then tmp := ppl[i].pls.nev;
-      threadHandlerModule.call('printRank', [tmp, 'ossz']);
+      threadHandlerModule.call('printRank', TQJSON.CreateFromString('{ "username": "' + tmp + '", "mode": "ossz" }'));
     end;
 
     if pos(' /rank napi', mit) = 1 then
@@ -13943,7 +13959,7 @@ var
       tmp := '';
       for i:=0 to high(ppl) do
         if (ppl[i].net.UID = 0) then tmp := ppl[i].pls.nev;
-      threadHandlerModule.call('printRank', [tmp, 'napi']);
+      threadHandlerModule.call('printRank', TQJSON.CreateFromString('{ "username": "' + tmp + '", "mode": "napi" }'));
     end;
 
     if pos(' /rank heti', mit) = 1 then
@@ -13951,7 +13967,7 @@ var
       tmp := '';
       for i:=0 to high(ppl) do
         if (ppl[i].net.UID = 0) then tmp := ppl[i].pls.nev;
-      threadHandlerModule.call('printRank', [tmp, 'heti']);
+      threadHandlerModule.call('printRank', TQJSON.CreateFromString('{ "username": "' + tmp + '", "mode": "heti" }'));
     end;
 
     if pos(' /rank havi', mit) = 1 then
@@ -13959,17 +13975,17 @@ var
       tmp := '';
       for i:=0 to high(ppl) do
         if (ppl[i].net.UID = 0) then tmp := ppl[i].pls.nev;
-      threadHandlerModule.call('printRank', [tmp, 'havi']);
+      threadHandlerModule.call('printRank', TQJSON.CreateFromString('{ "username": "' + tmp + '", "mode": "havi" }'));
     end;
 
     if pos(' /koth', mit) = 1 then
     begin
-      threadHandlerModule.call('printKoth', ['koth']);
+      threadHandlerModule.call('printKoth', TQJSON.CreateFromString('{ "mode": "koth" }'));
     end;
 
     if pos(' /toth', mit) = 1 then
     begin
-      threadHandlerModule.call('printKoth', ['toth']);
+      threadHandlerModule.call('printKoth', TQJSON.CreateFromString('{ "mode": "toth" }'));
     end;
 
 

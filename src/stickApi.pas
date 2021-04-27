@@ -31,9 +31,9 @@ interface
       class function GET(const route: string): TApiResponse;
   end;
 
-  procedure printTop(const args: array of const);
-  procedure printRank(const args: array of const);
-  procedure printKoth(const args: array of const);
+  procedure printTop(args: TQJSON);
+  procedure printRank(args: TQJSON);
+  procedure printKoth(args: TQJSON);
 
   
 implementation
@@ -77,15 +77,15 @@ end;
 // THREADS
 //-----------------------------------------------------------------------------
 
-procedure printTop(const args: array of const);
+procedure printTop(args: TQJSON);
 var
   i: Integer;
   route, output, line, nev, pont: string;
   response: TApiResponse;
 begin
-  route := VariantUtils.VarRecToStr(args[0]);
-
   try
+    route := args.GetString(['mode']);
+
     response := TApi.GET(route);
 
     if response.success then
@@ -111,14 +111,14 @@ begin
 
 end;
 
-procedure printRank(const args: array of const);
+procedure printRank(args: TQJSON);
 var
   route, output, username, mode: string;
   response: TApiResponse;
 begin
   try
-    username := VariantUtils.VarRecToStr(args[0]);
-    mode := VariantUtils.VarRecToStr(args[1]);
+    username := args.GetString(['username']);
+    mode := args.GetString(['mode']);
     route := 'rank&nev=' + username + '&type=' + mode;
 
     response := TApi.GET(route);
@@ -139,14 +139,14 @@ begin
   end;
 end;
 
-procedure printKoth(const args: array of const);
-var               
+procedure printKoth(args: TQJSON);
+var
   i: Integer;
   output, line, nev, pont, mode: string;
   response: TApiResponse;
 begin
   try
-    mode := VariantUtils.VarRecToStr(args[0]);
+    mode := args.GetString(['mode']);
     response := TApi.GET(mode);
 
     if response.success then

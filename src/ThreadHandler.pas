@@ -4,32 +4,48 @@ interface
 
   uses
     Classes,
+    SysUtils,
     //
     Typestuff,
-    QJSON;
+    QJSON,
+    Sentry;
+
+  type TSagaMode = (
+        TAKE_LEADING, //leading debounce
+        TAKE_LATEST,  //trailing debounce
+        TAKE_EVERY
+    );
 
   type TSaga = class (TObject)
     private
       _key: string;
-      _callback: TIndefiniteProcedure;
+      _mode: TSagaMode;
+      _callback: TJSONProcedure;
     published
-      constructor Create(key: string; callback: TIndefiniteProcedure);
-      function key: string;
-      function callback: TIndefiniteProcedure; //ez lesz a thread execute
+      constructor Create(key: string; mode: TSagaMode; callback: TJSONProcedure);
+      property key: string read _key;
+      property mode: TSagaMode read _mode;
+      function callback: TJSONProcedure; //ez lesz a thread execute
   end;
 
   type TCallbackThread = class (TThread)
     private
-      _callback: TIndefiniteProcedure;
+      _sagaKey: string;
+      _callback: TJSONProcedure;
+      _callbackArgs: TQJSON;
+      _finished: boolean;
     protected
-      procedure Execute(const args: array of const); overload;
-    published
-      constructor Create(callback: TIndefiniteProcedure);
+      procedure Execute; override;
+    published     
+      property sagaKey: string read _sagaKey;
+      property finished: boolean read _finished;
+      constructor Create(sagaKey: string; callback: TJSONProcedure; args: TQJSON);
+      procedure forceFinish;
   end;
 
   TCallbackThreadArray = array of TCallbackThread;
+  PCallbackThreadArray = array of ^TCallbackThread;
 
-  //TODO: proxy layer to takeLeading, takeLatest, etc sagas
   type TThreadHandler = class (TObject)
     private
       _sagas: array of TSaga;
@@ -38,7 +54,7 @@ interface
     published
       constructor Create;
       procedure addSaga(saga: TSaga);
-      function call(key: string; const args: array of const): THandle;  //újat indít, suspend marad ahogy volt
+      function call(key: string; args: TQJSON): THandle;  //újat indít, suspend marad ahogy volt
       //TODO: procedure all(keys: array of string; parallel: boolean = false);
       //TODO: procedure race(keys: array of string);
       //TODO: execute(key / keys / null)  //csak ha van is suspended, nem indít újat
@@ -50,39 +66,47 @@ interface
 
 var
   threadHandlerModule: TThreadHandler;
-  fastinfoSaga, printTopSaga, printRankSaga, printKothSaga: TSaga; //TODO: move these
+  fastinfoSaga, printTopSaga, printRankSaga, printKothSaga, handleBotsSaga: TSaga; //TODO: move these
   
 
 implementation
 
 //TCallbackThread
-constructor TCallbackThread.Create(callback: TIndefiniteProcedure);
+constructor TCallbackThread.Create(sagaKey: string; callback: TJSONProcedure; args: TQJSON);
 begin
   inherited Create(true); //suspended on create
 
+  _sagaKey := sagaKey;
   _callback := callback;
+  _callbackArgs := args;
+  _finished := false;
+
+  FreeOnTerminate := false; //cleanup szedi ossze
 end;
 
-procedure TCallbackThread.Execute(const args: array of const);
+procedure TCallbackThread.Execute;
 begin
-  _callback(args);
-  terminate;
+  laststate := 'execute';
+  _callback(_callbackArgs);
+  _finished := true;
+end;
+
+procedure TCallbackThread.forceFinish;
+begin 
+  laststate := 'forceFinish';
+  _finished := true;
 end;
 
 
 //TSaga
-constructor TSaga.Create(key: string; callback: TIndefiniteProcedure);
+constructor TSaga.Create(key: string; mode: TSagaMode; callback: TJSONProcedure);
 begin
   _key := key;
+  _mode := mode;
   _callback := callback;
 end;
 
-function TSaga.key: string;
-begin
-  result := _key;
-end;
-
-function TSaga.callback: TIndefiniteProcedure;
+function TSaga.callback: TJSONProcedure;
 begin
   result := _callback;
 end;
@@ -101,67 +125,99 @@ begin
   _sagas[high(_sagas)] := saga;
 end;
 
-function TThreadHandler.call(key: string; const args: array of const): THandle;
+function TThreadHandler.call(key: string; args: TQJSON): THandle;
 var
-  i: Integer;
+  i, threadIndex: Integer;
   saga: TSaga;
-  found: boolean;
+  foundSaga, foundThread: boolean;
 begin
+  //remove finished threads
   cleanup;
 
   //find the saga
-  found := false;
+  foundSaga := false;
   for i := low(_sagas) to high(_sagas) do
     if _sagas[i].key <> key then
       continue
     else
     begin
       saga := _sagas[i];
-      found := true;
+      foundSaga := true;
       break;
     end;
 
-  if not found then exit;
+  //we don goofed
+  if not foundSaga then
+  begin
+    sentryModule.addBreadcrumb(makeBreadcrumb('[TThreadHandler.call] No saga with key: ' + key)); //lehetne reportError is
+    exit;
+  end;
+
+  //look for running thread
+  foundThread := false;
+  for i := low(_threads) to high(_threads) do
+    if _threads[i].sagaKey <> key then
+      continue
+    else
+    begin
+      if _threads[i].Finished then continue;
+
+      sentryModule.reportError(Exception.Create('found not terminated thread'), 'asd');
+      
+      threadIndex := i;
+      foundThread := true;
+      break;
+    end;
+
+  //handle proxying
+  if foundThread then
+  begin
+    if saga.mode = TAKE_LEADING then exit;
+
+    if saga.mode = TAKE_LATEST then
+      if not _threads[threadIndex].Finished then
+        _threads[threadIndex].forceFinish;
+        
+  end;
 
   //create thread
   setlength(_threads, succ(length(_threads)));
-  _threads[high(_threads)] := TCallbackThread.Create(saga.callback());
+  _threads[high(_threads)] := TCallbackThread.Create(saga.key, saga.callback(), args);
 
   result := _threads[high(_threads)].ThreadID;
 
-  //execute
-  _threads[high(_threads)].Execute(args);
+  //start thread
+  _threads[high(_threads)].Resume;
 end;
 
-//TODO: clear results for deleted threads
 procedure TThreadHandler.cleanup(hard: boolean = false);
 var
   i: Integer;
-  newThreads: TCallbackThreadArray;
+  newThreads: PCallbackThreadArray;
 begin
   setlength(newThreads, 0);
 
   if hard then
     for i := low(_threads) to high(_threads) do
     begin
-      if _threads[i].Terminated then continue;
-      if not _threads[i].Suspended then _threads[i].Suspend;
-      _threads[i].Terminate;
+      if _threads[i].Finished then continue;
+      _threads[i].forceFinish;
     end;
 
   for i := low(_threads) to high(_threads) do
   begin
-    if not _threads[i].Terminated then
+    if not _threads[i].Finished then
     begin
       setlength(newThreads, length(newThreads) + 1);
-      newThreads[high(newThreads)] := _threads[i];
-    end
-    else
-      _threads[i].Destroy;
+      newThreads[high(newThreads)] := @_threads[i];
+    end;
   end;
 
+  for i := 0 to high(newThreads) do
+  begin
+    _threads[i] := newThreads[i]^;
+  end;
   setlength(_threads, length(newThreads));
-  _threads := copy(newThreads, low(newThreads), length(newThreads));
 end;
 
 end.

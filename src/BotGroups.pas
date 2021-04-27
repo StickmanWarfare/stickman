@@ -130,6 +130,9 @@ type
     //TODO: function findById(id: Integer): Integer; //TODO: move to Utils.pas
   end;
 
+var
+  botGroupArr: array of TBotGroup;
+
 implementation
 
 

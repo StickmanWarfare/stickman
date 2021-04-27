@@ -27,6 +27,7 @@ type
   TCallback = procedure of object;
   TCallbackArray = array of TCallback;
   TIndefiniteProcedure = procedure(const args: array of const);
+  TJSONProcedure = procedure(args: TQJSON);
 
   TComparatorFunction = function(value: Variant; key: string = ''): boolean;
   TMutatorFunction = function(value: Variant; key: string = ''): Variant;
