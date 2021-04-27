@@ -8,7 +8,8 @@ uses
   Direct3D9,
   ojjektumok,
   fizika,
-  windows;
+  windows,
+  qjson;
 
 type
   ByteArrayUtils = class
@@ -100,10 +101,30 @@ type
       class function VarRecToStr(rec: TVarRec): string;
       //TODO: class function VarRecToInt(): string;
       //TODO: class function VarRecToFloat(): string;
-    end;      
+    end;
 
-  
+  //TODO: remove
+  type KillMeUtils = class (TObject)
+    published
+      class function unhungaryify(src: string): string;
+  end;
+
+
 implementation
+
+class function KillMeUtils.unhungaryify(src: string): string;
+begin
+  result := src;
+  result := StringReplace(result, 'á', 'a', [rfReplaceAll, rfIgnoreCase]);
+  result := StringReplace(result, 'é', 'e', [rfReplaceAll, rfIgnoreCase]);
+  result := StringReplace(result, 'í', 'i', [rfReplaceAll, rfIgnoreCase]);
+  result := StringReplace(result, 'ó', 'o', [rfReplaceAll, rfIgnoreCase]); 
+  result := StringReplace(result, 'ö', 'o', [rfReplaceAll, rfIgnoreCase]);
+  result := StringReplace(result, 'o', 'o', [rfReplaceAll, rfIgnoreCase]); //ez egy hoszzu ö
+  result := StringReplace(result, 'ú', 'u', [rfReplaceAll, rfIgnoreCase]); 
+  result := StringReplace(result, 'ü', 'u', [rfReplaceAll, rfIgnoreCase]);
+  result := StringReplace(result, 'u', 'u', [rfReplaceAll, rfIgnoreCase]); //emmeg hosszu ü
+end;
 
 class function VariantUtils.VarRecToStr(rec: TVarRec): string;
 begin
@@ -113,8 +134,8 @@ begin
       vtBoolean:  Result := Result + BoolToStr(VBoolean);
       vtChar:     Result := Result + VChar;
       vtExtended: Result := Result + FloatToStr(VExtended^);
-      vtString:   Result := Result + VString^;
-      vtPChar:    Result := Result + VPChar;
+      vtString:   Result := Result + string(VAnsiString);//VString^;
+      vtPChar:    Result := Result + string(VAnsiString); //VPChar;
       vtObject:   Result := Result + VObject.ClassName;
       vtClass:    Result := Result + VClass.ClassName;
       vtAnsiString:  Result := Result + string(VAnsiString);

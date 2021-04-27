@@ -95,11 +95,12 @@ end;
 //TODO: actual JSON writer
 procedure TSentry.reportError(err: Exception; msg: string);
 var
-  json: string;
+  json, fname: string;
   i: Integer;
 begin
   //open output file
-  assignfile(_output, 'sentry.json');
+  fname := formatdatetime('YYYY-MM-DD_hh-mm-ss-zzz', now) + '.sentry.json';
+  assignfile(_output, fname);
   rewrite(_output);
 
   //make contents

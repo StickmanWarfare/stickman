@@ -17,7 +17,7 @@
 {.$DEFINE matieditor}
 {.$DEFINE profiler}
 {.$DEFINE propeditor}
-{$DEFINE localhost}
+{.$DEFINE localhost}
 {.$DEFINE nomodifier}
 {.$DEFINE oldterrain}
 {.$DEFINE fegyverteszt}
@@ -121,8 +121,6 @@ var
 
   botGroupArr: array of TBotGroup;
   selfieMaker: TSelfie; 
-
-  scriptsHandler: TScriptsHandler; 
 
   CMAP1_NAME:string = 'cmap.png'; //régi terep
   CMAP2_NAME:string = 'cmap2.png'; //térkép
@@ -415,229 +413,6 @@ var
 
 procedure writeChat(s:string);forward;
 procedure fillupmenu;forward;
-
-
-//-----------------------------------------------------------------------------
-// THREADS
-//-----------------------------------------------------------------------------
-
-//TODO: move api related threads to stickApi unit
-//      (requires separate script handler unit at least)
-
-{
-//EXAMPLE
-type TPrintServerTimeThread = class(TAsync)
-private
-  _api: TApi;
-  _response: TApiResponse;
-protected
- procedure Execute; override;
-end;
-
-procedure TPrintServerTimeThread.Execute;
-var
-  output: string;
-begin
-  try
-    _api := TApi.Create;
-    _response := _api.GET(baseUrl + 'servertime');
-
-    if _response.success then
-    begin
-       output := _response.data.getString(['data','time']);
-
-       evalscriptline('display ' + output);
-    end;
-  finally
-    Terminate;
-  end;  
-end;
-}
-
-type TToplist = (TOP_MONTHLY, TOP_WEEKLY, TOP_DAILY, TOP_ALL);
-
-type TPrintTopThread = class(TAsync)
-private
-  _api: TApi;
-  _response: TApiResponse;
-  _endpoint: string;
-protected
-  procedure Execute; override;
-public
-  constructor Create(startSuspended: boolean; mode: TToplist = TOP_ALL);
-end;
-
-constructor TPrintTopThread.Create(startSuspended: boolean; mode: TToplist = TOP_ALL);
-begin
-  inherited Create(startSuspended);
-
-  case mode of
-    TOP_MONTHLY: _endpoint := 'havitop';
-    TOP_WEEKLY: _endpoint := 'hetitop';
-    TOP_DAILY: _endpoint := 'napitop';
-    TOP_ALL: _endpoint := 'top';
-  end;
-end;
-
-procedure TPrintTopThread.Execute;
-var
-  output: string;
-  nev: string;
-  pont: string;
-  line: string;
-  i: Cardinal;
-begin
-  try
-    _api := TApi.Create;
-    _response := _api.GET(baseUrl + _endpoint);
-
-    if _response.success then
-    begin
-      for i := 0 to 9 do
-      begin
-        nev := _response.data.getString(['data', i, 'nev']);
-        if length(nev) = 0 then nev := '-';
-
-        pont := _response.data.getString(['data', i, 'pont']);
-        if length(pont) = 0 then pont := '';
-
-        line := inttostr(i + 1) + '. ' + nev + ' ' + pont;
-        output := output + NL + line;
-       end;
-       scriptsHandler.evalscriptline('display ' + output);
-    end;
-  finally
-    Terminate;
-  end;
-end;
-
-
-type TPrintRank = class(TAsync)
-private
-  _api: TApi;
-  _response: TApiResponse;
-  _uname: string;
-  _mode: string;
-protected
-  procedure Execute; override;
-public
-  constructor Create(startSuspended: boolean; uname: string; mode: TToplist = TOP_ALL);
-end;
-
-constructor TPrintRank.Create(startSuspended: boolean; uname: string; mode: TToplist = TOP_ALL);
-begin
-  inherited Create(startSuspended);
-
-  _uname := uname;
-  case mode of
-    TOP_MONTHLY: _mode := 'havi';
-    TOP_WEEKLY: _mode := 'heti';
-    TOP_DAILY: _mode := 'napi';
-    TOP_ALL: _mode := 'ossz';
-  end;
-end;
-
-procedure TPrintRank.Execute;
-var
-  output: string;
-begin
-  try
-    _api := TApi.Create;
-    _response := _api.GET(baseUrl + 'rank&nev=' + _uname + '&type=' + _mode);
-
-    if _response.success then
-    begin
-      output := _response.data.getString(['data', 'rank']);
-
-      scriptsHandler.evalscriptline('display ' + output);
-    end;
-
-  finally
-    Terminate;
-  end;
-end;
-
-
-type TPrintKoTH = class(TAsync)
-private
-  _api: TApi;
-  _response: TApiResponse;
-protected
-  procedure Execute; override;
-end;
-
-procedure TPrintKoTH.Execute;
-var
-  output: string;
-  nev: string;
-  pont: string;
-  line: string;
-  i: Cardinal;
-begin
-  try
-    _api := TApi.Create;
-    _response := _api.GET(baseUrl + 'koth');
-
-    if _response.success then
-    begin
-      for i := 0 to 9 do
-      begin
-        nev := _response.data.getString(['data', i, 'nev']);
-        if length(nev) = 0 then nev := '-';
-
-        pont := _response.data.getString(['data', i, 'pont']);
-        if length(pont) = 0 then pont := '';
-
-        line := inttostr(i + 1) + '. ' + nev + ' ' + pont;
-        output := output + NL + line;
-       end;
-       scriptsHandler.evalscriptline('display ' + output);
-    end;
-  finally
-    Terminate;
-  end;
-end;
-
-
-type TPrintToTH = class(TAsync)
-private
-  _api: TApi;
-  _response: TApiResponse;
-protected
-  procedure Execute; override;
-end;
-
-procedure TPrintToTH.Execute;
-var
-  output: string;
-  nev: string;
-  pont: string;
-  line: string;
-  i: Cardinal;
-begin
-  try
-    _api := TApi.Create;
-    _response := _api.GET(baseUrl + 'toth');
-
-    if _response.success then
-    begin
-      for i := 0 to 9 do
-      begin
-        nev := _response.data.getString(['data', i, 'nev']);
-        if length(nev) = 0 then nev := '-';
-
-        pont := _response.data.getString(['data', i, 'pont']);
-        if length(pont) = 0 then pont := '';
-
-        line := inttostr(i + 1) + '. ' + nev + ' ' + pont;
-        output := output + NL + line;
-       end;
-       scriptsHandler.evalscriptline('display ' + output);
-    end;
-  finally
-    Terminate;
-  end;
-end;
 
 //-----------------------------------------------------------------------------
 // FUNCTIONS
@@ -2912,10 +2687,28 @@ begin
     end;
 end;
 
-//TODO: remove
 procedure fastinfo(const args: array of const);
 begin
   scriptsHandler.evalScriptLine('fastinfo ' + VariantUtils.VarRecToStr(args[0]));
+end;
+
+procedure initThreadHandler;
+begin                          
+  sentryModule.addBreadcrumb(makeBreadcrumb('called initThreadHandler'));
+  
+  threadHandlerModule := TThreadHandler.Create;
+
+  fastinfoSaga := TSaga.Create('fastinfo', fastinfo);
+  threadHandlerModule.addSaga(fastinfoSaga);
+
+  printTopSaga := TSaga.Create('printTop', printTop);
+  threadHandlerModule.addSaga(printTopSaga);
+
+  printRankSaga := TSaga.Create('printRank', printRank);
+  threadHandlerModule.addSaga(printRankSaga);
+
+  printKothSaga := TSaga.Create('printKoth', printKoth);
+  threadHandlerModule.addSaga(printKothSaga);
 end;
 
 function InitializeAll:HRESULT;
@@ -2932,7 +2725,7 @@ var
   cloud_speed:single;
   cloud_color:longword;
   mati:TMaterial;
-  tmpbol:boolean;
+  tmpbol:boolean;                            
   tmpint:integer;
   special:string;
 label
@@ -2947,10 +2740,8 @@ begin
   //TODO: remove
   //raise Exception.Create('faszom varja ki amig tolt');
 
-  threadHandlerModule := TThreadHandler.Create;
-
-  fastinfoSaga := TSaga.Create('fastinfo', fastinfo);
-  threadHandlerModule.addSaga(fastinfoSaga);
+  laststate := 'Loading ThreadHandler';
+  initThreadHandler;
 
   sundir:=D3DXVector3(-1, 1.0, 0);
 
@@ -4708,8 +4499,6 @@ var
 label
   atugor;
 begin
-  sentryModule.addBreadcrumb(makeBreadcrumb('called iranyit'));
-
   D3DXVec3Subtract(mysebVec, d3dxvector3(cpx^, cpy^, cpz^), d3dxvector3(cpox^, cpoy^, cpoz^));
   myseb:=D3DXVec3Length(mysebVec);
 
@@ -14120,36 +13909,25 @@ var
       SpawnVehicle(d3dxvector3(-335, waterlevel, -60),2,'submarine');
     end;
 {$ENDIF}
-    {
-    if pos(' //', mit) = 1 then evalscriptline(copy(mit, 4, length(mit) - 3));
-      }
-
-    {
-    //EXAMPLE
-    if pos(' /servertime', mit) = 1 then
-    begin
-      TPrintServerTimeThread.Create(FALSE);
-    end;
-    }
 
     if pos(' /havitop', mit) = 1 then
     begin
-      TPrintTopThread.Create(FALSE, TOP_MONTHLY);
-    end; 
+      threadHandlerModule.call('printTop', ['havitop']);
+    end;
 
     if pos(' /hetitop', mit) = 1 then
     begin
-      TPrintTopThread.Create(FALSE, TOP_WEEKLY);
+      threadHandlerModule.call('printTop', ['hetitop']);
     end;
 
     if pos(' /napitop', mit) = 1 then
     begin
-      TPrintTopThread.Create(FALSE, TOP_DAILY);
+      threadHandlerModule.call('printTop', ['napitop']);
     end;
 
     if pos(' /top', mit) = 1 then
     begin
-      TPrintTopThread.Create(FALSE);
+      threadHandlerModule.call('printTop', ['top']);
     end;
 
     if pos(' /rank', mit) = 1 then
@@ -14157,7 +13935,7 @@ var
       tmp := '';
       for i:=0 to high(ppl) do
         if (ppl[i].net.UID = 0) then tmp := ppl[i].pls.nev;
-      TPrintRank.Create(FALSE, tmp);
+      threadHandlerModule.call('printRank', [tmp, 'ossz']);
     end;
 
     if pos(' /rank napi', mit) = 1 then
@@ -14165,7 +13943,7 @@ var
       tmp := '';
       for i:=0 to high(ppl) do
         if (ppl[i].net.UID = 0) then tmp := ppl[i].pls.nev;
-      TPrintRank.Create(FALSE, tmp, TOP_DAILY);
+      threadHandlerModule.call('printRank', [tmp, 'napi']);
     end;
 
     if pos(' /rank heti', mit) = 1 then
@@ -14173,7 +13951,7 @@ var
       tmp := '';
       for i:=0 to high(ppl) do
         if (ppl[i].net.UID = 0) then tmp := ppl[i].pls.nev;
-      TPrintRank.Create(FALSE, tmp, TOP_WEEKLY);
+      threadHandlerModule.call('printRank', [tmp, 'heti']);
     end;
 
     if pos(' /rank havi', mit) = 1 then
@@ -14181,18 +13959,19 @@ var
       tmp := '';
       for i:=0 to high(ppl) do
         if (ppl[i].net.UID = 0) then tmp := ppl[i].pls.nev;
-      TPrintRank.Create(FALSE, tmp, TOP_MONTHLY);
-    end; 
+      threadHandlerModule.call('printRank', [tmp, 'havi']);
+    end;
 
     if pos(' /koth', mit) = 1 then
     begin
-      TPrintKoTH.Create(FALSE);
+      threadHandlerModule.call('printKoth', ['koth']);
     end;
 
     if pos(' /toth', mit) = 1 then
     begin
-      TPrintToTH.Create(FALSE);
+      threadHandlerModule.call('printKoth', ['toth']);
     end;
+
 
 {$IFDEF propeditor}
     if pos(' /p', mit) = 1 then

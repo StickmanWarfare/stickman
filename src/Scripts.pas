@@ -112,6 +112,9 @@ type
       procedure evalScriptLine(line: string);
   end;
 
+var
+  scriptsHandler: TScriptsHandler;
+
 
 implementation
 

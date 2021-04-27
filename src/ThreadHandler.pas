@@ -5,25 +5,26 @@ interface
   uses
     Classes,
     //
-    Typestuff;
+    Typestuff,
+    QJSON;
 
   type TSaga = class (TObject)
     private
       _key: string;
-      _callback: TIndefiniteProcedute;
+      _callback: TIndefiniteProcedure;
     published
-      constructor Create(key: string; callback: TIndefiniteProcedute);
+      constructor Create(key: string; callback: TIndefiniteProcedure);
       function key: string;
-      function callback: TIndefiniteProcedute; //ez lesz a thread execute
+      function callback: TIndefiniteProcedure; //ez lesz a thread execute
   end;
 
   type TCallbackThread = class (TThread)
     private
-      _callback: TIndefiniteProcedute;
+      _callback: TIndefiniteProcedure;
     protected
       procedure Execute(const args: array of const); overload;
     published
-      constructor Create(callback: TIndefiniteProcedute);
+      constructor Create(callback: TIndefiniteProcedure);
   end;
 
   TCallbackThreadArray = array of TCallbackThread;
@@ -37,7 +38,7 @@ interface
     published
       constructor Create;
       procedure addSaga(saga: TSaga);
-      procedure call(key: string; const args: array of const);  //újat indít, suspend marad ahogy volt
+      function call(key: string; const args: array of const): THandle;  //újat indít, suspend marad ahogy volt
       //TODO: procedure all(keys: array of string; parallel: boolean = false);
       //TODO: procedure race(keys: array of string);
       //TODO: execute(key / keys / null)  //csak ha van is suspended, nem indít újat
@@ -49,13 +50,13 @@ interface
 
 var
   threadHandlerModule: TThreadHandler;
-  fastinfoSaga: TSaga;
+  fastinfoSaga, printTopSaga, printRankSaga, printKothSaga: TSaga; //TODO: move these
   
 
 implementation
 
 //TCallbackThread
-constructor TCallbackThread.Create(callback: TIndefiniteProcedute);
+constructor TCallbackThread.Create(callback: TIndefiniteProcedure);
 begin
   inherited Create(true); //suspended on create
 
@@ -70,7 +71,7 @@ end;
 
 
 //TSaga
-constructor TSaga.Create(key: string; callback: TIndefiniteProcedute);
+constructor TSaga.Create(key: string; callback: TIndefiniteProcedure);
 begin
   _key := key;
   _callback := callback;
@@ -81,7 +82,7 @@ begin
   result := _key;
 end;
 
-function TSaga.callback: TIndefiniteProcedute;
+function TSaga.callback: TIndefiniteProcedure;
 begin
   result := _callback;
 end;
@@ -100,7 +101,7 @@ begin
   _sagas[high(_sagas)] := saga;
 end;
 
-procedure TThreadHandler.call(key: string; const args: array of const);
+function TThreadHandler.call(key: string; const args: array of const): THandle;
 var
   i: Integer;
   saga: TSaga;
@@ -126,10 +127,13 @@ begin
   setlength(_threads, succ(length(_threads)));
   _threads[high(_threads)] := TCallbackThread.Create(saga.callback());
 
+  result := _threads[high(_threads)].ThreadID;
+
   //execute
   _threads[high(_threads)].Execute(args);
 end;
 
+//TODO: clear results for deleted threads
 procedure TThreadHandler.cleanup(hard: boolean = false);
 var
   i: Integer;
