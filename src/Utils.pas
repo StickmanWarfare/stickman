@@ -118,12 +118,12 @@ begin
   result := StringReplace(result, 'á', 'a', [rfReplaceAll, rfIgnoreCase]);
   result := StringReplace(result, 'é', 'e', [rfReplaceAll, rfIgnoreCase]);
   result := StringReplace(result, 'í', 'i', [rfReplaceAll, rfIgnoreCase]);
-  result := StringReplace(result, 'ó', 'o', [rfReplaceAll, rfIgnoreCase]); 
+  result := StringReplace(result, 'ó', 'o', [rfReplaceAll, rfIgnoreCase]);
   result := StringReplace(result, 'ö', 'o', [rfReplaceAll, rfIgnoreCase]);
-  result := StringReplace(result, 'o', 'o', [rfReplaceAll, rfIgnoreCase]); //ez egy hoszzu ö
+  result := StringReplace(result, 'õ', 'o', [rfReplaceAll, rfIgnoreCase]); //ez egy hoszzu ö
   result := StringReplace(result, 'ú', 'u', [rfReplaceAll, rfIgnoreCase]); 
   result := StringReplace(result, 'ü', 'u', [rfReplaceAll, rfIgnoreCase]);
-  result := StringReplace(result, 'u', 'u', [rfReplaceAll, rfIgnoreCase]); //emmeg hosszu ü
+  result := StringReplace(result, 'û', 'u', [rfReplaceAll, rfIgnoreCase]); //emmeg hosszu ü
 end;
 
 class function VariantUtils.VarRecToStr(rec: TVarRec): string;

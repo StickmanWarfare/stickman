@@ -119,6 +119,8 @@ const
 var
   // REMOVE
 
+  botkills: Integer = 0;
+  bootkillsendtim: Integer = 100 * 60 * 5; //every 5 minutes (igen az 100 es nem 1000)
   botGroupArr: array of TBotGroup;
   selfieMaker: TSelfie; 
 
@@ -2690,6 +2692,15 @@ end;
 procedure fastinfo(const args: array of const);
 begin
   scriptsHandler.evalScriptLine('fastinfo ' + VariantUtils.VarRecToStr(args[0]));
+end;  
+
+procedure reportBotKills(const args: array of const);
+begin
+  bootkillsendtim := 500;
+  if (botkills <= 0) exit;
+                        
+  botkills := 0;
+  sendBotKills([botkills]);
 end;
 
 procedure initThreadHandler;
@@ -2709,6 +2720,9 @@ begin
 
   printKothSaga := TSaga.Create('printKoth', printKoth);
   threadHandlerModule.addSaga(printKothSaga);
+
+  reportBotKillsSaga := TSaga.Create('reportBotKills', reportBotkills);
+  threadHandlerModule.addSaga(reportBotKillsSaga);
 end;
 
 function InitializeAll:HRESULT;
@@ -4555,9 +4569,6 @@ begin
 
     if dine.keyprsd(DIK_B) then
     begin
-      //TODO: remove
-      threadHandlerModule.call('fastinfo', ['pressed B']);
-
       selfieMaker.dab := not selfieMaker.dab;
     end;
   end;
@@ -7088,7 +7099,8 @@ begin
   if not bots_enabled then exit;
   for groupIndex := low(botGroupArr) to high(botGroupArr) do
     for botIndex := low(botGroupArr[groupIndex].bots) to high(botGroupArr[groupIndex].bots) do
-      botGroupArr[groupIndex].bots[botIndex].collideProjectile(loves);
+      if (botGroupArr[groupIndex].bots[botIndex].collideProjectile(loves)) then
+        botkills := botkills + 1;
 end;
 
 procedure renderbots;
@@ -8119,6 +8131,13 @@ end;
       dec(invulntim);
       if invulntim = 0 then
         showHudInfo('', 0, 0);
+    end;
+
+    if bootkillsendtim <> 0 then
+    begin
+      dec(bootkillsendtim);
+      if bootkillsendtim = 0 then
+        threadHandlerModule.call('reportBotKills', []);
     end;
     // if latszonaKL>0 then dec(latszonaKL);
 
@@ -15385,7 +15404,6 @@ begin //                 BEGIIIN
 
         multip2p:=TMMOPeerToPeer.Create(multisc.myport, myfegyv, myfegyv_skin);                         //JAEZAZ
         writeln(logfile, 'Network initialized');
-
 
         laststate:= 'Initialzing game 3';
 

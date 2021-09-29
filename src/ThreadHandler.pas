@@ -50,7 +50,7 @@ interface
 
 var
   threadHandlerModule: TThreadHandler;
-  fastinfoSaga, printTopSaga, printRankSaga, printKothSaga: TSaga; //TODO: move these
+  fastinfoSaga, printTopSaga, printRankSaga, printKothSaga, reportBotKillsSaga: TSaga; //TODO: move these
   
 
 implementation

@@ -9,6 +9,9 @@ interface
     //
     IdHTTP,
     IdURI,
+    IdMultipartFormData,
+    IdIOHandler,
+    IdSSLOpenSSL,
     //
     multiplayer,
     qjson,
@@ -17,7 +20,8 @@ interface
     Utils;
 
   const
-    BASE_URL = 'https://stickman.hu/api?mode=';
+    PROTOCOL = 'https://';
+    BASE_URL = 'localhost/api?mode='; //'stickman.hu/api?mode=';
     NL = AnsiString(#13#10);
 
 
@@ -28,27 +32,17 @@ interface
 
   type TApi = class(TObject)
     public
-      class function GET(const route: string): TApiResponse;
+      class function GET(const route: string): TApiResponse;  
+      class function POST(const route: string; const data: TIdMultipartFormDataStream): TApiResponse;
   end;
 
   procedure printTop(const args: array of const);
   procedure printRank(const args: array of const);
   procedure printKoth(const args: array of const);
+  procedure sendBotKills(const args: array of const);
 
   
 implementation
-
-{
-  HELPER FUNCTIONS
-}
-function StreamToString(Stream: TMemoryStream): String;
-var
-    len: Integer;
-begin
-    len := Stream.Size - Stream.Position;
-    SetLength(Result, len);
-    if len > 0 then Stream.ReadBuffer(Result[1], len);
-end;
 
 {
   TApi
@@ -58,7 +52,7 @@ var
   url: string;
 begin
   try
-    url := TIdURI.URLEncode(BASE_URL + KillMeUtils.unhungaryify(route));
+    url := TIdURI.URLEncode(PROTOCOL + BASE_URL + KillMeUtils.unhungaryify(route));
     sentryModule.addBreadcrumb(makeBreadcrumb('[GET] ' + url));
 
     result.success := true;
@@ -67,6 +61,37 @@ begin
     on E:Exception do
     begin
       sentryModule.addBreadcrumb(makeBreadcrumb('[GET] Failed: ' + url + ' - with ' + E.Message));
+      result.success := false;
+      result.data := TQJSON.Create;
+    end
+  end;
+end;
+
+class function TApi.POST(const route: string; const data: TIdMultipartFormDataStream): TApiResponse;
+var
+  url: string; 
+  postResponse: string;
+  HTTPClient: TIdHTTP;
+  IdSSLIOHandler: TIdSSLIOHandlerSocketOpenSSL;
+begin
+  try
+    url := TIdURI.URLEncode(PROTOCOL + BASE_URL + KillMeUtils.unhungaryify(route));
+    sentryModule.addBreadcrumb(makeBreadcrumb('[POST] ' + url));
+                               
+    HTTPClient := TIdHTTP.Create(nil);
+
+    IdSSLIOHandler := TIdSSLIOHandlerSocketOpenSSL.Create(nil);
+    IdSSLIOHandler.SSLOptions.SSLVersions := [sslvTLSv1,sslvTLSv1_1,sslvTLSv1_2];
+    HTTPClient.IOHandler := IdSSLIOHandler;
+
+    postResponse := HTTPClient.Post(url, data);
+
+    result.success := true;
+    result.data := TQJSON.Create;
+  except
+    on E:Exception do
+    begin
+      sentryModule.addBreadcrumb(makeBreadcrumb('[POST] Failed: ' + url + ' - with ' + E.Message));
       result.success := false;
       result.data := TQJSON.Create;
     end
@@ -169,6 +194,31 @@ begin
     on E:Exception do
     begin
       sentryModule.addBreadcrumb(makeBreadcrumb('printKoth failed on ' + mode));
+      //TODO: reportError(E, msg) helyette majd ha nem egy file lesz az output
+    end;
+  end;
+end;
+
+procedure sendBotKills(const args: array of const);
+var
+  route, kills: string;
+  response: TApiResponse;
+  postData: TIdMultiPartFormDataStream;
+begin
+  route := 'botkill';
+
+  try
+    kills := VariantUtils.VarRecToStr(args[0]);
+
+    postData := TIdMultiPartFormDataStream.Create;
+    postData.AddFormField('form[nev]', KillMeUtils.unhungaryify(multisc.nev));
+    postData.AddFormField('form[kills]', kills);
+
+    response := TApi.POST(route, postData);
+  except
+    on E:Exception do
+    begin
+      sentryModule.addBreadcrumb(makeBreadcrumb('sendBotKills failed'));
       //TODO: reportError(E, msg) helyette majd ha nem egy file lesz az output
     end;
   end;
