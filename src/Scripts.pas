@@ -553,7 +553,7 @@ begin
       exit;
     end;
 
-  //ez miért nem script error lel debug loife
+  //why isnt this script error lel debug loife
   multisc.chats[addchatindex].uzenet := 'No such vector variable: ' + name;
   addchatindex:=addchatindex + 1;
 end;
@@ -571,7 +571,7 @@ begin
       exit;
     end;
 
-  //ez miért nem script error lel debug loife part 2
+  //why isnt this script error lel debug loife part 2
   multisc.chats[addchatindex].uzenet := 'No such numeric variable: ' + name;
   addchatindex:=addchatindex + 1;
 end;
@@ -669,9 +669,9 @@ var
   value:single;
   r:TSingleArray;
 begin
-  // ! a vektor változó
-  // % a szám változó
-  // és mi a faszom a string wow thx Hector
+  // ! vector variable
+  // % number variable
+  // what the fuck is string wow thx Hector
 
   setlength(words, length(words) + 1);
   words[high(words)] := '//';
@@ -698,7 +698,7 @@ begin
       if words[i][1] = '%' then
         words[i] := FloatToStr(getNumVar(copy(words[i], 2, length(words[i]) - 1)));
 
-  //számoljunk, most hogy nincsenek változók
+  //variables processed, lets count
   numnum:=0;
   varnum:=0;
   operator:= ' ';
@@ -708,8 +708,8 @@ begin
     val(words[i], value, error);
 
     if error = 0 then
-    begin //szám!
-      inc(numnum); //számoljuk hány szám jön egymás után
+    begin //number!
+      inc(numnum); //count numbers in a row
 
       if numnum > 3 then
       begin
@@ -723,7 +723,7 @@ begin
     else
     begin
 
-      if (operator <> ' ') then // az operátorok mûködése
+      if (operator <> ' ') then //operators
       begin
         if (numnum = 1) and (varnum = 1) then
         begin
@@ -799,7 +799,7 @@ begin
 
       end
       else
-        if (words[i] = '//') then //vége!
+        if (words[i] = '//') then //end
         begin
           SetLength(r, 3);
           r[0]:=vars[0];
@@ -861,18 +861,18 @@ begin
   DecimalSeparator:= '.';  //for reading json in commands
   setlength(args, 0);
 
-  //bontsuk szavakra, és tegyük egy args arraybe
+  //split to words
   args := explodeLine(line, args);
 
-  //ha szopó van
+  //shits fucked
   if length(args) <= 0 then exit;
 
-  //behelyettesítés
+  //plugging in
   parserResult := parseGlobals(args);
   if parserResult.handled then exit;
   args := parserResult.args;
 
-  //wow, tudunk valamit
+  //wow, its something
   parserResult := parseControls(args);
   if parserResult.handled then exit;
   args := parserResult.args;
@@ -880,21 +880,21 @@ begin
   //sneaky short circuit
   if not _scriptevaling[_scriptdepth] then exit;
 
-  //értékadás
+  //assignments
   parserResult := parseAssignments(args);
   if parserResult.handled then exit;
   args := parserResult.args;
 
-  //új változó
+  //new vars
   parserResult := parseDeclarations(args);
   if parserResult.handled then exit;
   args := parserResult.args;
 
-  //parancsok
+  //commands
   parserResult := parseCommands(args, line);
   if parserResult.handled then exit;
 
-  //senki se kezelte le
+  //unhandled
   multisc.chats[addchatindex].uzenet:= 'Unhandled scriptline: ' + line;
   addchatindex:=addchatindex + 1;
 end;
@@ -918,7 +918,7 @@ begin
       t:=args[1][1];
       if (t = '$') then
         for i:=0 to Length(_strvars) - 1 do
-          if args[1] = '$' + _strvars[i].name then //megvan mibe tesszük
+          if args[1] = '$' + _strvars[i].name then //container found
           begin
             tmp:= '';
             j:=trunc(computenums(copy(args, 2, length(args) - 2)));
@@ -1066,7 +1066,7 @@ begin
   end;
 end;
      
-//nagy kiírás középre
+//big hud message in the center
 function fastinfoCMD(args: TStringArray; out handler: TScriptsHandler): boolean;
 var
   i: integer;
@@ -1090,7 +1090,7 @@ begin
   end;
 end;
 
-//nagy kiírás középre - piros
+//big RED hud message in the center
 function fastinfoRedCMD(args: TStringArray; out handler: TScriptsHandler): boolean;
 var
   i: integer;
@@ -1114,7 +1114,7 @@ begin
   end;
 end;
       
-//chat kiírás
+//chat message
 function printCMD(args: TStringArray; out handler: TScriptsHandler): boolean;
 var
   i: integer;
@@ -1139,7 +1139,7 @@ begin
   end;
 end;
 
-//chat kiírás - global
+//global chat message
 function chatmostCMD(args: TStringArray; out handler: TScriptsHandler): boolean;
 var
   i: integer;
@@ -1164,7 +1164,7 @@ begin
   end;
 end;
     
-//ablakos kiírás
+//window display
 function displayCMD(args: TStringArray; out handler: TScriptsHandler): boolean;
 var
   i: integer;
@@ -1189,7 +1189,7 @@ begin
   end;
 end;
 
-//ablakos kíirás - becsukás
+//window display - close
 function closedisplayCMD(args: TStringArray; out handler: TScriptsHandler): boolean;
 begin
   result := false;
@@ -1207,7 +1207,7 @@ begin
   end;
 end;
 
-//script hívás
+//script call
 function scriptCMD(args: TStringArray; out handler: TScriptsHandler): boolean;
 begin
   result := false;
@@ -1225,7 +1225,7 @@ begin
   end;
 end;
 
-//script hívás - "async"
+//script call - "async"
 function timeoutCMD(args: TStringArray; out handler: TScriptsHandler): boolean;
 var
   time: single;
@@ -1254,7 +1254,7 @@ end;
 // SCRIPT ENGINE AND DEBUG TOOLS END
 // PARTICLES AND PROPS
           
-//részecske rendszer kikapcs
+//stop particle system
 function particleStopCMD(args: TStringArray; out handler: TScriptsHandler): boolean;
 var
   i: integer;
@@ -1283,8 +1283,8 @@ begin
     end;
   end;
 end;
-       
-//részecske rendszer bekapcs
+
+//start particle system
 function particleStartCMD(args: TStringArray; out handler: TScriptsHandler): boolean;
 var
   i: integer;
@@ -1330,8 +1330,8 @@ begin
     end;
   end;
 end;
-         
-//prop elrejtés
+
+//prop hide
 function propHideCMD(args: TStringArray; out handler: TScriptsHandler): boolean;
 begin
   result := false;
@@ -1349,7 +1349,7 @@ begin
   end;
 end;
          
-//prop elõhozás
+//prop show
 function propShowCMD(args: TStringArray; out handler: TScriptsHandler): boolean;
 begin
   result := false;
@@ -1528,7 +1528,7 @@ end;
 //BOT BATTLE STUFF END
 //MISC COMMANDS AND TEST TOOLS
 
-//law robbanás
+//law explosion
 function explodeCMD(args: TStringArray; out handler: TScriptsHandler): boolean;
 begin
   result := false;
@@ -1562,7 +1562,7 @@ begin
 end;
 }
 
-//hang
+//sounds
 function soundCMD(args: TStringArray; out handler: TScriptsHandler): boolean;
 begin
   result := false;
