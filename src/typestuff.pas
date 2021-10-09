@@ -12,10 +12,8 @@ uses
   Zlib,
   Idwinsock2,
   qjson,
-  Variants,
-  dotenv;
+  Variants;
 
-//TODO: move these to dotenv
 const
   PROG_VER=211000;
   datachecksum=$46D75CAF;
@@ -551,8 +549,6 @@ var
   cpx:Psingle;///FRÖCCCS
   cpy:Psingle;///FRÖCCCS
   cpz:Psingle;///FRÖCCCS
-
-  env: TDotenv;
 
   addchatindex: integer;
   
