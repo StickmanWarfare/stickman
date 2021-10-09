@@ -33,7 +33,7 @@ interface
       public
         function getState(): TState;
         procedure subscribe(callback: TCallback);
-        procedure dispatch(action: TAction);
+        procedure dispatch(action: TAction); reintroduce;
         constructor Create(initialState: TState; reducer: TReducer);
     end;
 

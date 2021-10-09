@@ -4,6 +4,7 @@ interface
 
   uses
     Classes,
+    Variants,
     //
     Typestuff,
     QJSON;
@@ -22,7 +23,7 @@ interface
     private
       _callback: TIndefiniteProcedure;
     protected
-      procedure Execute(const args: array of const); overload;
+      procedure Execute(const args: array of const); reintroduce;
     published
       constructor Create(callback: TIndefiniteProcedure);
   end;
@@ -105,23 +106,21 @@ function TThreadHandler.call(key: string; const args: array of const): THandle;
 var
   i: Integer;
   saga: TSaga;
-  found: boolean;
 begin
   cleanup;
-
+  saga := nil;
+  result := Null;
   //find the saga
-  found := false;
   for i := low(_sagas) to high(_sagas) do
     if _sagas[i].key <> key then
       continue
     else
     begin
       saga := _sagas[i];
-      found := true;
       break;
     end;
 
-  if not found then exit;
+  if saga = nil then exit;
 
   //create thread
   setlength(_threads, succ(length(_threads)));

@@ -156,16 +156,17 @@ function TDynamicArray.findIndex(comparator: TComparatorFunction): Integer;
 var
   i: Integer;
 begin
-  if length(_items) <= 1 then result := -1;
+  result := -1;
 
-  for i := low(_items) to high(_items) do
-  begin
-    if comparator(_items[i], intToStr(i)) then
+  if length(_items) > 1 then
+    for i := low(_items) to high(_items) do
     begin
-      result := i;
-      exit;
+      if comparator(_items[i], intToStr(i)) then
+      begin
+        result := i;
+        exit;
+      end;
     end;
-  end;
 
 end;
 

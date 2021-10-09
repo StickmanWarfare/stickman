@@ -1227,8 +1227,6 @@ end;
 
 //script call - "async"
 function timeoutCMD(args: TStringArray; out handler: TScriptsHandler): boolean;
-var
-  time: single;
 begin
   result := false;
 
