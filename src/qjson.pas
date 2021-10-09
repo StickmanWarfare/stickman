@@ -347,7 +347,7 @@ var
   i: integer;
 begin
   i := 1;
-  CreateQJSONFromString(src, i);
+  root := CreateQJSONFromString(src, i);
 end;
 
 function TQJSON.toString(data:PQJSONData; indent:integer): string;

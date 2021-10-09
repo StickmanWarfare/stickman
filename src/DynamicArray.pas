@@ -12,11 +12,11 @@ interface
     private
       _items: TVariantArray;
       _isFrozen: boolean;
-      _isPermaFrozen: boolean;
+      _isPermaFrozen: boolean;  
+      procedure init;
     public
       constructor Create(); overload;
       constructor Create(items: TVariantArray); overload;
-      procedure init;
       //
       function push(item: Variant): Integer; //index 
       function pop: Variant;

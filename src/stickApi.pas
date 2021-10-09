@@ -21,7 +21,7 @@ interface
 
   const
     PROTOCOL = 'https://';
-    BASE_URL = 'localhost/api?mode='; //'stickman.hu/api?mode=';
+    BASE_URL = 'stickman.hu/api?mode=';
     NL = AnsiString(#13#10);
 
 
@@ -85,9 +85,10 @@ begin
     HTTPClient.IOHandler := IdSSLIOHandler;
 
     postResponse := HTTPClient.Post(url, data);
+    postResponse := stringreplace(postResponse, '\', '', [rfReplaceAll]);
 
     result.success := true;
-    result.data := TQJSON.Create;
+    result.data := TQJSON.CreateFromString(postResponse);
   except
     on E:Exception do
     begin

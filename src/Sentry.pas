@@ -65,7 +65,7 @@ constructor TSentry.Create;
 begin
   with _metadata do
   begin
-    isDev := {$IFDEF undebug} false {$ELSE} true {$ENDIF};
+    isDev := env.isDev;
     version := PROG_VER;
     checksum := datachecksum;
   end;

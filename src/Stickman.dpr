@@ -5,6 +5,8 @@
  * for more information.                     *)
 
 {$R stickman.RES}
+
+//TODO: move these to dotenv, refact all IFDEF checks
 {$DEFINE force16bitindices} //ez hibás, pár helyen, ha nincs kipontozva, meg kell majd nézni
 {.$DEFINE undebug} //Remove dot for release, add dot for dev
 {.$DEFINE nochecksumcheck}
@@ -72,7 +74,8 @@ uses
   Redux,
   DynamicArray,
   Sentry,
-  ThreadHandler;
+  ThreadHandler,
+  dotenv;
 
 const
   lvlmin = 0; //ENNEK ÍGY KÉNE MARADNIA
@@ -118,7 +121,6 @@ const
   //-----------------------------------------------------------------------------
 var
   // REMOVE
-
   botkills: Integer = 0;
   bootkillsendtim: Integer = 100 * 60 * 5; //every 5 minutes (igen az 100 es nem 1000)
   botGroupArr: array of TBotGroup;
@@ -2696,11 +2698,13 @@ end;
 
 procedure reportBotKills(const args: array of const);
 begin
-  bootkillsendtim := 500;
-  if (botkills <= 0) exit;
-                        
-  botkills := 0;
+  bootkillsendtim := 100 * 60 * 5;
+  
+  if (length(multisc.nev) <= 0) then exit;
+  if (botkills <= 0) then exit;
+
   sendBotKills([botkills]);
+  botkills := 0;
 end;
 
 procedure initThreadHandler;
@@ -2725,6 +2729,14 @@ begin
   threadHandlerModule.addSaga(reportBotKillsSaga);
 end;
 
+procedure initDotenv();
+begin
+  env := TDotenv.Create(
+    {$IFDEF undebug} false {$ELSE} true {$ENDIF},
+    {$IFDEF nochecksumcheck} false {$ELSE} true {$ENDIF}
+  );
+end;
+
 function InitializeAll:HRESULT;
 var
   pIndices:PWordArray;
@@ -2739,7 +2751,7 @@ var
   cloud_speed:single;
   cloud_color:longword;
   mati:TMaterial;
-  tmpbol:boolean;                            
+  tmpbol:boolean;
   tmpint:integer;
   special:string;
 label
@@ -14999,6 +15011,7 @@ begin //                 BEGIIIN
   NtSIT(GetCurrentThread, $11, nil, 0);
 {$ENDIF}
 
+  initDotenv;
   sentryModule := TSentry.Create;
 
   try

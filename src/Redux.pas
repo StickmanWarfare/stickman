@@ -76,50 +76,5 @@ begin
   end;
 end;
 
-{
-  Example / How to use:
-  * Call makeExampleStore to create the store
-  * Use getState() to query the store (make selectors for efficienty)
-  * Use dispatch() to alter the store (make action records for efficienty)
-  * Use subscribe() to pass callbacks that get called after dispatch
-
-
-function makeExampleStoreState: TState;
-begin
-  result := TMutableObject.Create();
-  result.assign('foo', 5);
-  result.assign('bar', 'asd');
-end; 
-
-function setBarReducer(state: TState; action: TAction): TState;
-begin
-  result := state;
-  result.assign('bar', action.payload.get('bar'));
-end;
-
-function setFooPlusFiveReducer(state: TState; action: TAction): TState;
-begin
-  result := state;
-  result.assign('foo', action.payload.get('foo') + 5);
-end;
-
-function exampleStoreReducer(state: TState; action: TAction): TState;
-begin
-  result := state;
-
-  if action.key = 'setFooPlusFive' then
-    result := setFooPlusFiveReducer(state, action)
-  else if action.key = 'setBar' then
-    result := setBarReducer(state, action);
-
-end;
-
-function makeExampleStore: TStore;
-begin
-  result := TStore.Create(makeExampleStoreState(), exampleStoreReducer);
-end;
-
-}
-
 end.
 
