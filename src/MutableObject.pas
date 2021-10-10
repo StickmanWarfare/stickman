@@ -73,6 +73,8 @@ function TMutableObject.find(comparator: TComparatorFunction): Variant;
 var
   i: Integer;
 begin
+  result := Null;
+
   for i := 0 to high(__values) do
   begin
     if comparator(__values[i].value, __values[i].key) then
@@ -87,6 +89,8 @@ function TMutableObject.findKey(comparator: TComparatorFunction): string;
 var
   i: Integer;
 begin
+  result := Null;
+
   for i := 0 to high(__values) do
   begin
     if comparator(__values[i].value, __values[i].key) then
@@ -102,6 +106,7 @@ var
   i: Integer;
 begin
   result := false;
+  
   for i := 0 to high(__values) do
   begin
     if __values[i].value = value then
@@ -117,6 +122,7 @@ var
   i: Integer;
 begin
   result := false;
+
   for i := 0 to high(__values) do
   begin
     if __values[i].key = key then
@@ -131,7 +137,9 @@ function TMutableObject.assign(key: string; value: Variant; strict: boolean = fa
 var
   i: Integer;
   newPair: TKeyValuePair;
-begin
+begin       
+  result := Null;
+  
   if isFrozen() then exit;
 
   if not has(key) then
@@ -163,7 +171,9 @@ function TMutableObject.unset(key: string; strict: boolean = false): Variant;
 var
   i: Integer;
   found: boolean;
-begin
+begin              
+  result := Null;
+  
   if isFrozen() then exit;
 
   if not has(key) then
@@ -200,7 +210,9 @@ end;
 function TMutableObject.get(key: string; strict: boolean = false): Variant;
 var
   i: Integer;
-begin
+begin       
+  result := Null;
+  
   if not has(key) then
   begin
     if strict then

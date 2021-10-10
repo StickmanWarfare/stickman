@@ -3,6 +3,7 @@ unit DynamicArray;
 interface
   uses
     SysUtils,
+    Variants,
     //
     Typestuff;
 
@@ -79,6 +80,8 @@ end;
 
 function TDynamicArray.pop: Variant;
 begin
+  result := Null;
+
   if _isFrozen or _isPermaFrozen then exit;
 
   if length(_items) <= 0 then exit;
@@ -93,7 +96,9 @@ begin
 end;
 
 function TDynamicArray.at(index: Integer): Variant;
-begin
+begin  
+  result := Null;
+
   if length(_items) <= 0 then exit;
   if index >= length(_items) then exit;
   if index <= 0 then exit;
@@ -102,14 +107,18 @@ begin
 end;
 
 function TDynamicArray.head: Variant;
-begin
+begin       
+  result := Null;
+
   if length(_items) <= 0 then exit;
 
   result := _items[low(_items)];
 end;
 
 function TDynamicArray.tail: TVariantArray;
-begin
+begin       
+  setlength(result, 0);
+
   if length(_items) <= 1 then exit;
 
   result := copy(_items, 1, length(_items) - 1);
@@ -139,6 +148,8 @@ function TDynamicArray.find(comparator: TComparatorFunction): Variant;
 var
   i: Integer;
 begin
+  result := Null;
+
   if length(_items) <= 1 then exit;
 
   for i := low(_items) to high(_items) do
