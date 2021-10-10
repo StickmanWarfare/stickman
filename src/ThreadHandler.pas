@@ -16,7 +16,7 @@ interface
     published
       constructor Create(key: string; callback: TIndefiniteProcedure);
       function key: string;
-      function callback: TIndefiniteProcedure; //ez lesz a thread execute
+      function callback: TIndefiniteProcedure; //this will be the thread execute
   end;
 
   type TCallbackThread = class (TThread)
@@ -39,13 +39,13 @@ interface
     published
       constructor Create;
       procedure addSaga(saga: TSaga);
-      function call(key: string; const args: array of const): THandle;  //újat indít, suspend marad ahogy volt
+      function call(key: string; const args: array of const): THandle;  //creates new saga, suspended ones stay as-is
       //TODO: procedure all(keys: array of string; parallel: boolean = false);
       //TODO: procedure race(keys: array of string);
-      //TODO: execute(key / keys / null)  //csak ha van is suspended, nem indít újat
+      //TODO: execute(key / keys / null)  //starts suspended ones, does not create new saga
       //TODO: suspend(key / keys / null)
       //TODO: terminate(key / keys / null)
-      //TODO: waitFor(key / keys / null) //az lemegy, többi suspended
+      //TODO: waitFor(key / keys / null) //runs given saga(s), all others stay as-is/suspended
   end;
 
 
@@ -110,6 +110,7 @@ begin
   cleanup;
   saga := nil;
   result := Null;
+
   //find the saga
   for i := low(_sagas) to high(_sagas) do
     if _sagas[i].key <> key then
