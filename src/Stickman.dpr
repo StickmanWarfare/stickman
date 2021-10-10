@@ -8,7 +8,7 @@
 
 {$I Defines.inc}
 
-{$DEFINE force16bitindices} //ez hib·s, p·r helyen, ha nincs kipontozva, meg kell majd nÈzni
+{$DEFINE force16bitindices} //ez hib√°s, p√°r helyen, ha nincs kipontozva, meg kell majd n√©zni
 {.$DEFINE speedhack}
 {.$DEFINE repkedomod}
 {.$DEFINE godmode}
@@ -76,7 +76,7 @@ uses
   ThreadHandler;
 
 const
-  lvlmin = 0; //ENNEK ÕGY K…NE MARADNIA
+  lvlmin = 0; //ENNEK √çGY K√âNE MARADNIA
   lvlmax = 6;
   lvlsiz = 32; //Ennek is :(
   lvlsizp = lvlsiz + 1;
@@ -108,7 +108,7 @@ const
   T_CONST = 0;
   T_OPERATOR = 1;
 
-  //CMAP_SIZE=1024; //lefelÈ betˆltÈsnÈl kÈne scalelni
+  //CMAP_SIZE=1024; //lefel√© bet√∂lt√©sn√©l k√©ne scalelni
   CMAP_SIZE = 1024;
   CMAP_PATH = 'data/textures/map/';
 
@@ -124,8 +124,8 @@ var
   botGroupArr: array of TBotGroup;
   selfieMaker: TSelfie; 
 
-  CMAP1_NAME:string = 'cmap.png'; //rÈgi terep
-  CMAP2_NAME:string = 'cmap2.png'; //tÈrkÈp
+  CMAP1_NAME:string = 'cmap.png'; //r√©gi terep
+  CMAP2_NAME:string = 'cmap2.png'; //t√©rk√©p
   CMAP3_NAME:string = 'cmap3.png'; //shader terep
   modifierjson:TQJSON;
 {$IFDEF matieditor}
@@ -183,7 +183,7 @@ var
 
   hogombmesh:ID3DXMesh = nil;
 
-  foliages:array of Tfoliage; //NˆvÈnyzet
+  foliages:array of Tfoliage; //N√∂v√©nyzet
   //  foliagelevels:array of integer;
   ojjektumrenderer:T3DORenderer;
   fegyv:Tfegyv = nil;
@@ -232,14 +232,14 @@ var
   toind, allind:integer;
   muks:Tmuksoka;
   halalhorg:integer;
-  cpox:Psingle; ///FR÷CCCS
-  cpoy:Psingle; ///FR÷CCCS
-  cpoz:Psingle; ///FR÷CCCS
+  cpox:Psingle; ///FR√ñCCCS
+  cpoy:Psingle; ///FR√ñCCCS
+  cpoz:Psingle; ///FR√ñCCCS
   mousesens:single;
   mouseacc:boolean;
   oopos:TD3DXVector3;
   wentthroughwall:boolean;
-  posokvoltak:array[0..4] of TD3DXVector3; //Ne MERD az MMO-n kÌbv¸l haszn·lni mert megbaszlak!
+  posokvoltak:array[0..4] of TD3DXVector3; //Ne MERD az MMO-n k√≠bv√ºl haszn√°lni mert megbaszlak!
   lastzone:string;
   zonaellen:integer;
   zonabarat:integer;
@@ -768,7 +768,7 @@ begin
   v24y:=advwove(xx, zz - (scalfac)) - advwove(xx, zz + (scalfac));
   //v1-v3
   v13y:=advwove(xx - (scalfac), zz) - advwove(xx + (scalfac), zz);
-  //Dˆbbenetes az egyszer˚sÌtÈs
+  //D√∂bbenetes az egyszer√ªs√≠t√©s
   norm.x:=v13y;
   norm.y:=2 * scalfac;
   norm.z:=v24y;
@@ -777,7 +777,7 @@ begin
     d3dxvec3scale(norm, norm, fastinvsqrt(lngt));
 end;
 
-//function norm(xx,zz:single;scalfac:single):Td3dvector; //ideiglenesen kivÈve
+//function norm(xx,zz:single;scalfac:single):Td3dvector; //ideiglenesen kiv√©ve
 //var
 //lngt:single;
 //v24y,v13y:single;
@@ -925,7 +925,7 @@ begin
   //if scalfac>=pow2[farlvl] then
   //if (not useoldterrain and (opt_detail>0)) or (useoldterrain and (scalfac>=pow2[farlvl])) then
   if (not useoldterrain) or (useoldterrain and (scalfac >= pow2[farlvl])) then
-  begin //t·voli vagy ˙j
+  begin //t√°voli vagy √∫j
     ux:=xx / 2048 + 0.5;
     uz:=zz / 2048 + 0.5;
 //    szin:=$FFFFFF; yeeeaaaahhh
@@ -933,7 +933,7 @@ begin
     u2z:=zz / 2 + cos(xx / 3) / 6 + cos(xx / 10); //+perlin.complexnoise(1,xx,zz+2000,16,4,0.5)*1{+perlin.noise(xx/200+100,0.5,zz/200)*50};
   end
   else
-  begin //old kˆzeli
+  begin //old k√∂zeli
     ux:=xx / 1 + sin(zz / 2) / 2 + sin(zz / 8) + perlin.complexnoise(1, xx + 2000, zz, 16, 4, 0.5) * 3 {+perlin.noise(xx/200,0.5,zz/200+100)*50};
     uz:=zz / 1 - cos(xx / 2) / 2 + cos(xx / 8) + perlin.complexnoise(1, xx, zz + 2000, 16, 4, 0.5) * 3 {+perlin.noise(xx/200+100,0.5,zz/200)*50};
     u2x:=xx / 16;
@@ -1034,7 +1034,7 @@ begin
       if (levels[lvl, alapind[i * 3 + 0]].color = fuszin) or
         (levels[lvl, alapind[i * 3 + 1]].color = fuszin) or
         (levels[lvl, alapind[i * 3 + 2]].color = fuszin) then
-      begin //f¸ves a cucc
+      begin //f√ºves a cucc
         lvlind[lvl, 0, lvlindszam[lvl, 0] + 0]:=alapind[i * 3 + 0] + lvlcucc;
         lvlind[lvl, 0, lvlindszam[lvl, 0] + 1]:=alapind[i * 3 + 1] + lvlcucc;
         lvlind[lvl, 0, lvlindszam[lvl, 0] + 2]:=alapind[i * 3 + 2] + lvlcucc;
@@ -1044,7 +1044,7 @@ begin
       if (levels[lvl, alapind[i * 3 + 0]].color = koszin) or
         (levels[lvl, alapind[i * 3 + 1]].color = koszin) or
         (levels[lvl, alapind[i * 3 + 2]].color = koszin) then
-      begin //vagy kˆves
+      begin //vagy k√∂ves
         lvlind[lvl, 1, lvlindszam[lvl, 1] + 0]:=alapind[i * 3 + 0] + lvlcucc;
         lvlind[lvl, 1, lvlindszam[lvl, 1] + 1]:=alapind[i * 3 + 1] + lvlcucc;
         lvlind[lvl, 1, lvlindszam[lvl, 1] + 2]:=alapind[i * 3 + 2] + lvlcucc;
@@ -1054,7 +1054,7 @@ begin
         if (levels[lvl, alapind[i * 3 + 0]].color <> fuszin) or
           (levels[lvl, alapind[i * 3 + 1]].color <> fuszin) or
           (levels[lvl, alapind[i * 3 + 2]].color <> fuszin) then
-        begin //vagy egyÈb (homok, vÌz)
+        begin //vagy egy√©b (homok, v√≠z)
           lvlind[lvl, 2, lvlindszam[lvl, 2] + 0]:=alapind[i * 3 + 0] + lvlcucc;
           lvlind[lvl, 2, lvlindszam[lvl, 2] + 1]:=alapind[i * 3 + 1] + lvlcucc;
           lvlind[lvl, 2, lvlindszam[lvl, 2] + 2]:=alapind[i * 3 + 2] + lvlcucc;
@@ -1071,7 +1071,7 @@ begin
   // zeromemory(pointer(pVertices),lvlsizp*lvlsizp*sizeof(Tcustomvertex));
   g_pVB.Unlock;
 
-  //elkˆltˆzt¸nk
+  //elk√∂lt√∂zt√ºnk
 
    //if lvl=4 then bokrok.update(@(levels[lvl,0]),yandnormbokor);
    //if lvl=1 then fuvek.update(@(levels[lvl,0]),yandnormfu);
@@ -1675,7 +1675,7 @@ begin
     dnsrad:=ojjektumarr[panthepulet].rad * 1.4;
   end
   else
-  begin //hogy legal·bb ne l·tszÛdjon a modokban //Ìgy utÛlag nÈzve ez egy tr·gya megold·s
+  begin //hogy legal√°bb ne l√°tsz√≥djon a modokban //√≠gy ut√≥lag n√©zve ez egy tr√°gya megold√°s
     dnsvec:=d3dxvector3(0, -100, 0);
     pantheonPos:=d3dxvector3(0, -100, 0);
     dnsrad:=1;
@@ -1835,7 +1835,7 @@ begin
   Result:=E_FAIL;
   tmptex:=nil;
   if Failed(g_pd3dDevice.CreateTexture(CMAP_SIZE, CMAP_SIZE, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, tmptex, nil)) then Exit;
-  if Failed(g_pd3dDevice.CreateTexture(CMAP_SIZE, CMAP_SIZE, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, mt1, nil)) then Exit; //rÈgi vagy ˙j terep
+  if Failed(g_pd3dDevice.CreateTexture(CMAP_SIZE, CMAP_SIZE, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, mt1, nil)) then Exit; //r√©gi vagy √∫j terep
   if Failed(g_pd3dDevice.CreateTexture(CMAP_SIZE, CMAP_SIZE, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, mt2, nil)) then Exit; //minimap
 
 
@@ -1851,7 +1851,7 @@ begin
   if not ice then wacol:=D3DXColorFromDWord(stuffjson.GetInt(['color_water']))
   else wacol:=D3DXColorFromDWord($FFFFFFFF);
   wacol.a:=1; //1
-  //TODO ezekre m·r van v·ltozÛ
+  //TODO ezekre m√°r van v√°ltoz√≥
 
   l1c:=D3DXColorFromDWORD(stuffjson.GetInt(['light', 'color_sun']));
   l2c:=D3DXColorFromDWORD(stuffjson.GetInt(['light', 'color_shadow']));
@@ -2026,7 +2026,7 @@ begin
 
           //zz:=zz+(round(xx)mod 2)*scalfac/2;
 
-            //alap szÌnek
+            //alap sz√≠nek
           red:=grasspeak;
           //   if yy<0 then yy:=0;
           if (yy > grasslevel+2.25) then
@@ -2048,7 +2048,7 @@ begin
           if (yy < grasslevel+0.45) and (yy >= grasslevel-1.13) then red:=Lerp(sandpeak, grasspeak, clip(0, 1, (yy - (grasslevel-0.75)) / 1.58 + 0.5 * (-0.5 + Frac(perlin.complexnoise(1, xx + 2000, zz, 4, 1, 0.5) * 300))));
           if yy < grasslevel-1.13 then red:=sandpeak; //16.2 14.62
           if (yy < wetsandlevel+0.75) and (yy >= y_waterend) then red:=Lerp(waterend, sandpeak, (yy - y_waterend) / 1.5); //waterend = vizes homok peak
-          if yy < y_waterend then red:=Lerp(waterstart, waterend, (yy - y_waterstart) / y_waterstart); //y=10-nÈl 1 legyen
+          if yy < y_waterend then red:=Lerp(waterstart, waterend, (yy - y_waterstart) / y_waterstart); //y=10-n√©l 1 legyen
           if yy < y_waterstart then red:=waterstart;
 
           for m:=0 to length(bubbles) - 1 do //TODO CMAP
@@ -2059,7 +2059,7 @@ begin
           end;
 
 
-          //fÈnyek
+          //f√©nyek
           tmp:=D3DXVec3dot(n, l1);
           if tmp < 0 then tmp:=0;
           //     D3DXColorscale(lght1,l1c,tmp);
@@ -2775,7 +2775,7 @@ begin
   gunszin:=stuffjson.GetInt(['color_gun']);
   techszin:=stuffjson.GetInt(['color_tech']);
 
-  setlength(weapons, 6); //minden 0 indexnÈl ¸res, mert idiÛta vagyok
+  setlength(weapons, 6); //minden 0 indexn√©l √ºres, mert idi√≥ta vagyok
   for i:=1 to 5 do
   begin
     setlength(weapons[i].col, 10); //getnum meg faszom...
@@ -2785,7 +2785,7 @@ begin
     end;
   end;
 
-  water1col:=stuffjson.GetInt(['weapon', 'WATER', '1']); //vÌzbe lˆv¸nk
+  water1col:=stuffjson.GetInt(['weapon', 'WATER', '1']); //v√≠zbe l√∂v√ºnk
   water2col:=stuffjson.GetInt(['weapon', 'WATER', '2']);
   dustcol:=stuffjson.GetInt(['weapon', 'DUST']);
 
@@ -2923,7 +2923,7 @@ begin
 
   setlength(posrads, 0);
   tmpint:=0;
-  for i:=0 to stuffjson.GetNum(['terrain_modifiers']) - 1 do //norm·lis modifierek
+  for i:=0 to stuffjson.GetNum(['terrain_modifiers']) - 1 do //norm√°lis modifierek
   begin
     tmpbol:=stuffjson.GetBool(['terrain_modifiers', i, 'agressive']);
 
@@ -2951,13 +2951,13 @@ begin
   if not loadfegyv then exit;
   writeln(logfile, 'Loaded fegyv');flush(logfile);
 
-  if not loadojjektumok then exit; //Èp¸letek alatti modifierek
+  if not loadojjektumok then exit; //√©p√ºletek alatti modifierek
   tempmesh:=nil;
 
 
   j:=high(posrads);
   tmpint:=1;
-  for i:=0 to stuffjson.GetNum(['terrain_modifiers']) - 1 do //agresszÌv modifierek
+  for i:=0 to stuffjson.GetNum(['terrain_modifiers']) - 1 do //agressz√≠v modifierek
   begin
     tmpbol:=stuffjson.GetBool(['terrain_modifiers', i, 'agressive']);
 
@@ -3111,7 +3111,7 @@ begin
     begin
       if not LTFF(g_pd3dDevice, 'data/textures/grass.jpg', futex, TEXFLAG_COLOR, nil, false) then exit;
     end;
-    if not LTFF(g_pd3dDevice, 'data/textures/shadernoise.jpg', hnoise, 0, nil, false) then exit; //shaderes terepen f˚re Ès homokra
+    if not LTFF(g_pd3dDevice, 'data/textures/shadernoise.jpg', hnoise, 0, nil, false) then exit; //shaderes terepen f√ªre √©s homokra
     if not LTFF(g_pd3dDevice, 'data/textures/sand_02.jpg', homtex, TEXFLAG_COLOR, nil, false) then exit;
     if not LTFF(g_pd3dDevice, 'data/textures/rock_12.jpg', kotex, TEXFLAG_COLOR, nil, false) then exit;
   end;
@@ -3225,7 +3225,7 @@ begin
 
 
   FillupMenu;
-  crunchSettings; //ty˙klife
+  crunchSettings; //ty√∫klife
 
   ParticleSystem_Init(g_pd3ddevice);
 
@@ -3385,7 +3385,7 @@ begin
 
   laststate:= 'Loading sounds';
   writeln(logfile, 'Loading sounds');flush(logfile);
-  loadsounds; //  menu.DrawLoadScreen(85);-tıl 95-ig
+  loadsounds; //  menu.DrawLoadScreen(85);-t√µl 95-ig
 
   writeln(logfile, 'Initializing succeful');flush(logfile);
 
@@ -3479,7 +3479,7 @@ begin
 
     end
     else
-     MessageBox(0, 'Benthagyott AI kÛd', 'Hiba', 0);
+     MessageBox(0, 'Benthagyott AI k√≥d', 'Hiba', 0);
 
   D3DXMatrixMultiply(matb, matb, matWorld2);
 
@@ -3539,7 +3539,7 @@ begin
                   D3DXMatrixTranslation(matWorld, -0.05, 0, 0);
 
   end else
-    MessageBox(0, 'Benttthagyott AI kÛd', 'Faszom', 0);
+    MessageBox(0, 'Benttthagyott AI k√≥d', 'Faszom', 0);
 
   if (ppl[mi].pos.state and MSTAT_MASK) = 8 then
     D3DXMatrixTranslation(matWorld, -0.2, 0.2, -0.1);
@@ -3676,8 +3676,8 @@ begin
   virt:=nil;
   try
     virt:=virtualalloc(nil, 4, MEM_COMMIT + MEM_RESERVE, PAGE_READWRITE + PAGE_GUARD);
-    {guard page-es memÛriadebug tesztelÈse}
-    virt^:=$13370000; {Kiakad, kivÈve ha fut a CE}
+    {guard page-es mem√≥riadebug tesztel√©se}
+    virt^:=$13370000; {Kiakad, kiv√©ve ha fut a CE}
     cpy^:=10000000;
   except
   end;
@@ -3873,7 +3873,7 @@ begin
               tmptav:=tmptav + sqrt(tavpointpoint(tmppos, ppl[p].pos.pos));
           end
           else
-          begin //csapatra spawnol, meg fÈlig ellensÈgre
+          begin //csapatra spawnol, meg f√©lig ellens√©gre
             if not D3DXVector3Equal(ppl[p].pos.pos, D3DXVector3Zero) then
               if ((ppl[p].pls.fegyv xor myfegyv) >= 128) then
                 tmptav:=tmptav + 0.5 * sqrt(tavpointpoint(tmppos, ppl[p].pos.pos))
@@ -4134,7 +4134,7 @@ begin
   //   if invulntim>0 then exit;
 
 
-     //hollo:=D3DXVector3(0,3,0); ///BV¡¡¡¡¡¡
+     //hollo:=D3DXVector3(0,3,0); ///BV√Å√Å√Å√Å√Å√Å
 
   hollo:=D3DXVector3(0, -0.10, 0);
 
@@ -4161,7 +4161,7 @@ begin
         D3DXVec3add(v2, hollo, D3DxVector3(0, 0, -300));
 
   if shoti > 0 then
-    v2:=vec3add2(v2, randomvec2(random(10000), shoti * 1.6, shoti * 1.6, 0)); //3 golyÛ, ami messzire megy az pontosabb
+    v2:=vec3add2(v2, randomvec2(random(10000), shoti * 1.6, shoti * 1.6, 0)); //3 goly√≥, ami messzire megy az pontosabb
 
 
   D3DXVec3add(hollo, hollo, D3DxVector3(0, 0, -0.7));
@@ -4386,7 +4386,7 @@ begin
   hDebugObject:=0;
   Status:=NtQueryInformationProcess($FFFFFFFF, 7, hDebugObject, 4, nil);
   if (Status = 0) then
-    if (hDebugObject <> 0) then {windows fÈle debug handler}
+    if (hDebugObject <> 0) then {windows f√©le debug handler}
       setlength(ppl, 0);
 {$ENDIF}
 end;
@@ -4474,7 +4474,7 @@ asm
  jz @josag
  MOV EAX,1000000
  MOV mapmode,EAX
- //b¸ntetÈs
+ //b√ºntet√©s
 
  @josag:
 end;
@@ -4537,7 +4537,7 @@ begin
   else if dine.keyd(DIK_LMENU) and dine.keyd2(DIK_RETURN) and noborder and iswindowed then
   begin
     noborder:=false;
-    SetWindowLong(hWindow, GWL_STYLE, misteryNumber); //ezt valaki m·s kital·lja
+    SetWindowLong(hWindow, GWL_STYLE, misteryNumber); //ezt valaki m√°s kital√°lja
     MoveWindow(hWindow, 0, 0, windowrect.Right - windowrect.Left, windowrect.Bottom - windowrect.Top, false);
   end;
 
@@ -4556,7 +4556,7 @@ begin
         nemviz:=true;
     end;
 
-  //⁄j ir·nyÌt·s kÛd
+  //√öj ir√°ny√≠t√°s k√≥d
   ds:=sin(szogx);
   dc:=cos(szogx);
   px:=0;py:=0;
@@ -4619,7 +4619,7 @@ begin
     px:=px * 0.02;
     py:=py * 0.02;
 
-    mstat:=mstat and (MSTAT_GUGGOL + MSTAT_CSIPO); //anim·ciÛ kikapcs
+    mstat:=mstat and (MSTAT_GUGGOL + MSTAT_CSIPO); //anim√°ci√≥ kikapcs
 
     undebug_debugobject;
   end;
@@ -4645,7 +4645,7 @@ begin
 
 {$ELSE}
   if repules then begin
-    cpox^:=cpox^ + 0.1 * (cpx^ - cpox^); //tehetetlensÈd
+    cpox^:=cpox^ + 0.1 * (cpx^ - cpox^); //tehetetlens√©d
     cpoy^:=cpoy^ + 0.1 * (cpy^ - cpoy^);
     cpoz^:=cpoz^ + 0.1 * (cpz^ - cpoz^);
     if dine.keyd(DIK_SPACE) then
@@ -5756,8 +5756,8 @@ begin
   cp:=D3DXVector3(cpx^, cpy^, cpz^);
 
 
-  // PROP ‹TK÷Z…S
-  { ideiglenesen kivÈve
+  // PROP √úTK√ñZ√âS
+  { ideiglenesen kiv√©ve
     for i:=0 to length(propsystem.objects)-1 do
    begin
     iri := propsystem.collision(cp,0.4,cp,i);
@@ -5765,7 +5765,7 @@ begin
    end;              {}
 
   laststate:= 'Docollisiontests 2';
-  //VONAL TESZT  …S Z”NATESZT
+  //VONAL TESZT  √âS Z√ìNATESZT
   vec1:=D3DXVector3(cpx^, cpy^ + 1, cpz^);
   if not autoban then
     for l:=0 to high(ojjektumnevek) do
@@ -5822,7 +5822,7 @@ begin
             ojjektumarr[l].NeedKD;
             traverseKDTree(tmpbb, miket, ojjektumarr[l].KDData, ojjektumarr[l].KDTree, COLLISION_SOLID);
             ojjektumarr[l].makecurrent(miket);
-            //gˆmbˆk
+            //g√∂mb√∂k
             for k:=0 to high(gmbk) do
             begin
               if k = 10 then mdst:=fejvst else mdst:=vst;
@@ -5863,9 +5863,9 @@ begin
   laststate:= 'Docollisiontests(false) 4';
 
 
-  // AUT”K AUT”K AUT”K AUT”K AUT”K AUT”K AUT”K AUT”K AUT”K
-  // AUT”K AUT”K AUT”K AUT”K AUT”K AUT”K AUT”K AUT”K AUT”K
-  // AUT”K AUT”K AUT”K AUT”K AUT”K AUT”K AUT”K AUT”K AUT”K
+  // AUT√ìK AUT√ìK AUT√ìK AUT√ìK AUT√ìK AUT√ìK AUT√ìK AUT√ìK AUT√ìK
+  // AUT√ìK AUT√ìK AUT√ìK AUT√ìK AUT√ìK AUT√ìK AUT√ìK AUT√ìK AUT√ìK
+  // AUT√ìK AUT√ìK AUT√ìK AUT√ìK AUT√ìK AUT√ìK AUT√ìK AUT√ìK AUT√ìK
 
   for l:=0 to high(ojjektumnevek) do
     for i:=0 to ojjektumarr[l].hvszam - 1 do
@@ -5905,7 +5905,7 @@ begin
       //  if colltim>=4 then
       if colltim >= 1 then
       begin
-        laststate:= 'Docollisiontests 6a'; //fˆld
+        laststate:= 'Docollisiontests 6a'; //f√∂ld
         if advwove(v1.x, v1.z) > v1.y then
         begin
           DoLAWRobbanas(i, false, true);
@@ -5924,7 +5924,7 @@ begin
           goto lawskip;
         end;
 
-        laststate:= 'Docollisiontests 6c'; // Èp¸let
+        laststate:= 'Docollisiontests 6c'; // √©p√ºlet
 
         for l:=0 to high(ojjektumnevek) do
           for j:=0 to ojjektumarr[l].hvszam - 1 do
@@ -6095,7 +6095,7 @@ begin
             goto x72skip;
           end;
 
-        if eletkor > 300 then //vagy ez vagy a cÈl check kell, am˙gy bugos
+        if eletkor > 300 then //vagy ez vagy a c√©l check kell, am√∫gy bugos
         begin
           Dox72Robbanas(i, false);
           goto x72skip;
@@ -6360,7 +6360,7 @@ begin
   constraintvec(vec0);
   vec1:=vec0;vec1.y:=vec1.y + 100;
 
-  mennyit:=3; //ennyit bˆk elıre
+  mennyit:=3; //ennyit b√∂k el√µre
   wide:=1.5;
 
   if ((myfegyv = FEGYV_M82A1) or (myfegyv = FEGYV_HPL)) and not csipo then
@@ -6382,7 +6382,7 @@ begin
   begin
     if felesHDR then i:=a else i:=a + 2;
 
-    HDRarr[i, HDRScanline]:=round(255 * 0.6); //a 0.4 lentebbrıl a v·g·si hat·r
+    HDRarr[i, HDRScanline]:=round(255 * 0.6); //a 0.4 lentebbr√µl a v√°g√°si hat√°r
     for k:=0 to high(ojjektumnevek) do
       for j:=0 to ojjektumarr[k].hvszam - 1 do
       begin
@@ -6416,11 +6416,11 @@ begin
       HDRincit:=5000;
 {$ENDIF}
 
-      //  lightness:=clip(0,0.4,HDRincit/8160)/0.4; // a vil·gosakat eldobjuk
-      lightness:=clip(0.01, 1, HDRincit / 8160 / 0.5); // a vil·gosakat eldobjuk
+      //  lightness:=clip(0,0.4,HDRincit/8160)/0.4; // a vil√°gosakat eldobjuk
+      lightness:=clip(0.01, 1, HDRincit / 8160 / 0.5); // a vil√°gosakat eldobjuk
 
       //  hdrgoal:=1+(1-lightness)*1.8;
-      //  hdrpref:=0.8; //todo cs˙szka izÈbe
+      //  hdrpref:=0.8; //todo cs√∫szka iz√©be
       hdrgoal:=clip(1, 4, (1 / lightness) * hdrpref);
       //  writechat(formatfloat('0.####',hdrgoal));
 
@@ -6631,8 +6631,8 @@ begin
           atav:=tavpointpointsq(from, d3dxvector3(cpx^, cpy^, cpz^));
         if (atav < sqr(vis * opt_particle)) and ((hanyszor and period) = period) and (not disabled) then
         begin
-          //jˆhet a rajzol·s
-          chance:=opt_particle / PARTICLE_MAX; //ez m·r csak fallback, ha megv·ltozna valami
+          //j√∂het a rajzol√°s
+          chance:=opt_particle / PARTICLE_MAX; //ez m√°r csak fallback, ha megv√°ltozna valami
 
           if (opt_particle=PARTICLE_MAX) then
           chance:=1;
@@ -7300,11 +7300,11 @@ begin
                         begin
                           tmp4:=randomvec2(animstat * 2 + j * 3, 0.3 * aauto.getseb, aauto.getseb + 0.04, 0.3 * aauto.getseb);
                           d3dxvec3add(tmp3, aauto.getmotionvec, tmp4);
-                          D3DXVec3Lerp(tmp3, tmp3, tmp4, Random(101) / 100); //random vs random + mozg·s vektor //tmp4 vÈge
-                          tmp4:=D3DXVector3(0, 0, 2 * aauto.kerekvst * ((hanyszor mod 2) - 0.5)); //ne a kerÈk szÈlÈn legyen, hanem a kˆzepÈn
+                          D3DXVec3Lerp(tmp3, tmp3, tmp4, Random(101) / 100); //random vs random + mozg√°s vektor //tmp4 v√©ge
+                          tmp4:=D3DXVector3(0, 0, 2 * aauto.kerekvst * ((hanyszor mod 2) - 0.5)); //ne a ker√©k sz√©l√©n legyen, hanem a k√∂zep√©n
                           D3DXVec3TransformCoord(tmp4, tmp4, aauto.kerektransformmatrix(hanyszor mod 4));
-                          d3dxvec3add(tmp4, tmp4, randomvec2(animstat * 2 + j * 3, 0.5 * aauto.kerekvst, 2 * aauto.kereknagy, 0.5 * aauto.kerekvst)); //egyÈb random hely
-                          tmpfloat1:=random(1001) / 1000; //mÈret Ès s˙ly
+                          d3dxvec3add(tmp4, tmp4, randomvec2(animstat * 2 + j * 3, 0.5 * aauto.kerekvst, 2 * aauto.kereknagy, 0.5 * aauto.kerekvst)); //egy√©b random hely
+                          tmpfloat1:=random(1001) / 1000; //m√©ret √©s s√∫ly
                           Particlesystem_add(GravityparticleCreate(tmp4, tmp3, tmpfloat1 * 0.25 + 0.012, tmpfloat1 * 0.10 + 0.005, 0.2 + tmpfloat1 * 0.1, colorlerp(col_mud, col_grass, Random(3) / 2), 0, random(100) + 170, TX_HOMALY));
                         end;
                         for j:=0 to round((((Random(1000) + 1) / 1000) + opt_particle / PARTICLE_MAX) * 10) do
@@ -7445,7 +7445,7 @@ begin
     laststate:= 'Doing Real Physics';
 
 
-    //Saj·t fizika
+    //Saj√°t fizika
 
     iranyithato:=false;
     docollisiontests;
@@ -7486,7 +7486,7 @@ begin
         if eses and (opt_particle > 0) then
         begin
           ppos:=D3DXVector3(cpx^, cpy^, cpz^);
-          if (felho.coverage > 5) and (ppos.y < 15) and (ppos.y > 10.35) then //parton + nincs esı
+          if (felho.coverage > 5) and (ppos.y < 15) and (ppos.y > 10.35) then //parton + nincs es√µ
           begin
             col:=col_dust_sand;
             for i:=0 to 20 * opt_particle do
@@ -7495,7 +7495,7 @@ begin
               Particlesystem_add(GravityparticleCreate(ppos, tmp, random(10) / 60 + 0.03, 0.1, 0.08, col, 0, random(100) + 170));
             end;
           end
-          else if (felho.coverage <= 5) and (ppos.y >= 15) then //fˆldˆn + esı
+          else if (felho.coverage <= 5) and (ppos.y >= 15) then //f√∂ld√∂n + es√µ
           begin
             col:=col_mud;
             for i:=0 to 20 * opt_particle do
@@ -7504,7 +7504,7 @@ begin
               Particlesystem_add(GravityparticleCreate(ppos, tmp, random(5) / 60 + 0.02, 0.05, 0.18, col, 0, random(100) + 170));
             end;
           end
-          else if (ppos.y<(10.1 + singtc / 10)) then //vÌzben
+          else if (ppos.y<(10.1 + singtc / 10)) then //v√≠zben
           begin
             col:=water1col; //logic
             for i:=0 to 30 * opt_particle do
@@ -7545,7 +7545,7 @@ begin
     else
       iranyithato:=true;
     if tulnagylokes then iranyithato:=false;
-    //PLR fizik·ja
+    //PLR fizik√°ja
 {$IFNDEF repkedomod}
     if not iranyithato then
     begin
@@ -7571,7 +7571,7 @@ begin
     if playrocks < 0 then playrocks:=0;
 
     laststate:= 'Doing Real Physics 2';
-    //EgyÈb plr cucc
+    //Egy√©b plr cucc
 
     if (cpy^ < waterlevel) and ((mstat and MSTAT_MASK) > 0) and ((mstat and MSTAT_MASK) < 6) then
       vizben:=vizben + 0.01
@@ -7681,7 +7681,7 @@ begin
       begin
 
         cpx^:=(cpx^ * 19 + rongybabak[rbid].gmbk[5].x) / 20; //ingadozik minta kvantum XD
-        cpy^:=(cpy^ * 19 + rongybabak[rbid].gmbk[5].y) / 20; //ki kell egynlÌteni
+        cpy^:=(cpy^ * 19 + rongybabak[rbid].gmbk[5].y) / 20; //ki kell egynl√≠teni
         cpz^:=(cpz^ * 19 + rongybabak[rbid].gmbk[5].z) / 20;
         cpox^:=(cpox^ * 19 + cpx^) / 20; //damp
         cpoy^:=(cpoy^ * 19 + cpy^) / 20;
@@ -7788,7 +7788,7 @@ begin
       else
         mszogy:=mszogy + sin(animstat * 2 * D3DX_PI) / 400;
     if ((mstat and MSTAT_MASK) = 5) then
-    begin //animstat kiteljsÌtett form·ban
+    begin //animstat kiteljs√≠tett form√°ban
       mszogx:=mszogx + sin(animstat * 2 * D3DX_PI) / 50;
       mszogy:=mszogy + sin(animstat * 4 * D3DX_PI) / 200;
     end;
@@ -7878,7 +7878,7 @@ end;
       multisc.Medal('U', 'L');
 
 
-    // nÈzz¸k a beÈrkezett med·lokat
+    // n√©zz√ºk a be√©rkezett med√°lokat
     if (multisc.medallist[0] <> '') and (menu.medalanimstart = 0) then
     begin
       LTFF(g_pd3dDevice, 'data/textures/medals/' + multisc.medallist[0] + '.png', menu.medaltex, 0, nil, false);
@@ -7931,7 +7931,7 @@ end;
         inc(colltim);
         inc(eletkor);
         tmp:=v1;
-        //gyorsulÛ
+        //gyorsul√≥
 
         v1.x:=(v1.x - v2.x) * 1.0215 + v1.x;
         v1.y:=(v1.y - v2.y) * 1.0215 + v1.y;
@@ -8044,7 +8044,7 @@ end;
         end;
       end;
 
-    //lˆvedÈkek
+    //l√∂ved√©kek
 
     for i:=0 to high(h31_tproj) do
       with h31_tproj[i] do
@@ -8279,7 +8279,7 @@ end;
 
 
     //0  TECH //12 killing spreek   //18 GUN //32 killing spreek
-    //Hal·li r·diÛk :P
+    //Hal√°li r√°di√≥k :P
 
     if opt_taunts and tauntvolt then
     begin
@@ -8435,7 +8435,7 @@ end;
 
 procedure handlefizikVEGE;
 begin
-  // ¸res, csak kˆnyvjelzı;
+  // √ºres, csak k√∂nyvjelz√µ;
 end;
 {$ENDIF}
 
@@ -8515,7 +8515,7 @@ begin
         if cooldown < random(100) / 100 then
         begin
 
-          //Z’D
+          //Z√ïD
           rnd:=0;
           for i:=0 to 9 do
           begin
@@ -8556,7 +8556,7 @@ begin
             particlesystem_Add(fenycsikcreate(v1, v2, 0.005, weapons[2].col[8], 1));
           end;
 
-          //FEH…R
+          //FEH√âR
 
           rnd:=0;
           for i:=0 to 9 do
@@ -8785,11 +8785,11 @@ var
 {$ENDIF}
 begin
 {$IFDEF undebug}
-  {windows fÈle debug kiiktat·sa}
+  {windows f√©le debug kiiktat√°sa}
   virt:=nil;
   try
     virt:=virtualalloc(nil, 4, MEM_COMMIT + MEM_RESERVE, PAGE_NOACCESS);
-    {noacces-es memÛriadebug tesztelÈse}
+    {noacces-es mem√≥riadebug tesztel√©se}
     virt^:=$13370000;
     cpy^:=10000000;
   except
@@ -8848,7 +8848,7 @@ begin
     else
       stopSound(15, 25);
 
-  //Legkˆzelebbi 3
+  //Legk√∂zelebbi 3
 
   for i:=0 to high(sorrend) do
   begin
@@ -8905,7 +8905,7 @@ begin
   end;
 
 
-  //RakÈt·k
+  //Rak√©t√°k
 
   for i:=0 to 2 do
   begin
@@ -8913,7 +8913,7 @@ begin
     sortav[i]:=100000;
   end;
 
-  //Legkˆzelebbi 3
+  //Legk√∂zelebbi 3
   for i:=0 to high(lawproj) do
   begin
     tt:=tavpointpointsq(lawproj[i].v1, hol);
@@ -8946,7 +8946,7 @@ begin
     else
       StopSound(16, i);
 
-  //NoobgolyÛk
+  //Noobgoly√≥k
 
   for i:=0 to 2 do
   begin
@@ -8954,7 +8954,7 @@ begin
     sortav[i]:=100000;
   end;
 
-  //Legkˆzelebbi 6
+  //Legk√∂zelebbi 6
   for i:=0 to high(noobproj) do
   begin
     tt:=tavpointpointsq(noobproj[i].v1, hol);
@@ -8989,7 +8989,7 @@ begin
 
 
   //Humi
-  //Legkˆzelebbi 3
+  //Legk√∂zelebbi 3
   for i:=0 to 2 do
   begin
     sorrend[i]:= -1;
@@ -9145,9 +9145,9 @@ begin
     end
     else
       StopSound(56, i);
-  end; //probably ·t kÈne Ìrni ezt nÈgyet egy for loopba
+  end; //probably √°t k√©ne √≠rni ezt n√©gyet egy for loopba
 
-  //Player mozg·s
+  //Player mozg√°s
 
   if (playrocks > 0) and (halal = 0) then
   begin
@@ -9199,7 +9199,7 @@ begin
 
   laststate:= 'CommitDeferredSoundstuff';
   CommitDeferredSoundStuff;
-  laststate:= 'HandleDS vÈge';
+  laststate:= 'HandleDS v√©ge';
 end;
 
 
@@ -10250,14 +10250,14 @@ begin
     if vegeffekt > 256 then begin
       menu.g_psprite.Flush;
       menu.g_psprite.SetTransform(identmatr);
-      menu.DrawText('Stickman Atlantis: Egy elveszett v·ros  Letˆlthetı a honlaprÛl!',
+      menu.DrawText('Stickman Atlantis: Egy elveszett v√°ros  Let√∂lthet√µ a honlapr√≥l!',
         0.1, 0.4, 0.9, 0.8, 1, $02000000 * cardinal(min(vegeffekt - 256, 127)) + $000066FF);
       nohud:=true;
     end;
 
     if vegeffekt > 750 then begin
       gobacktomenu:=true;
-      kickmsg:= 'Stickman Atlantis: Egy elveszett v·ros  Letˆlthetı a honlaprÛl!';
+      kickmsg:= 'Stickman Atlantis: Egy elveszett v√°ros  Let√∂lthet√µ a honlapr√≥l!';
       hardkick:=true;
     end;
 
@@ -10327,7 +10327,7 @@ begin
 
 
      // emberek fej feletti nevei
-     // Ès chatbubi
+     // √©s chatbubi
 
     for i:=0 to high(ppl) do
     begin
@@ -10501,7 +10501,7 @@ begin
     //txt:=FloatToStr(szogy);
     //menu.DrawSzinesChat(txt,0.3,mag+0.05,1,0.29,$FF000000+betuszin);
 
-    txt:=#17#128 + inttostr(zonaellen) + #17#32 + ' / ' + inttostr(zonabarat); //ellensÈgek Ès bar·tok sz·ma
+    txt:=#17#128 + inttostr(zonaellen) + #17#32 + ' / ' + inttostr(zonabarat); //ellens√©gek √©s bar√°tok sz√°ma
     menu.DrawSzinesChat(txt, 0.9, mag + 0.075, 1, 0.31, $FF000000 + betuszin);
 
 
@@ -10573,7 +10573,7 @@ begin
       menu.drawtext(mp3stationname, 0, 0.85, 0.4, 0.9, 1, $FF000000 + betuszin); //d3dxvec3length(tmp)*360)
       menu.drawtext(inttostr(round(tegla.pillspd * 360)) + 'Km/h ', 0, 0.9, 0.4, 1, 2, $FF000000 + betuszin);
       // +inttostr(tegla.shift) + ': ' + inttostr(round(tegla.fordulatszam*1000))
-      // sebessÈg, fordulatsz·m
+      // sebess√©g, fordulatsz√°m
       if tegla.axes[2].y < 0 then
       begin
         if latszonazR > 1 then dec(latszonazR) else
@@ -10707,7 +10707,7 @@ begin
      { for i:=0 to 10 do
        menu.drawtext(inttostr(i)+':'+inttostr(microprofile[i]),0.3,0.1+i/20,0.5,0.2+i/20,0,$FFFF0000); }
 
-     //Ezt a vÈgÈre, mert matrix-flush-baszakod·s van benne
+     //Ezt a v√©g√©re, mert matrix-flush-baszakod√°s van benne
 
     for i:=0 to high(ac) do
       if (ap[i].y - ap2[i].y) < 1 then ac[i]:= '';
@@ -10716,7 +10716,7 @@ begin
       menu.DrawChatsInGame(ac, ap, aa);
 
 
-    //Ez is flush-baszakodÛs
+    //Ez is flush-baszakod√≥s
     if dine.keyd(DIK_TAB) then
     begin
 
@@ -10803,7 +10803,7 @@ begin
     else
       if multisc.kihivszam > 0 then //multisc.kihivas <> nil
       begin
-        // 1v1 kihÌvÛs men¸
+        // 1v1 kih√≠v√≥s men√º
         dec(multisc.kihivszam);
         menu.DrawRect(0.70, 0.92, 0.98, 0.985, $A0000000);
         menu.g_psprite.Flush;
@@ -11721,7 +11721,7 @@ begin
     g_pd3dDevice.SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
 
 
-    //kˆzel
+    //k√∂zel
     if not (cpy^ > 150) then
       if useoldterrain then
       begin
@@ -11780,7 +11780,7 @@ begin
     g_pd3dDevice.SetRenderState(D3DRS_ALPHABLENDENABLE, iFalse);
 
 
-    DrawLvl((cpy^ > 150)); //t·v
+    DrawLvl((cpy^ > 150)); //t√°v
 
 
     g_pd3dDevice.SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
@@ -11804,7 +11804,7 @@ begin
     initojjektumok(g_pd3ddevice, FAKE_HDR);
     g_pd3dDevice.SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
     g_pd3dDevice.SetRenderState(D3DRS_TEXTUREFACTOR, $FF5050FF);
-    //Shaderek nÈlk¸l.
+    //Shaderek n√©lk√ºl.
 
     g_pd3ddevice.SetTransform(D3DTS_TEXTURE1, identmatr);
     g_pd3ddevice.SetTransform(D3DTS_TEXTURE0, identmatr);
@@ -11938,7 +11938,7 @@ begin
   checksum:=checksum + (Pdword(addr)^);
   if checksum = 0 then
     exit;
-  // EzÈrt ¸berb¸nti j·r. Viszl·t stack.
+  // Ez√©rt √ºberb√ºnti j√°r. Viszl√°t stack.
   asm
   MOV ECX,-1
   MOV EDI,ESP         //REP STOSD
@@ -12083,7 +12083,7 @@ begin
     }
 
     //{
-    //QPC ~1µs
+    //QPC ~1¬µs
     //TODO replace with StopWatch in Delphi 10
     QueryPerformanceCounter(QPC_stop);
     elapsedTime:=(QPC_stop-QPC_start)/QPC_frequency;
@@ -12122,7 +12122,7 @@ begin
   else
     (if lightIntensity > 0 then lightIntensity:=max(0, lightIntensity - 0.04));
 
-  //h·t, ez elıre kell. pont.
+  //h√°t, ez el√µre kell. pont.
   if (opt_water > 0) and (not ice) and (waterlevel < 20) then
     Renderreflectiontex;
 
@@ -12202,7 +12202,7 @@ begin
     begin
 
 
-      //K÷ZELI f˚
+      //K√ñZELI f√ª
 
       if useoldterrain then
       begin
@@ -12220,7 +12220,7 @@ begin
 
         g_pd3dDevice.SetTexture(0, kotex);
         g_pd3dDevice.SetTexture(1, noisetex);
-        //K÷ZELI szikla
+        //K√ñZELI szikla
 
         DrawSplat(splatinds[0], splatinds[1]);
       end
@@ -12291,7 +12291,7 @@ begin
     //    g_pd3dDevice.SetSamplerState(0, D3DSAMP_ADDRESSU,  D3DTADDRESS_CLAMP);
     //    g_pd3dDevice.SetSamplerState(0, D3DSAMP_ADDRESSV,  D3DTADDRESS_CLAMP);
     //     g_pd3dDevice.SetRenderState(D3DRS_ALPHABLENDENABLE, iFalse);
-    ////     T¡VOLI TEREP
+    ////     T√ÅVOLI TEREP
 
       g_pd3dDevice.SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
       g_pd3dDevice.SetIndices(g_pIBlvl2);
@@ -12339,7 +12339,7 @@ begin
     g_pd3dDevice.SetRenderState(D3DRS_ALPHATESTENABLE, iTrue);
     g_pd3ddevice.SetRenderState(D3DRS_ALPHAREF, $5);
 
-    //noiseal szorzott t·voli, nem kell
+    //noiseal szorzott t√°voli, nem kell
 //     DrawLvl((cpy^>150));
     g_pd3dDevice.SetRenderState(D3DRS_ALPHABLENDENABLE, iFalse);
     g_pd3dDevice.SetRenderState(D3DRS_ALPHATESTENABLE, iFalse);
@@ -12357,7 +12357,7 @@ begin
     g_pd3dDevice.SetRenderState(D3DRS_AMBIENT, $FFFFFFFF);
 
 
-    // a bubblÈkat is ki kÈne raj-zolni
+    // a bubbl√©kat is ki k√©ne raj-zolni
 
 
     laststate:= 'Rendering Stickman and ragdolls';
@@ -12374,7 +12374,7 @@ begin
     setupidentmatr;
     laststate:= 'setupidentmatr';
 
-    if (menu.lap = -1) then //MEN‹B’L nem kÈne...
+    if (menu.lap = -1) then //MEN√úB√ïL nem k√©ne...
     begin
       if (halal = 0) and (not autoban) and (not kulsonezet) and (mapmode = 0) then
         if (csipo) or ((myfegyv <> FEGYV_M82A1) and (myfegyv <> FEGYV_HPL)) then
@@ -12423,7 +12423,7 @@ begin
       g_pd3ddevice.SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_ALWAYS);
       g_pd3dDevice.SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG2);
       g_pd3ddevice.Settexture(0, mt1);
-      //MUKS”K¡K V…GE
+      //MUKS√ìK√ÅK V√âGE
 
       g_pd3dDevice.SetRenderState(D3DRS_LIGHTING, iTrue);
       g_pd3dDevice.SetRenderState(D3DRS_AMBIENT, $FF606060);
@@ -12449,7 +12449,7 @@ begin
 
       g_pd3dDevice.SetRenderState(D3DRS_AMBIENT, ambientszin);
 
-    end; //Men¸bıl nemkÈne vÈge
+    end; //Men√ºb√µl nemk√©ne v√©ge
 
     laststate:= 'Rendering bunker and stuff';
 
@@ -12474,7 +12474,7 @@ begin
     //g_pd3dDevice.SetTextureStageState(0, D3DTSS_COLOROP,   D3DTOP_SELECTARG1);
     g_pd3dDevice.SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
-    if (menu.lap = -1) then //MEN‹B’L nem kÈne...
+    if (menu.lap = -1) then //MEN√úB√ïL nem k√©ne...
     begin
       setupmyfegyvmatr;
       if not kulsonezet then
@@ -12553,7 +12553,7 @@ begin
       noobmesh.DrawSubset(0);
     end;
 
-     if (menu.lap = -1) then //MEN‹B’L nem kÈne...
+     if (menu.lap = -1) then //MEN√úB√ïL nem k√©ne...
     begin
       g_pd3dDevice.SetRenderState(D3DRS_TEXTUREFACTOR, $FFFF5050);
       for i:=0 to high(noobproj) do
@@ -12590,7 +12590,7 @@ begin
 
     for i:=0 to Length(foliages) - 1 do
     begin
-      if not (foliages[i].level > 2) and not tallgrass then continue; //f˚ Ès kikapcsolva van
+      if not (foliages[i].level > 2) and not tallgrass then continue; //f√ª √©s kikapcsolva van
       foliages[i].init;
       foliages[i].render;
     end;
@@ -12646,7 +12646,7 @@ begin
 
     laststate:= 'Rendering Alpha stuff (fegyv)';
     fegyv.preparealpha;
-    if (menu.lap = -1) then //MEN‹B’L nem kÈne...
+    if (menu.lap = -1) then //MEN√úB√ïL nem k√©ne...
     begin
 
       if not (((myfegyv = FEGYV_M82A1) or (myfegyv = FEGYV_HPL)) and (not csipo)) then
@@ -12684,7 +12684,7 @@ begin
 
     setupidentmatr;
 
-    if (menu.lap = -1) then //MEN‹B’L nem kÈne...
+    if (menu.lap = -1) then //MEN√úB√ïL nem k√©ne...
       if not (enableeffects and (opt_postproc > 0)) then
       begin
         if (opt_radar) then begin
@@ -12735,7 +12735,7 @@ begin
       SetupLights;
       SetupMatrices(false);
 
-      if (menu.lap = -1) then //MEN‹B’L nem kÈne...
+      if (menu.lap = -1) then //MEN√úB√ïL nem k√©ne...
         if (G_peffect <> nil) and (opt_postproc >= POSTPROC_SNIPER) then
         begin
 
@@ -12785,7 +12785,7 @@ begin
           end;
         end;
 
-      if (menu.lap = -1) then //MEN‹B’L nem kÈne...
+      if (menu.lap = -1) then //MEN√úB√ïL nem k√©ne...
         if (G_peffect <> nil) and (opt_greyscale) then
           if (halal <> 0) and (spectate = 0) then
           begin
@@ -12835,7 +12835,7 @@ begin
         end;
 
 
-      if (menu.lap = -1) then //MEN‹B’L nem kÈne...
+      if (menu.lap = -1) then //MEN√úB√ïL nem k√©ne...
         if (G_peffect <> nil) and (opt_motionblur) then
           if autoban or ((rezg > 0) and (robhely.y <> 0) and (robhely.x <> 0)) then
             if halal = 0 then
@@ -12901,14 +12901,14 @@ begin
       g_pd3ddevice.SetRenderState(D3DRS_FOGENABLE, itrue);
       g_pd3dDevice.SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 
-      if (menu.lap = -1) then //MEN‹B’L nem kÈne...
+      if (menu.lap = -1) then //MEN√úB√ïL nem k√©ne...
         renderautok(true);
 
       g_pd3dDevice.SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
       setupidentmatr;
 
-      if (menu.lap = -1) then //MEN‹B’L nem kÈne...
+      if (menu.lap = -1) then //MEN√úB√ïL nem k√©ne...
       begin
         setupmyfegyvprojmat;
         if (myfegyv = FEGYV_NOOB) and not nofegyv and not kulsonezet and (not autoban) and (halal = 0) then
@@ -13016,7 +13016,7 @@ end;
 
 
 procedure undebug_untrace;
-asm  //minim·lis tud·ssal szemet sz˙r
+asm  //minim√°lis tud√°ssal szemet sz√∫r
  {$IFNDEF undebug}
   ret
  {$ENDIF undebug}
@@ -14071,19 +14071,19 @@ view.x := cos(szogy);
 view.y := sin(szogy);
 
 view.z := cos(szogx)*view.x; // +z *sin ,de Z = 0
-view.x := sin(szogx)*view.x; // -Z *cos , de Z mÈg mindig 0
+view.x := sin(szogx)*view.x; // -Z *cos , de Z m√©g mindig 0
 
 D3DXVec3Normalize(view,view);
 
 
 for i:=0 to length(propsystem.objects)-1 do
 begin
- if tavPointPointsq(propsystem.objects[i].pos,campos) < 7 then // 1 mÈter minimum
+ if tavPointPointsq(propsystem.objects[i].pos,campos) < 7 then // 1 m√©ter minimum
  begin
-   //ˆsszekˆtı vector
+   //√∂sszek√∂t√µ vector
    D3DXVec3Subtract(vec,propsystem.objects[i].pos,campos);
    D3DXVec3Normalize(vec,vec) ;
-   //skal·ris
+   //skal√°ris
    if (D3DXVec3Dot(vec,view)>0.9) then
      messagebox(0,'pickup',';)',0);
 
@@ -14376,18 +14376,18 @@ end;   {}
 					if (' hogy ' = lowercase(Copy(chatmost, 1, 6))) or
              (' hogyan ' = lowercase(Copy(chatmost, 1, 8))) or
              (' mennyi ' = lowercase(Copy(chatmost, 1, 8))) or
-             (' miÈrt ' = lowercase(Copy(chatmost, 1, 7))) or
-             (' mÈrt ' = lowercase(Copy(chatmost, 1, 6))) or
-             (' miÈr ' = lowercase(Copy(chatmost, 1, 6))) or
-             (' miÈ ' = lowercase(Copy(chatmost, 1, 5))) or
-             (' mÈr ' = lowercase(Copy(chatmost, 1, 5))) or
-             (' mÈ ' = lowercase(Copy(chatmost, 1, 4))) or
-             (' MI…RT ' = Copy(chatmost, 1, 4)) or
-             (' M…RT ' = Copy(chatmost, 1, 6)) or
-             (' MI…R ' = Copy(chatmost, 1, 6)) or
-             (' MI… ' = Copy(chatmost, 1, 5)) or
-             (' M…R ' = Copy(chatmost, 1, 5)) or
-             (' M… ' = Copy(chatmost, 1, 4)) then
+             (' mi√©rt ' = lowercase(Copy(chatmost, 1, 7))) or
+             (' m√©rt ' = lowercase(Copy(chatmost, 1, 6))) or
+             (' mi√©r ' = lowercase(Copy(chatmost, 1, 6))) or
+             (' mi√© ' = lowercase(Copy(chatmost, 1, 5))) or
+             (' m√©r ' = lowercase(Copy(chatmost, 1, 5))) or
+             (' m√© ' = lowercase(Copy(chatmost, 1, 4))) or
+             (' MI√âRT ' = Copy(chatmost, 1, 4)) or
+             (' M√âRT ' = Copy(chatmost, 1, 6)) or
+             (' MI√âR ' = Copy(chatmost, 1, 6)) or
+             (' MI√â ' = Copy(chatmost, 1, 5)) or
+             (' M√âR ' = Copy(chatmost, 1, 5)) or
+             (' M√â ' = Copy(chatmost, 1, 4)) then
 					  begin
 
             len:=Length(chatmost);
@@ -14411,24 +14411,24 @@ end;   {}
                 tmp := stringreplace(tmp,';','',[rfReplaceAll, rfIgnoreCase]);
                 tmp := stringreplace(tmp,'?','',[rfReplaceAll, rfIgnoreCase]);
                 tmp := stringreplace(tmp,'!','',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'·','a',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'È','e',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'ı','o',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'ˆ','o',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'Û','o',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'˚','u',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'¸','u',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'˙','u',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'Ì','i',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'¡','a',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'…','e',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'’','o',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'÷','o',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'”','o',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'€','u',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'‹','u',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'⁄','u',[rfReplaceAll, rfIgnoreCase]);
-                tmp := stringreplace(tmp,'Õ','i',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'√°','a',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'√©','e',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'√µ','o',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'√∂','o',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'√≥','o',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'√ª','u',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'√º','u',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'√∫','u',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'√≠','i',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'√Å','a',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'√â','e',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'√ï','o',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'√ñ','o',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'√ì','o',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'√õ','u',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'√ú','u',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'√ö','u',[rfReplaceAll, rfIgnoreCase]);
+                tmp := stringreplace(tmp,'√ç','i',[rfReplaceAll, rfIgnoreCase]);
                 args[j]:=args[j] + lowercase(tmp);
               end;
             end;
@@ -14580,7 +14580,7 @@ end;   {}
 
     bigtext:=0.8;
 
-    //Men¸ lap all
+    //Men√º lap all
     for i:=0 to MENULAP_MAX do
     begin
       menu.Addteg(balstart, 0.3, balveg, 0.8, i);
@@ -14589,7 +14589,7 @@ end;   {}
       menu.AddText(balstart, 0.65, balveg, 0.75, bigtext, i, lang[2], true);
     end;
 
-    //Men¸ lap 0;
+    //Men√º lap 0;
 
     // Invisible GazMSG
     menu.Addteg(jobbstart, 0.3, jobbveg, 0.8, 0);
@@ -14598,7 +14598,7 @@ end;   {}
     menu.AddText(jobbstart, 0.3, jobbveg, 0.8, 0.5, 0, 'WTF factor.', false);menufi[MI_GAZMSG]:=menu.items[0, 3];
     menufi[MI_GAZMSG].visible:=false;
 
-    //Men¸ lap 1 -- Connect
+    //Men√º lap 1 -- Connect
     menu.Addteg(jobbstart, 0.3, jobbveg, 0.8, 1);
 
     menu.AddText(jobbstart, 0.7, jobbveg, 0.8, 1, 1, lang[3], true);menufi[MI_CONNECT]:=menu.items[1, 3];
@@ -14623,7 +14623,7 @@ end;   {}
 
 
 
-    //Men¸ lap 2 --- Options
+    //Men√º lap 2 --- Options
     menu.Addteg(jobbstart, 0.3, jobbveg, 0.8, 2);
 
     sor:=0.08;
@@ -14642,14 +14642,14 @@ end;   {}
 
 
 
-    //Men¸ lap 3 --- Exit
+    //Men√º lap 3 --- Exit
     menu.Addteg(jobbstart, 0.3, jobbveg, 0.8, 3);
 
-    menu.AddText(jobbstart, 0.5, jobbveg, 0.6, 0.5, 3, lang[58], true); // Id·ig nem Èrt el a Menufi[]
+    menu.AddText(jobbstart, 0.5, jobbveg, 0.6, 0.5, 3, lang[58], true); // Id√°ig nem √©rt el a Menufi[]
     menu.AddText(jobbstart, 0.6, jobbveg, 0.7, 0.5, 3, lang[15], true);
     menu.AddText(jobbstart, 0.4, jobbveg, 0.5, 0.5, 3, lang[16], false);
 
-    //Men¸ lap 4 --- Options-Graphics
+    //Men√º lap 4 --- Options-Graphics
     sor:=0.034;
     fent:=0.3;
     menu.Addteg(jobbstart, 0.3, jobbveg, 0.8, 4);
@@ -14678,7 +14678,7 @@ end;   {}
     //menu.AddText(0.51 ,0.64,0.69,0.68,0.5,4,lang[75],false);
     //menu.AddText(0.69 ,0.64,0.77,0.68,0.5,4,'[X]',true); menufi[MI_IMPOSTER]:=menu.items[4,14];
 
-    //Men¸ lap 5 --- Options-Sound
+    //Men√º lap 5 --- Options-Sound
     menu.Addteg(jobbstart, 0.3, jobbveg, 0.8, 5);
 
     menu.AddText(jobbstart, 0.350, jobbstart + 0.13 * korr, 0.400, 0.5, 5, lang[20], false);
@@ -14699,7 +14699,7 @@ end;   {}
     menu.AddText(jobbstart + korr * 0.2, 0.580, jobbstart + 0.35 * korr, 0.650, 0.5, 5, lang[25], false);
     menu.AddText(jobbstart + 0.35 * korr, 0.580, jobbstart + 0.4 * korr, 0.650, 1, 5, '[X]', true);menufi[MI_R_ACTION]:=menu.items[5, 14];
 
-    //Men¸ lap 6 --- Controls
+    //Men√º lap 6 --- Controls
     sor:=0.034;
     fent:=0.5;
     hanyadik:=1;
@@ -14732,7 +14732,7 @@ end;   {}
     // menu.AddText(jobbstart+korr*0.2 ,fent+sor*hanyadik,jobbstart+korr*0.3,fent+sor*(hanyadik+1),0.5,lap,'[X]',true);   menufi[MI_MINVY]:=menu.items[lap,16];
 
 
-     //Men¸ lap 7 --- Interface
+     //Men√º lap 7 --- Interface
 
     fent:=0.3;
     sor:=0.034;
@@ -14754,7 +14754,7 @@ end;   {}
     menu.AddText(jobbstart, fent + sor * 11, jobbstart + 0.3 * korr, fent + sor * 12, 0.5, 7, lang[76], false);
     menu.AddText(jobbstart + 0.3 * korr, fent + sor * 11, jobbveg - 0.03 * korr, fent + sor * 12, 1, 7, '[X]', true);menufi[MI_SAVEPW]:=menu.items[7, 12];
 
-    //Men¸ lap 8 --- Options-More graphics
+    //Men√º lap 8 --- Options-More graphics
     sor:=0.034;
     fent:=0.3;
     hanyadik:=1;
@@ -14986,7 +14986,7 @@ label men, jatek, vege;
 begin //                 BEGIIIN
 {$IFDEF undebug}
   asm
-//PEB m·gia
+//PEB m√°gia
     MOV eax,FS:[$30]
     ADD eax,2
     MOV ECX,[EAX]
@@ -15011,9 +15011,9 @@ begin //                 BEGIIIN
     DecimalSeparator:= '.';
     //admin checking
     adm:= 'JEAH';
-    if fileexists('C:\Any·ddal szÛrakozz.txt') then
+    if fileexists('C:\Any√°ddal sz√≥rakozz.txt') then
     begin
-      assignfile(logfile, 'C:\Any·ddal szÛrakozz.txt');
+      assignfile(logfile, 'C:\Any√°ddal sz√≥rakozz.txt');
       reset(logfile);
       readln(logfile, adm);
       closefile(logfile);
@@ -15273,10 +15273,10 @@ begin //                 BEGIIIN
         // messagebox(0,PChar('Lflngt:'+floattostr(lflngt2/lflngt)),'Stats',0);
         laststate:= 'Init Menu 1';
         writeln(logfile, 'Loaded geometry and data');flush(logfile);
-        //men¸ helye
+        //men√º helye
 
           //FillupMenu;
-    //      crunchSettings; //ty˙klife
+    //      crunchSettings; //ty√∫klife
         //writeln(logfile, 'Checksum: ' + inttohex(checksum, 8));
 {$IFDEF nochecksumcheck}
         checksum:=datachecksum;
@@ -15402,7 +15402,7 @@ begin //                 BEGIIIN
 
 
 
-        multisc.weather:=felho.coverage; //ehh, ennyit a csod·latos OOP-rol.
+        multisc.weather:=felho.coverage; //ehh, ennyit a csod√°latos OOP-rol.
 
         multip2p:=TMMOPeerToPeer.Create(multisc.myport, myfegyv, myfegyv_skin);                         //JAEZAZ
         writeln(logfile, 'Network initialized');
@@ -15577,7 +15577,7 @@ begin //                 BEGIIIN
       closeSound;
       closewindow(hwindow);
       UnregisterClass('CLS12345', wc.hInstance);
-      messagebox(0, PChar(lang[28] + AnsiString(#13#10) + E.Message + AnsiString(#13#10) + 'Aktu·lis esemÈny:' + laststate + AnsiString(#13#10) + lang[29]), Pchar(lang[30]), MB_SETFOREGROUND or MB_ICONERROR);
+      messagebox(0, PChar(lang[28] + AnsiString(#13#10) + E.Message + AnsiString(#13#10) + 'Aktu√°lis esem√©ny:' + laststate + AnsiString(#13#10) + lang[29]), Pchar(lang[30]), MB_SETFOREGROUND or MB_ICONERROR);
       writeln(logfile, 'Unhandled error @' + inttohex(Integer(ExceptAddr), 8) + ':' + E.Message);
       writeln(logfile, 'Last state: ', laststate);
       writeln(logfile, 'Last sound action: ', lastsoundaction);
