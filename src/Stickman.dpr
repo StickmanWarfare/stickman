@@ -6,10 +6,9 @@
 
 {$R stickman.RES}
 
-//TODO: move these to dotenv, refact all IFDEF checks
+{$I Defines.inc}
+
 {$DEFINE force16bitindices} //ez hibás, pár helyen, ha nincs kipontozva, meg kell majd nézni
-{.$DEFINE undebug} //Remove dot for release, add dot for dev
-{.$DEFINE nochecksumcheck}
 {.$DEFINE speedhack}
 {.$DEFINE repkedomod}
 {.$DEFINE godmode}
@@ -74,8 +73,7 @@ uses
   Redux,
   DynamicArray,
   Sentry,
-  ThreadHandler,
-  dotenv;
+  ThreadHandler;
 
 const
   lvlmin = 0; //ENNEK ÍGY KÉNE MARADNIA
@@ -2727,14 +2725,6 @@ begin
 
   reportBotKillsSaga := TSaga.Create('reportBotKills', reportBotkills);
   threadHandlerModule.addSaga(reportBotKillsSaga);
-end;
-
-procedure initDotenv();
-begin
-  env := TDotenv.Create(
-    {$IFDEF undebug} false {$ELSE} true {$ENDIF},
-    {$IFDEF nochecksumcheck} false {$ELSE} true {$ENDIF}
-  );
 end;
 
 function InitializeAll:HRESULT;
@@ -15011,7 +15001,6 @@ begin //                 BEGIIIN
   NtSIT(GetCurrentThread, $11, nil, 0);
 {$ENDIF}
 
-  initDotenv;
   sentryModule := TSentry.Create;
 
   try

@@ -161,7 +161,6 @@ end;
 
 function TMutableObject.unset(key: string; strict: boolean = false): Variant;
 var
-  hasKey: boolean;
   i: Integer;
   found: boolean;
 begin
@@ -175,6 +174,7 @@ begin
     exit;
   end;
 
+  found := false;
   for i := 0 to high(__values) do
   begin
     if __values[i].key = key then
@@ -234,8 +234,6 @@ end;
 
 //TODO: make overloaded version with others: array of TMutableObject
 function TMutableObject.difference(other: TMutableObject): TMutableObject;
-var
-  i: Integer;
 begin
   result := TMutableObject.Create();
 
@@ -264,7 +262,6 @@ end;
 procedure TMutableObject.merge(other: TMutableObject);
 var
   i: Integer;
-  newKeys: TStringArray;
 begin
   for i := 0 to high(other.keys()) do
   begin

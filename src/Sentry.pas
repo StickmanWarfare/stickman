@@ -1,5 +1,7 @@
 unit Sentry;
 
+{$I Defines.inc}
+
 interface
 
   uses
@@ -65,7 +67,7 @@ constructor TSentry.Create;
 begin
   with _metadata do
   begin
-    isDev := env.isDev;
+    isDev := {$IFDEF undebug} false {$ELSE} true {$ENDIF};
     version := PROG_VER;
     checksum := datachecksum;
   end;
