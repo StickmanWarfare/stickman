@@ -65,7 +65,9 @@ type
   constructor Create();
   constructor CreateFromFile(const filename:string);
   constructor CreateFromHTTP(const url:string);
+  constructor CreateFromString(const src: string);
   procedure SaveToFile(const filename:string);
+  function toString(data:PQJSONData; indent:integer): string;
   destructor Destroy();override;
   procedure SetVal(keys:array of const;mire:integer);overload;
   procedure SetValF(keys:array of const;mire:single);overload;
@@ -338,6 +340,98 @@ begin
   finally
     IdHTTP.Free;
   end;
+end;
+
+constructor TQJSON.CreateFromString(const src: string);
+var
+  i: integer;
+begin
+  i := 1;
+  root := CreateQJSONFromString(src, i);
+end;
+
+function TQJSON.toString(data:PQJSONData; indent:integer): string;
+var
+  i, hgh: integer;
+begin
+  result := '';
+
+  case data.typ of
+    QJSON_NULL: result := result + 'null'; //ez mi lesz lel
+
+    QJSON_INT: result := result + intToStr(data.intval);
+
+    QJSON_FLOAT: result := result + FloatToStrF(data.floatval,ffGeneral,7,1);
+
+    QJSON_BOOLEAN: if data.boolval then result := result + 'true' else result := result + 'false';
+
+    QJSON_STRING: result := result + '"' + data.strval^ + '"';
+
+    QJSON_ARRAY:
+      begin
+       hgh:=high(data.arrval^);
+
+       result := result + '[';
+
+       if hgh>=3 then
+       //  writeln(fil);
+         result := result;
+
+       for i:=0 to hgh do
+       begin
+        if hgh>=3 then
+         result := result + StringOfChar(#9,indent+1);
+
+        toString(data.arrval^[i], indent+1);
+        if i=hgh then
+         //write(fil)
+         result := result
+        else
+         result := result + ', ';
+
+        if hgh>=3 then
+         //writeln(fil);
+          result := result;
+
+       end;
+       if hgh>=3 then
+        result := result + StringOfChar(#9,indent);
+
+       result := result + ']';
+      end;
+
+    QJSON_MAP:
+      begin
+       hgh:=high(data.mapval^);
+       result := result + '{';
+       if hgh>=3 then
+         //writeln(fil);
+         result := result;
+
+       for i:=0 to hgh do
+       begin
+        if hgh>=3 then
+         result := result + StringOfChar(#9,indent+1);
+
+        result := result + '"' + data.mapval^[i].key + '": ';
+        toString(data.mapval^[i].data,indent+1);
+        if i=hgh then
+         //write(fil)
+         result := result
+        else
+         result := result + ', ';
+
+        if hgh>=3 then
+         //writeln(fil);
+         result := result;
+       end;
+
+       if hgh>=3 then
+        result := result + StringOfChar(#9,indent);
+
+       result := result + '}';
+      end;
+     end;
 end;
 												
 procedure TQJSON.SaveToFile2(data:PQJSONData;indent:integer;var fil:TextFile);

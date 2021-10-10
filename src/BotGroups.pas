@@ -97,7 +97,7 @@ type
     //
     procedure doLogic;
     procedure passInfo(_playerHalott: boolean; _playerFegyv: Byte; _playerPos: TD3DXVector3; _playerMatWorld: TD3DXMatrix; _bots: array of TBot);
-    procedure collideProjectile(loves: TLoves);
+    function collideProjectile(loves: TLoves): boolean;  //returns true when shot by player
   end;
 
   TBotArray = array of TBot;
@@ -624,12 +624,14 @@ begin
   state.canShootCd := ownProps.baseLovesCooldown;
 end;
 
-procedure TBot.collideProjectile(loves: TLoves);
+function TBot.collideProjectile(loves: TLoves): boolean;
 var
   isGun, amGun, isHit: boolean;
   matWorld, matWorld2 :TD3DMatrix;
   muks: TMuksoka;
 begin
+  result := FALSE;
+
   if state.isDead > -1 then exit;
   if state.isInvul > -1 then exit;
 
@@ -664,6 +666,7 @@ begin
     putRagdoll(state.pos, loves.pos);
     if loves.kilotte <> -2 then
     begin
+      result := TRUE;
       _addHudMessage(lang[110], $FF0000);
       hudMessages[low(hudMessages)].fade:=200;
     end;

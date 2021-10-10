@@ -112,6 +112,9 @@ type
 
   end;
 
+var
+  propsystem:TPropsystem;
+
 const
 
 COLL_BOX      = $01;
