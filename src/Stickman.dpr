@@ -11695,6 +11695,9 @@ begin
   for i:=0 to high(explosionripples) do
     with explosionripples[i] do
     begin
+      if (meret = 0) then
+        continue;
+
       d3dxmatrixtranslation(mat, pos.x, pos.y, pos.z);
 
       mat2:=d3dxmatrix(vsz.x * meret, vsz.y * meret, vsz.z * meret, 0,
