@@ -3878,9 +3878,12 @@ procedure undebug_memory1;
 {$IFDEF undebug}
 var
   virt:pdword;
+  mask:TFPUExceptionMask;
 {$ENDIF}
 begin
 {$IFDEF undebug}
+  //for some reason this changes the exception mask, so save it and restore it
+  mask := GetExceptionMask();
   virt:=nil;
   try
     virt:=virtualalloc(nil, 4, MEM_COMMIT + MEM_RESERVE, PAGE_READWRITE + PAGE_GUARD);
@@ -3890,6 +3893,7 @@ begin
   except
   end;
   virtualfree(virt, 0, MEM_RELEASE);
+  SetExceptionMask(mask);
 {$ENDIF}
 end;
 
@@ -11695,6 +11699,9 @@ begin
   for i:=0 to high(explosionripples) do
     with explosionripples[i] do
     begin
+      if (meret = 0) then
+        continue;
+
       d3dxmatrixtranslation(mat, pos.x, pos.y, pos.z);
 
       mat2:=d3dxmatrix(vsz.x * meret, vsz.y * meret, vsz.z * meret, 0,
